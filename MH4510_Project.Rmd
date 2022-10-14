@@ -1,0 +1,357 @@
+---
+title: "MH4510 Project"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+date: "`r Sys.Date()`"
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+# MH4510 Project - Data science salary prediction
+
+Goal: Predict salary of a position based on factors associated with the
+job.
+
+Dataset:
+<https://www.kaggle.com/datasets/nikhilbhathi/data-scientist-salary-us-glassdoor>
+
+Import relevant libraries:
+
+```{r}
+library(tidyverse)
+library(tm)
+library(wordcloud)
+library(stringr)
+library(GGally)
+library(ggplot2)
+library(reshape2)
+library(RColorBrewer)
+library(scales)
+
+# import data from local csv file
+D <- read.csv("data_cleaned_2021.csv")
+head(D)
+```
+
+## Data Cleaning
+
+Note: the dataset downloaded has already been cleaned by the owner, but
+we will do some additional cleaning and data preparation so that it is
+suited for our needs.
+
+### 1. Cleaning texts
+
+Removing "\\n" from job descriptions, cleaning job descriptions text,
+and creating a new variable to store lengths of job description texts:
+
+```{r}
+# Keep only alphabets and spaces, changing texts to lowercase, and create a new variable to store length of job description texts
+D_clean <- D %>%
+  mutate(cleaned_text = gsub("[^a-zA-Z]", " ", Job.Description)) %>%
+  mutate(cleaned_text = tolower(cleaned_text)) %>%
+  mutate(Job.Title = tolower(Job.Title)) %>%
+  mutate('desc_len' = sapply(D_clean$Job.Description, nchar))
+
+# Ssing stringr to replace all instances of "\n" with spaces instead
+while (grepl("\n", D_clean$cleaned_text, fixed = TRUE)) {
+  D_clean$cleaned_text <- str_replace(D_clean$cleaned_text, "\n", " ")
+}
+# Used a while loop because the function would only run once through the string, removing only one instance of '\n'
+
+head(D_clean)
+```
+
+Re-doing columns to reflect simplified job titles and seniority:
+
+```{r}
+# Drop the versions that the owner created, so we can control how it is done
+D_clean <- D_clean %>%
+  select(-c('job_title_sim', 'seniority_by_title'))
+
+# Create a function to collate general titles of job positions
+job_simp_fn <- function(title) {
+  if (grepl("data scientist", title)) {
+  output <- "data scientist"
+  } else if (grepl("director", title)) {
+    output <- "director"
+  } else if (grepl("manager", title)) {
+    output <- "manager"
+  } else if (grepl("data science", title)) {
+    output <- "data scientist"
+  } else if (grepl("data engineer", title)) {
+    output <- "data engineer"
+  } else if (grepl("data analyst", title)) {
+    output <- "data analyst"
+  } else if (grepl("data analytics", title)) {
+    output <- "data analyst"
+  } else if (grepl("machine learning", title)) {
+    output <- "MLE"
+  } else {
+    output <- "NA"
+  }}
+
+# Create a function to collate seniority of job positions
+seniority <- function(title) {
+  if (grepl("sr", title)) {
+  output <- "senior"
+  } else if (grepl("senior", title)) {
+    output <- "senior"
+  } else if (grepl("jr", title)) {
+    output <- "junior"
+  } else if (grepl("junior", title)) {
+    output <- "junior"
+  } else {
+    output <- 'NA'
+  }}
+
+# Apply both functions and create new variables 
+D_clean$'job_simp' <- sapply(D_clean$Job.Title, job_simp_fn)
+D_clean$'seniority' <- sapply(D_clean$Job.Title, seniority)
+
+# View head of only these three variables:
+head(D_clean[, c('Job.Title', 'job_simp', 'seniority')])
+```
+
+Create a new variable to count the number of competitors a company has:
+
+```{r}
+# Function to convert "Competitors" variable from "-1" and strings to a count variable
+my_strsplit <- function(string) {
+  if (string == -1){
+    output <- 0
+  } else {
+  output <- length(strsplit(toString(string), ", ")[[1]])
+  }}
+
+# Apply the function and create a new variable comp_count
+D_clean$comp_count <- sapply(D_clean$Competitors, my_strsplit)
+
+# View head of variables 'Competitors' and 'comp_count'
+D_clean[, c('Competitors', 'comp_count')]
+```
+
+Below is a summary of our numeric variables:
+
+(this included categorical variables that used 1s and 0s, such as
+python, employer.provided, etc)
+
+```{r}
+summary(D_clean%>%select_if(is.numeric))
+```
+
+## Data Visualizations
+
+### 1. Numerical variables data visualizations
+
+#### 1.1. Histograms
+
+Histogram of rating:
+
+```{r}
+ggplot(D_clean, aes(x=Rating)) +
+  geom_histogram()
+```
+
+-   Companies without rating are given a -1 rating. Since the rest of
+    the ratings follow a normal distribution, we may replace the ratings
+    with a mean value instead.
+
+Histogram of average salary in thousands:
+
+```{r}
+ggplot(D_clean, aes(x=Avg.Salary.K.)) + 
+  geom_histogram()
+```
+
+Histogram of age of companies:
+
+```{r}
+ggplot(D_clean, aes(x=Age)) + 
+  geom_histogram()
+```
+
+Histogram of job description text length:
+
+```{r}
+ggplot(D_clean, aes(x=desc_len)) +
+  geom_histogram()
+```
+
+#### 1.2. Boxplots
+
+Boxplot of salaries
+
+```{r}
+D_long <- melt(D_clean%>%select(c(Lower.Salary, Upper.Salary, Avg.Salary.K.)))
+head(D_long)
+ggplot(D_long, aes(x=variable, y=value)) +
+  geom_boxplot()
+```
+
+Boxplot of Rating:
+
+```{r}
+ggplot(D_clean, aes(y=Rating)) +
+  geom_boxplot()
+```
+
+Boxplot of Age:
+
+```{r}
+ggplot(D_clean, aes(y=Age)) +
+  geom_boxplot()
+```
+
+Boxplot of Job Description Length:
+
+```{r}
+ggplot(D_clean, aes(y=desc_len)) + 
+  geom_boxplot()
+```
+
+#### 1.3. Word cloud
+
+a\. Generating our term-document matrix:
+
+```{r}
+corpus <- VCorpus(VectorSource(D_clean$cleaned_text))
+DTM <- DocumentTermMatrix(corpus)
+dim(DTM)
+```
+
+-   (perhaps we can try GloVe instead)
+
+Some frequent words, organized according to alphabetical order:
+
+```{r}
+words_freq <- termFreq(D_clean$cleaned_text)
+head(words_freq)
+```
+
+b\. Some of these words do not make sense, so we increase the minimum
+frequency of the word to 35 (We noticed at words_freq \>= 30 there were
+still some hard to understand words, like abl = 33):
+
+```{r}
+frequent_words <- words_freq[words_freq >= 35]
+length(frequent_words)
+```
+
+c\. The new dimensions of our term-document matrix with the frequent
+words:
+
+```{r}
+DTM <- DTM[ , names(frequent_words)]
+dim(DTM)
+```
+
+d\. Remove stopwords and plot word cloud. (Plus add some colours):
+
+```{r}
+frequent_words <- frequent_words[!(names(frequent_words) %in% stopwords())]
+wordcloud(words = names(frequent_words), freq = frequent_words, min.freq = 0,
+            max.words = 100, random.order=FALSE, rot.per=0.35, 
+            colors=brewer.pal(8, "Dark2"))
+```
+
+e\. Dimensions of term-document matrix after removing stopwords:
+
+```{r}
+DTM <- DTM[ , names(frequent_words)]
+dim(DTM)
+```
+
+#### 1.4. Corrplot
+
+```{r}
+D_num <- D_clean %>%
+  select(-c("index", "Python", "spark", "aws", "excel", "sql", "sas", "keras", "pytorch",  
+            "scikit", "tensor", "hadoop", 'tableau', 'bi', 'flink', 'mongo', 'google_an', 
+            "Employer.provided", 'Hourly')) %>% 
+  rename('comp' = 'comp_count', 'desc' = 'desc_len', 'avg_S' = 'Avg.Salary.K.', 
+         'upp_S' = 'Upper.Salary', 'low_S' = 'Lower.Salary')
+
+D_num %>%
+  ggcorr(palette = "RdBu", label = TRUE)
+```
+
+```{r}
+D_num %>% 
+  select_if(is.numeric) %>%
+  ggpairs()
+```
+
+```{r}
+D_num %>%
+  select_if(is.numeric) %>%
+  cor %>% round(3)
+```
+
+### 2. Categorical variables data visualizations
+
+Calling out names of variables in our dataset to find which are
+categorical:
+
+```{r}
+names(D_clean)
+```
+
+Creating a new dataframe consisting of categorical variables:
+
+```{r}
+D_cat <- D_clean %>%
+  select(c("Location", "Headquarters", "Size", "Type.of.ownership", "Industry", 
+           "Sector", "Revenue", "company_txt", "Job.Location", 'Python', "spark", "aws", 
+           "excel", "sql", "sas", "keras", "pytorch", "scikit", "tensor", "hadoop", 
+           "tableau", "bi", "flink", "mongo", "google_an", "job_simp", "seniority"))
+head(D_cat)
+```
+
+[IN PROGRESS] Loop through and make bar plots for each
+
+(on hindsight, it was not worth using a function to do it all at one go.
+I cant resize some of the images and I can't see anything useful)
+
+```{r}
+cat_barplot <- function(variable) {
+  p <- ggplot(D_cat, aes(x=variable, fill = variable)) +
+    geom_bar() + theme_minimal()
+}
+
+lapply(D_cat, cat_barplot)
+```
+
+-   Notice that variables like "Location", "Headquarters", "Industry",
+    and "company_txt" have too many variables to properly plot the
+    graphs
+
+Barplot of top 10 job locations (state):
+
+```{r}
+D_cat %>%
+  count(Job.Location) %>%
+  mutate(n_percent = prop.table(n)) %>%
+  arrange(-n_percent) %>%
+  slice(1:10) %>%
+  ggplot(aes(x = reorder(Job.Location, -n_percent), y = n, fill = n, 
+             label = scales::percent(n_percent))) + 
+  geom_bar(position='dodge', stat="identity") + 
+  geom_text(size=3, vjust = -0.5) + 
+  geom_text(size=3, aes(label = n), vjust = 1.5, colour="white") +
+  xlab("Job Location (State)") + ylab("N")
+```
+
+```{r}
+ggplot(D_jl, aes(x=reorder(Job.Location, -n), y=n, fill=Job.Location)) + 
+  geom_bar(stat='identity') +
+  geom_text(
+     aes(label=after_stat('prop*100'), group=1),
+     stat='identity',
+     nudge_y=0.125,
+     va='bottom',
+     format_string='{:.1f}%'
+ )
+```
