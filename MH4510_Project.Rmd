@@ -53,7 +53,7 @@ D_clean <- D %>%
   mutate(cleaned_text = gsub("[^a-zA-Z]", " ", Job.Description)) %>%
   mutate(cleaned_text = tolower(cleaned_text)) %>%
   mutate(Job.Title = tolower(Job.Title)) %>%
-  mutate('desc_len' = sapply(D_clean$Job.Description, nchar))
+  mutate('desc_len' = sapply(D$Job.Description, nchar))
 
 # Ssing stringr to replace all instances of "\n" with spaces instead
 while (grepl("\n", D_clean$cleaned_text, fixed = TRUE)) {
@@ -130,7 +130,7 @@ my_strsplit <- function(string) {
 D_clean$comp_count <- sapply(D_clean$Competitors, my_strsplit)
 
 # View head of variables 'Competitors' and 'comp_count'
-D_clean[, c('Competitors', 'comp_count')]
+head(D_clean[, c('Competitors', 'comp_count')])
 ```
 
 Below is a summary of our numeric variables:
@@ -342,16 +342,4 @@ D_cat %>%
   geom_text(size=3, vjust = -0.5) + 
   geom_text(size=3, aes(label = n), vjust = 1.5, colour="white") +
   xlab("Job Location (State)") + ylab("N")
-```
-
-```{r}
-ggplot(D_jl, aes(x=reorder(Job.Location, -n), y=n, fill=Job.Location)) + 
-  geom_bar(stat='identity') +
-  geom_text(
-     aes(label=after_stat('prop*100'), group=1),
-     stat='identity',
-     nudge_y=0.125,
-     va='bottom',
-     format_string='{:.1f}%'
- )
 ```
