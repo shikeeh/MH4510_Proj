@@ -50,7 +50,7 @@ and creating a new variable to store lengths of job description texts:
 ```{r}
 # Keep only alphabets and spaces, changing texts to lowercase, and create a new variable to store length of job description texts
 D_clean <- D %>%
-  mutate(cleaned_text = gsub("[^a-zA-Z]", " ", Job.Description)) %>%
+  mutate(cleaned_text = gsub("[^a-zA-Z0-9]", " ", Job.Description)) %>%
   mutate(cleaned_text = tolower(cleaned_text)) %>%
   mutate(Job.Title = tolower(Job.Title)) %>%
   mutate('desc_len' = sapply(D$Job.Description, nchar))
