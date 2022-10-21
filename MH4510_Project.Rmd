@@ -20,7 +20,7 @@ How to use Github:
 4.  commit changes
 5.  push changes
 
-when you want to edit the rmd file:
+When you want to edit the rmd file:
 
 1.  pull changes
     1.  overrides your previous version that was kept in your folder
