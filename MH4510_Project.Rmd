@@ -12,24 +12,71 @@ editor_options:
 
 # MH4510 Project - Data science salary prediction
 
+## Preface:
+
 How to use Github:
 
-1.  make your edits
-2.  save the same project file
-3.  go to github desktop
-4.  commit changes
-5.  push changes
+1.  Open GitHub Desktop app
+2.  Pull from origin to receive the most updated .Rmd file
+3.  Make your edits on the MH4510_Project.Rmd file
+4.  Save your edits in the same file
+5.  Add descriptions for changes made
+6.  Commit changes
+7.  Push changes
 
-When you want to edit the rmd file:
+Note that pulling the most update project file will override the project
+file existing in your project folder. You may either create a fork to
+save your changes, or simply create a separate .Rmd file to work on
+personally before copying your edits to the main project file.
 
-1.  pull changes
-    1.  overrides your previous version that was kept in your folder
+# 1. Introduction to the problem
 
-Goal: Predict salary of a position based on factors associated with the
-job.
+## 1.1. Literature review
+
+There is no doubt that COVID-19 has changed the employment landscape in
+Singapore. A rapid shift towards digitalisation of businesses amidst a
+recession means that Singaporeans have to keep pace with the change in
+order to remain competitive at work (My Skills Future, 2021).
+
+Singapore employers have prioritised skills over education (Tan, 2021).
+Employers are starting to realise that new hires should be assessed
+based on their existing skill sets --- instead of just their paper
+qualifications and work history --- as there are various in-demand soft
+skills transferable from one job to another. Other skills relevant to
+the job may be learned through on-the-job training and development (The
+Straits Times, 2021).
+
+However, there is a gap between what individuals expect they will
+require and what they have been taught in school among students. Just
+27% of students say they are well equipped for future positions, while
+22% say they are not at all prepared. According to a [2019
+survey](https://www.cbi.org.uk/media/3841/12546_tess_2019.pdf) (Grimes,
+2019), two out of five employers believe school and college graduates
+are unprepared for employment. One-third say they are dissatisfied with
+the quantity of relevant work experience young people have (EconoTimes,
+2021).
+
+The last decade has also shown us that whether or not one has a degree,
+continual learning is imperative. In an age of ubiquitous disruption and
+massive unpredictability, both employers and job seekers concede that
+the knowledge and skills gained from a university degree can easily
+become obsolete (Lim, 2021).
+
+## 1.2. Objective
+
+As the world grows more volatile, uncertain, complex and ambiguous,
+graduates have to catch up with real-world needs and equip themselves
+with the necessary skills. Considering that more employers are placing a
+greater emphasis on individuals' skill sets and key traits than they are
+on a piece of paper, this project aims to predict data scientist salary
+based on the relevant variables in the dataset.
+
+# 2. Dataset
 
 Dataset:
 <https://www.kaggle.com/datasets/nikhilbhathi/data-scientist-salary-us-glassdoor>
+
+## 2.1. Description of dataset
 
 Import relevant libraries:
 
@@ -47,18 +94,24 @@ library(scales)
 # import data from local csv file
 D <- read.csv("data_cleaned_2021.csv")
 head(D)
+names(D)
 ```
 
-## Data Cleaning
+This dataset has 41 variables, consisting of numerical, categorical, and
+text. Some variables are derivations from others, and as such we will
+not be using all 41 variables.
+
+## 2.2. Exploratory data analysis
+
+### 2.2.1. Data cleaning
 
 Note: the dataset downloaded has already been cleaned by the owner, but
 we will do some additional cleaning and data preparation so that it is
 suited for our needs.
 
-### 1. Cleaning texts
-
-Removing "\\n" from job descriptions, cleaning job descriptions text,
-and creating a new variable to store lengths of job description texts:
+1.  Removing "\\n" from job descriptions, cleaning job descriptions
+    text, and creating a new variable to store lengths of job
+    description texts:
 
 ```{r}
 # Keep only alphabets and spaces, changing texts to lowercase, and create a new variable to store length of job description texts
@@ -77,7 +130,7 @@ while (grepl("\n", D_clean$cleaned_text, fixed = TRUE)) {
 head(D_clean)
 ```
 
-Re-doing columns to reflect simplified job titles and seniority:
+2.  Re-doing columns to reflect simplified job titles and seniority:
 
 ```{r}
 # Drop the versions that the owner created, so we can control how it is done
@@ -128,7 +181,8 @@ D_clean$'seniority' <- sapply(D_clean$Job.Title, seniority)
 head(D_clean[, c('Job.Title', 'job_simp', 'seniority')])
 ```
 
-Create a new variable to count the number of competitors a company has:
+3.  Create a new variable to count the number of competitors a company
+    has:
 
 ```{r}
 # Function to convert "Competitors" variable from "-1" and strings to a count variable
@@ -146,20 +200,20 @@ D_clean$comp_count <- sapply(D_clean$Competitors, my_strsplit)
 head(D_clean[, c('Competitors', 'comp_count')])
 ```
 
+### 2.2.2. Data visualizations
+
 Below is a summary of our numeric variables:
 
 (this included categorical variables that used 1s and 0s, such as
-python, employer.provided, etc)
+python, employer.provided, etc. and we have yet to remove them).
 
 ```{r}
 summary(D_clean%>%select_if(is.numeric))
 ```
 
-## Data Visualizations
+#### 2.2.2.1. Numerical variables data visualizations
 
-### 1. Numerical variables data visualizations
-
-#### 1.1. Histograms
+1.  Histograms
 
 Histogram of rating:
 
@@ -193,7 +247,7 @@ ggplot(D_clean, aes(x=desc_len)) +
   geom_histogram()
 ```
 
-#### 1.2. Boxplots
+2.  Boxplots
 
 Boxplot of salaries
 
@@ -225,7 +279,7 @@ ggplot(D_clean, aes(y=desc_len)) +
   geom_boxplot()
 ```
 
-#### 1.3. Word cloud
+3.  Word cloud
 
 a\. Generating our term-document matrix:
 
@@ -277,7 +331,7 @@ DTM <- DTM[ , names(frequent_words)]
 dim(DTM)
 ```
 
-#### 1.4. Corrplot
+4.  Corrplot
 
 ```{r}
 D_num <- D_clean %>%
@@ -303,7 +357,7 @@ D_num %>%
   cor %>% round(3)
 ```
 
-### 2. Categorical variables data visualizations
+#### 2.2.2.2. Categorical variables data visualizations
 
 Calling out names of variables in our dataset to find which are
 categorical:
@@ -323,25 +377,10 @@ D_cat <- D_clean %>%
 head(D_cat)
 ```
 
-[IN PROGRESS] Loop through and make bar plots for each
+-   Note that variables like "Location", "Headquarters", "Industry", and
+    "company_txt" have too many variables to properly plot the graphs
 
-(on hindsight, it was not worth using a function to do it all at one go.
-I cant resize some of the images and I can't see anything useful)
-
-```{r}
-cat_barplot <- function(variable) {
-  p <- ggplot(D_cat, aes(x=variable, fill = variable)) +
-    geom_bar() + theme_minimal()
-}
-
-lapply(D_cat, cat_barplot)
-```
-
--   Notice that variables like "Location", "Headquarters", "Industry",
-    and "company_txt" have too many variables to properly plot the
-    graphs
-
-Barplot of top 10 job locations (state):
+1.  Barplot of top 10 job locations (state):
 
 ```{r}
 D_cat %>%
@@ -360,3 +399,29 @@ D_cat %>%
 ```{r}
 ggplot(D_cat, aes(x=job_simp))
 ```
+
+# 3. Objectives
+
+## 3.1. Modelling
+
+### 3.1.1. Proposed models
+
+#### 3.1.1.1. Multiple linear regression
+
+#### 3.1.1.2. Random forest/deep forest (gcforest)/XGBoost
+
+#### 3.1.1.3. Neural network
+
+#### 3.1.1.4. Symbolic regression
+
+#### 3.1.1.5. Elastic net regression/LASSO
+
+### 3.1.2. Beyond the syllabus
+
+#### 3.1.2.1. Proposed model
+
+#### 3.1.2.2. Theory behind the model
+
+## 3.2. Summary of results
+
+# 4. Conclusion
