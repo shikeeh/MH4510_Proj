@@ -90,6 +90,10 @@ library(ggplot2)
 library(reshape2)
 library(RColorBrewer)
 library(scales)
+library(text2vec)
+library(caret)
+library(neuralnet)
+library(fastDummies) # for creating dummy variables
 
 # import data from local csv file
 D <- read.csv("data_cleaned_2021.csv")
@@ -117,14 +121,15 @@ suited for our needs.
 # Keep only alphabets and spaces, changing texts to lowercase, and create a new variable to store length of job description texts
 D_clean <- D %>%
   mutate(cleaned_text = gsub("[^a-zA-Z0-9]", " ", Job.Description)) %>%
+  mutate(cleaned_text = gsub("\\n", " ", cleaned_text)) %>%
   mutate(cleaned_text = tolower(cleaned_text)) %>%
   mutate(Job.Title = tolower(Job.Title)) %>%
   mutate('desc_len' = sapply(D$Job.Description, nchar))
 
 # Ssing stringr to replace all instances of "\n" with spaces instead
-while (grepl("\n", D_clean$cleaned_text, fixed = TRUE)) {
-  D_clean$cleaned_text <- str_replace(D_clean$cleaned_text, "\n", " ")
-}
+#while (grepl("\n", D_clean$cleaned_text, fixed = TRUE)) {
+#  D_clean$cleaned_text <- str_replace(D_clean$cleaned_text, "\n", " ")
+#}
 # Used a while loop because the function would only run once through the string, removing only one instance of '\n'
 
 head(D_clean)
@@ -404,6 +409,14 @@ ggplot(D_cat, aes(x=job_simp))
 
 ## 3.1. Modelling
 
+```{r}
+
+```
+
+```{r}
+
+```
+
 ### 3.1.1. Proposed models
 
 #### 3.1.1.1. Multiple linear regression
@@ -412,18 +425,70 @@ ggplot(D_cat, aes(x=job_simp))
 
 #### 3.1.1.3. Neural network
 
+```{r}
+tokens <- space_tokenizer(D_clean$cleaned_text)
+it = itoken(tokens, progressbar = FALSE)
+vocab <- create_vocabulary(it) %>% prune_vocabulary(10)
+vectorizer <- vocab_vectorizer(vocab)
+tcm <- create_tcm(it, vectorizer)
+
+cat("Dimensions of tcm =", dim(tcm), "\n")
+```
+
+```{r}
+dim_word_emb <- 100
+
+glove = GlobalVectors$new(rank = dim_word_emb, x_max = 10)
+
+wv_main = glove$fit_transform(tcm, n_iter = 50, convergence_tol = 0.01)
+
+wv_context = glove$components
+word_vectors = wv_main + t(wv_context)
+
+cat("Dim of word vector matrix =", dim(word_vectors))
+```
+
+```{r}
+dtm <- create_dtm(it, vectorizer)
+cbow_data <- as.matrix(dtm %*% word_vectors)
+```
+
+```{r}
+set.seed(8888)
+all_data <- cbow_data %>%
+  as_tibble %>%
+  mutate(Y = D_clean$Avg.Salary.K.)
+
+ind <- which(runif(nrow(all_data)) < 0.7)
+
+train_data <- all_data %>% slice(ind)
+test_data <- all_data %>% slice(-ind)
+
+mod_nn <- neuralnet(Y ~ ., data = train_data, 
+                                    hidden = c(20, 20, 20),
+                    threshold = 0.5,
+                    lifesign = "full",
+                    lifesign.step = 10000,
+                    err.fct = "sse",
+                    linear.output = TRUE)
+
+summary(mod_nn)
+
+```
+
 #### 3.1.1.4. Symbolic regression
 
 #### 3.1.1.5. Elastic net regression/LASSO
 
-The Least Absolute Shrinkage and Selection Operator (LASSO) is a modification
-of linear regression, as there is an extra regularization term in its loss
-function as compared to that of linear regression. This is to lower the 
-complexity of the model by limiting the sum of the absolute values of the 
-coefficients. Meanwhile, elastic net regression combines the properties of 
-both linear and LASSO regressions, and there are two hyperparameters, namely 
-β and α. We will need to choose the optimum values for these two hyperparameters 
-before generating predictions.
+The Least Absolute Shrinkage and Selection Operator (LASSO) is a
+modification of linear regression, as there is an extra regularization
+term in its loss function as compared to that of linear regression. This
+is to lower the complexity of the model by limiting the sum of the
+absolute values of the coefficients. Meanwhile, elastic net regression
+combines the properties of both linear and LASSO regressions, and there
+are two hyperparameters, namely β and α. We will need to choose the
+optimum values for these two hyperparameters before generating
+predictions.
 
 ### 3.1.2. Beyond the syllabus
 
