@@ -480,15 +480,43 @@ summary(mod_nn)
 
 #### 3.1.1.5. Elastic net regression/LASSO
 
-The Least Absolute Shrinkage and Selection Operator (LASSO) is a
-modification of linear regression, as there is an extra regularization
-term in its loss function as compared to that of linear regression. This
-is to lower the complexity of the model by limiting the sum of the
-absolute values of the coefficients. Meanwhile, elastic net regression
-combines the properties of both linear and LASSO regressions, and there
-are two hyperparameters, namely β and α. We will need to choose the
-optimum values for these two hyperparameters before generating
-predictions.
+The Least Absolute Shrinkage and Selection Operator (LASSO) is a modification
+of linear regression, as there is an extra regularization term in its loss
+function as compared to that of linear regression. This is to lower the 
+complexity of the model by limiting the sum of the absolute values of the 
+coefficients. Meanwhile, elastic net regression combines the properties of 
+both linear and LASSO regressions, and there are two hyperparameters, namely 
+β and α. Here is the loss function of elastic net regression:
+$$
+L_E(\beta)=\sum_{i=1}^{N}
+\left(y^i - \beta_0 - \sum_{j=1}^{p}\beta_jx_j^i\right)^2+
+(1-\alpha)\lambda\sum_{j=1}^{p}\beta_j^2+
+\alpha\lambda\sum_{j=1}^{p}|\beta_j|
+$$
+We will need to choose the optimum values for these two hyperparameters 
+before generating predictions.
+
+##Elastic Net
+```{r}
+elasticnet <- train(Avg.Salary.K. ~., data = D_clean, method = "glmnet", trControl = trainControl("cv", number = 5))
+
+elasticnet
+```
+
+##LASSO
+```{r}
+lambda <- 10^seq(-3, 0, length = 20)
+lambda
+```
+
+```{r}
+lasso <- train(Avg.Salary.K. ~., data = D_clean, method = "glmnet", trControl = trainControl("cv", number = 10), tuneGrid = expand.grid(alpha = 1, lambda = lambda), preProcess = c("scale"))
+
+lasso
+```
+```{r}
+lasso$bestTune
+```
 
 ### 3.1.2. Beyond the syllabus
 
