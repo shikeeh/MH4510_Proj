@@ -474,9 +474,9 @@ mod_nn <- neuralnet(Y ~ ., data = train_data,
                     linear.output = TRUE)
 
 pred_nn <- compute(mod_nn,test_data[,1:100])
-pred_nn <- pred_nn$net.result*(max(all_data$Y)-min(all_data$Y))+min(all_data$Y)
+pred_n <- pred_nn$net.result*(max(all_data$Y)-min(all_data$Y))+min(all_data$Y)
 test_n <- (test_data$Y)*(max(all_data$Y)-min(all_data$Y))+min(all_data$Y)
-RMSE_nn <- (sum((test_n - pred_nn)^2)/nrow(test_data))^0.5
+RMSE_nn <- (sum((test_n - pred_n)^2)/nrow(test_data))^0.5
 
 RMSE_nn
 ```
