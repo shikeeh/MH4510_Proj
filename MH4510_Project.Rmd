@@ -94,6 +94,8 @@ library(text2vec)
 library(caret)
 library(neuralnet)
 library(fastDummies) # for creating dummy variables
+library(randomForest)
+library(Metrics)
 
 # import data from local csv file
 D <- read.csv("data_cleaned_2021.csv")
@@ -422,6 +424,80 @@ ggplot(D_cat, aes(x=job_simp))
 #### 3.1.1.1. Multiple linear regression
 
 #### 3.1.1.2. Random forest/deep forest (gcforest)/XGBoost
+
+```{r}
+D_cleaned <- D_clean %>%
+  select(Job.Title, Rating, Location, Headquarters, Size, Type.of.ownership, Industry, Sector, 
+         Revenue, Competitors, Hourly, Employer.provided, Avg.Salary.K.,Job.Location, Age, 
+         Python, spark, aws, excel, sql, sas, keras, pytorch, scikit, tensor, hadoop, tableau, 
+         bi, flink, mongo, google_an, Degree, seniority)
+```
+
+```{r}
+X <- D_cleaned %>% 
+  select(-c(Avg.Salary.K.))
+y <- D_cleaned$Avg.Salary.K.
+
+index <- createDataPartition(y, p=0.7, list=FALSE)
+X_train <- X[index, ]
+X_test <- X[-index, ]
+Y_train <- y[index]
+Y_test<- y[-index]
+
+cat("Dimensions of the training set are", dim(X_train), "\n")
+cat("Dimensions of the test set are", dim(X_test), "\n")
+```
+
+```{r}
+mod_rf <- train(Avg.Salary.K.~., data = D_cleaned, method = "ranger",
+                num.trees = 50, importance = 'impurity',
+                trControl = trainControl("oob"))
+mod_rf
+
+rfGrid <- expand.grid(mtry = 955,
+                      min.node.size = 5,
+                      splitrule = "extratrees")
+
+mod_rf_tune <- train(Avg.Salary.K.~., data = D_cleaned, method = "ranger",
+                     num.trees = 50, importance = 'impurity',
+                     tuneGrid = rfGrid, trControl = trainControl("oob"))
+mod_rf_tune
+
+mod_rf_tune$bestTune
+
+mod_rf_tuned <- train(Avg.Salary.K.~., data = D_cleaned, method = "ranger",
+                      num.trees = 500, importance = 'impurity',
+                      tuneGrid = rfGrid, trControl = trainControl("oob"))
+mod_rf_tuned
+
+mod_rf_tuned$bestTune
+```
+
+```{r}
+regr <- randomForest(x = X_train, y = Y_train , maxnodes = 100, ntree = 1000)
+predictions <- predict(regr, X_test)
+
+result <- X_test
+result['Avg.Salary.K.'] <- Y_test
+result['prediction']<-  predictions
+
+head(result)
+```
+
+```{r}
+ggplot(  ) + 
+  geom_point( aes(x = X_test$Rating, y = predictions, color = 'red', alpha = 0.5) ) + 
+  geom_point( aes(x = X_test$Rating , y = predictions, color = 'blue',  alpha = 0.5)) + 
+  labs(x = "Rating", y = "Avg.Salary.K", color = "", alpha = 'Transperency') +
+  scale_color_manual(labels = c( "Predicted", "Real"), values = c("blue", "red"))
+```
+
+```{r}
+print(paste0('MAE: ' , mae(predictions , Y_test) ))
+print(paste0('MSE: ' ,caret::postResample(predictions , Y_test)['RMSE']^2 ))
+print(paste0('RMSE: ' ,caret::postResample(predictions , Y_test)['RMSE'])) #33.41
+print(paste0('R2: ' ,caret::postResample(predictions , Y_test)['Rsquared'] ))
+```
 
 #### 3.1.1.3. Neural network
 
