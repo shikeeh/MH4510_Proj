@@ -426,6 +426,7 @@ ggplot(D_cat, aes(x=job_simp))
 #### 3.1.1.2. Random forest/deep forest (gcforest)/XGBoost
 
 ```{r}
+#select variables for random forest
 D_cleaned <- D_clean %>%
   select(Job.Title, Rating, Location, Headquarters, Size, Type.of.ownership, Industry, Sector, 
          Revenue, Competitors, Hourly, Employer.provided, Avg.Salary.K.,Job.Location, Age, 
@@ -434,6 +435,7 @@ D_cleaned <- D_clean %>%
 ```
 
 ```{r}
+#splitting into train and test data
 X <- D_cleaned %>% 
   select(-c(Avg.Salary.K.))
 y <- D_cleaned$Avg.Salary.K.
@@ -449,6 +451,7 @@ cat("Dimensions of the test set are", dim(X_test), "\n")
 ```
 
 ```{r}
+#getting optimal hyper parameters
 mod_rf <- train(Avg.Salary.K.~., data = D_cleaned, method = "ranger",
                 num.trees = 50, importance = 'impurity',
                 trControl = trainControl("oob"))
@@ -474,6 +477,7 @@ mod_rf_tuned$bestTune
 ```
 
 ```{r}
+#random forest regression
 regr <- randomForest(x = X_train, y = Y_train , maxnodes = 100, ntree = 1000)
 predictions <- predict(regr, X_test)
 
@@ -485,6 +489,7 @@ head(result)
 ```
 
 ```{r}
+#plot graph to compare actual vs. predicted
 ggplot(  ) + 
   geom_point( aes(x = X_test$Rating, y = predictions, color = 'red', alpha = 0.5) ) + 
   geom_point( aes(x = X_test$Rating , y = predictions, color = 'blue',  alpha = 0.5)) + 
@@ -493,6 +498,7 @@ ggplot(  ) +
 ```
 
 ```{r}
+#using metrics to calculate RMSE
 print(paste0('MAE: ' , mae(predictions , Y_test) ))
 print(paste0('MSE: ' ,caret::postResample(predictions , Y_test)['RMSE']^2 ))
 print(paste0('RMSE: ' ,caret::postResample(predictions , Y_test)['RMSE'])) #33.41
