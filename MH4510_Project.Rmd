@@ -571,19 +571,17 @@ test_data <- all_data %>% slice(-ind)
 
 mod_nn <- neuralnet(Y ~ ., data = train_data, 
                                     hidden = c(20, 20),
-                    threshold = 1,
+                    threshold = 0.5,
                     lifesign = "full",
-                    lifesign.step = 10,
-                    stepmax = 4000,
+                    lifesign.step = 100,
+                    stepmax = 10000,
                     err.fct = "sse",
                     linear.output = TRUE)
 
 pred_nn <- compute(mod_nn,test_data[,1:100])
-pred_n <- pred_nn$net.result*(max(all_data$Y)-min(all_data$Y))+min(all_data$Y)
-test_n <- (test_data$Y)*(max(all_data$Y)-min(all_data$Y))+min(all_data$Y)
-RMSE_nn <- (sum((test_n - pred_n)^2)/nrow(test_data))^0.5
+RMSE_nn <- (sum((test_data$Y - pred_nn$net.result)^2)/nrow(test_data))^0.5
 
-RMSE_nn
+RMSE_nn #41.20078
 ```
 
 #### 3.1.1.4. Symbolic regression
