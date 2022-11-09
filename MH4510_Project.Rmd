@@ -425,11 +425,45 @@ ggplot(D_cat, aes(x=job_simp))
 
 #### 3.1.1.2. Random forest/deep forest (gcforest)/XGBoost
 
+#Random Forest
+
+We want to visualise our data through the use of decision trees. However, decision trees alone have a high variance which can cause the trees trained on different parts of the dataset to look very different. Hence, we will introduce an ensemble method to reduce the variance. Random forest is chosen over a bagged ensemble as there may exist one or more very strong predictors in our dataset, causing other predictors to not have a chance to be included. This will cause the predictions of trees to be highly correlated and adding more trees will not reduce the variance. Variable selection can also be done by looking at the variable importance of the random forest.
+
+We performed grid search with oob (out-of-bag error) while tuning the random forest to select the optimal values of the hyper-parameters try (number of variables) and min.node.size (minimal node size):
+
+```{r}
+#getting optimal hyper parameters
+mod_rf <- train(Avg.Salary.K.~., data = D_clean, method = "ranger",
+                num.trees = 50, importance = 'impurity',
+                trControl = trainControl("oob"))
+mod_rf
+```
+The optimal values of the hyper-parameters are:
+
+```{r}
+mod_rf$bestTune
+```
+
+Now we retrain the model with the selected hyperparameters to produce the following output:
+
+```{r}
+rfGrid <- expand.grid(mtry = 1379,
+                      min.node.size = 5,
+                      splitrule = "variance")
+                      
+mod_rf_tune <- train(Avg.Salary.K.~., data = D_clean, method = "ranger",
+                     num.trees = 50, importance = 'impurity',
+                     tuneGrid = rfGrid, trControl = trainControl("oob"))
+mod_rf_tune
+```
+
 ```{r}
 #selecting variables for random forest (shouldnt exist if data cleaning removed it)
 D_clean <- D_clean %>%
   select(-c(index, Job.Title, Salary.Estimate, Job.Description, Lower.Salary, Upper.Salary, cleaned_text, job_simp, desc_len))
 ```
+
+Then, we split our data into train and test data sets:
 
 ```{r}
 #splitting into train and test data
@@ -445,25 +479,6 @@ Y_test<- y[-index]
 
 cat("Dimensions of the training set are", dim(X_train), "\n")
 cat("Dimensions of the test set are", dim(X_test), "\n")
-```
-
-```{r}
-#getting optimal hyper parameters
-mod_rf <- train(Avg.Salary.K.~., data = D_clean, method = "ranger",
-                num.trees = 50, importance = 'impurity',
-                trControl = trainControl("oob"))
-mod_rf
-
-rfGrid <- expand.grid(mtry = 1379,
-                      min.node.size = 5,
-                      splitrule = "variance")
-
-mod_rf_tune <- train(Avg.Salary.K.~., data = D_clean, method = "ranger",
-                     num.trees = 50, importance = 'impurity',
-                     tuneGrid = rfGrid, trControl = trainControl("oob"))
-mod_rf_tune
-
-mod_rf_tune$bestTune
 ```
 
 ```{r}
