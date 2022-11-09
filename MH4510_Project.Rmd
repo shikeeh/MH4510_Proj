@@ -474,13 +474,7 @@ cat("Dim of word vector matrix =", dim(word_vectors))
 
 #Random Forest
 
-```{r}
-#selecting variables for random forest (should not exist if data cleaning removed it)
-D_clean_1 <- D_clean %>%
-  select(-c(index, Job.Title, Salary.Estimate, Job.Description, Company.Name, Location, Founded, Competitors, Lower.Salary, Upper.Salary, job_simp, cleaned_text))
-```
-
-We want to visualise our data through the use of decision trees. However, decision trees alone have a high variance which can cause the trees trained on different parts of the dataset to look very different. Hence, we will introduce an ensemble method to reduce the variance. Random forest is chosen over a bagged ensemble as there may exist one or more very strong predictors in our dataset, causing other predictors to not have a chance to be included. This will cause the predictions of trees to be highly correlated and adding more trees will not reduce the variance. Variable selection can also be done by looking at the variable importance of the random forest.
+Next, we want to visualise our data through the use of decision trees. However, decision trees alone have a high variance which can cause the trees trained on different parts of the dataset to look very different. Hence, we will introduce an ensemble method to reduce the variance. Random forest is chosen over a bagged ensemble as there may exist one or more very strong predictors in our dataset, causing other predictors to not have a chance to be included. This will cause the predictions of trees to be highly correlated and adding more trees will not reduce the variance. Variable selection can also be done by looking at the variable importance of the random forest.
 
 We performed grid search with oob (out-of-bag error) while tuning the random forest to select the optimal values of the hyper-parameters try (number of variables) and min.node.size (minimal node size):
 
@@ -497,7 +491,7 @@ The optimal values of the hyper-parameters are:
 mod_rf$bestTune
 ```
 
-Now we retrain the model with the selected hyperparameters to produce the following output:
+Now, we retrain the model with the selected hyperparameters to produce the following output:
 
 ```{r}
 rfGrid <- expand.grid(mtry = 1379,
@@ -528,6 +522,8 @@ cat("Dimensions of the training set are", dim(X_train), "\n")
 cat("Dimensions of the test set are", dim(X_test), "\n")
 ```
 
+Next, we perform random forest on the train data set
+
 ```{r}
 #random forest regression
 regr <- randomForest(x = X_train, y = Y_train , maxnodes = 100, ntree = 1000)
@@ -539,6 +535,7 @@ result['prediction']<-  predictions
 
 head(result)
 ```
+The graph below shows the data between Actual Average Salary vs. Predicted Average Salary
 
 ```{r}
 #plot graph to compare actual vs. predicted
@@ -556,6 +553,7 @@ print(paste0('MSE: ' ,caret::postResample(predictions , Y_test)['RMSE']^2 ))
 print(paste0('RMSE: ' ,caret::postResample(predictions , Y_test)['RMSE'])) #27.12
 print(paste0('R2: ' ,caret::postResample(predictions , Y_test)['Rsquared'] ))
 ```
+The bar graph below shows the top 5 most important variables in this prediction
 
 ```{r}
 #top 5 most important predictors 
