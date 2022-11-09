@@ -96,6 +96,8 @@ library(neuralnet)
 library(fastDummies) # for creating dummy variables
 library(randomForest)
 library(Metrics)
+library(keras)
+library(tensorflow)
 
 # import data from local csv file
 D <- read.csv("data_cleaned_2021.csv")
@@ -407,17 +409,45 @@ D_cat %>%
 ggplot(D_cat, aes(x=job_simp))
 ```
 
+## 2.3. Feature engineering
+
+### 2.3.1. Identifying variables
+
+### 2.3.2. Variable selection
+
+### 2.3.3. GloVe Word Embedding
+
+In this report, we used an unsupervised word embedding technique, which is GloVe to achieve vector representations for words inside the cleaned_text.
+
+First of all, we create the term co-occurrence matrix (TCM):
+```{r}
+tokens <- space_tokenizer(D_clean$cleaned_text)
+it = itoken(tokens, progressbar = FALSE)
+vocab <- create_vocabulary(it) %>% prune_vocabulary(10)
+vectorizer <- vocab_vectorizer(vocab)
+tcm <- create_tcm(it, vectorizer)
+
+cat("Dimensions of tcm =", dim(tcm), "\n")
+```
+
+Then, we create the Global Vectors (GloVe):
+```{r}
+dim_word_emb <- 100
+
+glove = GlobalVectors$new(rank = dim_word_emb, x_max = 10)
+
+wv_main = glove$fit_transform(tcm, n_iter = 50, convergence_tol = 0.01)
+
+wv_context = glove$components
+word_vectors = wv_main + t(wv_context)
+
+cat("Dim of word vector matrix =", dim(word_vectors))
+```
+
+
 # 3. Objectives
 
 ## 3.1. Modelling
-
-```{r}
-
-```
-
-```{r}
-
-```
 
 ### 3.1.1. Proposed models
 
@@ -458,8 +488,8 @@ mod_rf_tune
 ```
 
 ```{r}
-#selecting variables for random forest (shouldnt exist if data cleaning removed it)
-D_clean <- D_clean %>%
+#selecting variables for random forest (should not exist if data cleaning removed it)
+D_clean_1 <- D_clean %>%
   select(-c(index, Job.Title, Salary.Estimate, Job.Description, Lower.Salary, Upper.Salary, cleaned_text, job_simp, desc_len))
 ```
 
@@ -467,9 +497,9 @@ Then, we split our data into train and test data sets:
 
 ```{r}
 #splitting into train and test data
-X <- D_clean %>% 
-  select(-c(index, Avg.Salary.K.))
-y <- D_clean$Avg.Salary.K.
+X <- D_clean_1 %>% 
+  select(-Avg.Salary.K.)
+y <- D_clean_1$Avg.Salary.K.
 
 index <- createDataPartition(y, p=0.7, list=FALSE)
 X_train <- X[index, ]
@@ -521,34 +551,13 @@ data.frame(variable = names(var_importance), importance = var_importance) %>%
 
 #### 3.1.1.3. Neural network
 
-```{r}
-tokens <- space_tokenizer(D_clean$cleaned_text)
-it = itoken(tokens, progressbar = FALSE)
-vocab <- create_vocabulary(it) %>% prune_vocabulary(10)
-vectorizer <- vocab_vectorizer(vocab)
-tcm <- create_tcm(it, vectorizer)
-
-cat("Dimensions of tcm =", dim(tcm), "\n")
-```
-
-```{r}
-dim_word_emb <- 100
-
-glove = GlobalVectors$new(rank = dim_word_emb, x_max = 10)
-
-wv_main = glove$fit_transform(tcm, n_iter = 50, convergence_tol = 0.01)
-
-wv_context = glove$components
-word_vectors = wv_main + t(wv_context)
-
-cat("Dim of word vector matrix =", dim(word_vectors))
-```
-
+In order to predict the salary with neural network, we used Continuous Bag of Words (CBOW) as follows. It enables us to do downstream tasks, such as regression on texts.
 ```{r}
 dtm <- create_dtm(it, vectorizer)
 cbow_data <- as.matrix(dtm %*% word_vectors)
 ```
 
+Here is the model:
 ```{r}
 set.seed(8888)
 all_data <- cbow_data %>%
