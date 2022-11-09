@@ -566,6 +566,7 @@ The bar graph below shows the top 5 most important variables in this prediction
 #top 5 most important predictors 
 var_importance = mod_rf_tune$finalModel$variable.importance %>% 
   sort(decreasing = TRUE) %>% head(5)
+var_importance
 data.frame(variable = names(var_importance), importance = var_importance) %>% 
   ggplot(aes(x = reorder(variable, -importance), y = importance)) + geom_col() + 
   xlab("Variables") + ylab("Importance") + theme(axis.text.x = element_text(angle = 45)) 
