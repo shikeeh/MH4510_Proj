@@ -1,5 +1,5 @@
 ---
-title: "MH4510 Project"
+title: "Data Scientist Salary Prediction"
 output:
   pdf_document: default
   html_document:
@@ -10,9 +10,15 @@ editor_options:
     wrap: 72
 ---
 
-# MH4510 Project - Data science salary prediction
+# Team Humility
 
-## Preface:
+Chloe Neo Tze Ching
+Eng Jing Keat
+Goh Wei Lun Glenn
+Kaneko Yoshiki
+Tan Wei Keong
+
+## Abstract
 
 How to use Github:
 
