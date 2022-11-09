@@ -474,6 +474,13 @@ cat("Dim of word vector matrix =", dim(word_vectors))
 
 #Random Forest
 
+We removed variable "cleaned_text" as it affects the accuracy of random forest
+
+```{r}
+D_clean_1 <- D_clean %>%
+  select(-c(cleaned_text))
+```
+
 Next, we want to visualise our data through the use of decision trees. However, decision trees alone have a high variance which can cause the trees trained on different parts of the dataset to look very different. Hence, we will introduce an ensemble method to reduce the variance. Random forest is chosen over a bagged ensemble as there may exist one or more very strong predictors in our dataset, causing other predictors to not have a chance to be included. This will cause the predictions of trees to be highly correlated and adding more trees will not reduce the variance. Variable selection can also be done by looking at the variable importance of the random forest.
 
 We performed grid search with oob (out-of-bag error) while tuning the random forest to select the optimal values of the hyper-parameters try (number of variables) and min.node.size (minimal node size):
@@ -494,7 +501,7 @@ mod_rf$bestTune
 Now, we retrain the model with the selected hyperparameters to produce the following output:
 
 ```{r}
-rfGrid <- expand.grid(mtry = 1379,
+rfGrid <- expand.grid(mtry = 711,
                       min.node.size = 5,
                       splitrule = "variance")
                       
@@ -540,17 +547,17 @@ The graph below shows the data between Actual Average Salary vs. Predicted Avera
 ```{r}
 #plot graph to compare actual vs. predicted
 ggplot(  ) + 
-  geom_point( aes(x = X_test$Rating, y = predictions, color = 'red', alpha = 0.5) ) + 
-  geom_point( aes(x = X_test$Rating , y = predictions, color = 'blue',  alpha = 0.5)) + 
-  labs(x = "Rating", y = "Avg.Salary.K", color = "", alpha = 'Transperency') +
-  scale_color_manual(labels = c( "Predicted", "Real"), values = c("blue", "red"))
+  geom_point( aes(x = predictions, y = Y_test, color = 'red', alpha = 0.5) ) + 
+  geom_point( aes(x = predictions, y = Y_test, color = 'blue',  alpha = 0.5)) + 
+  labs(x = "Predicted Average Salary", y = "Actual Average Salary", color = "", alpha = 'Transperency') +
+  scale_color_manual(labels = c( "Predicted", "Actual"), values = c("navy", "green"))
 ```
 
 ```{r}
 #using metrics to calculate RMSE
 print(paste0('MAE: ' , mae(predictions , Y_test) ))
 print(paste0('MSE: ' ,caret::postResample(predictions , Y_test)['RMSE']^2 ))
-print(paste0('RMSE: ' ,caret::postResample(predictions , Y_test)['RMSE'])) #27.12
+print(paste0('RMSE: ' ,caret::postResample(predictions , Y_test)['RMSE'])) #26.17
 print(paste0('R2: ' ,caret::postResample(predictions , Y_test)['Rsquared'] ))
 ```
 The bar graph below shows the top 5 most important variables in this prediction
