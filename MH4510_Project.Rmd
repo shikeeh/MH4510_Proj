@@ -215,6 +215,17 @@ D_clean$comp_count <- sapply(D_clean$Competitors, my_strsplit)
 head(D_clean[, c('Competitors', 'comp_count')])
 ```
 
+4. Variables Selection
+
+After removing unnecessary columns, our data contains 33 variables for analysis.
+
+```{r}
+#remove unnecessary columns 
+D_clean <- D_clean %>%
+select(-c(index, Job.Title, Salary.Estimate, Job.Description, Company.Name, Location, Founded, Competitors, Lower.Salary, Upper.Salary, job_simp))
+names(D_clean)
+```
+
 ### 2.2.2. Data visualizations
 
 Below is a summary of our numeric variables:
