@@ -621,8 +621,38 @@ lasso$bestTune
 
 ### 3.1.2. Beyond the syllabus
 
-#### 3.1.2.1. Proposed model
+#### 3.1.2.1. Shapley Value Regression
+Shapley Value Regression is a technique used to determine the relative importance of predictor variables in linear regression. It derives from game theory and its purpose is to evaluate the worth of each player's input over all possible combinations of players. In the study, it aims to identify main variables predicting data scientists' salaries and to avoid the problem of high correlation between variables.
 
+```{r}
+set.seed(1234)
+ind <- runif(nrow(D_clean)) < 0.7
+
+train_data <- D_clean[ind , ] 
+test_data <- D_clean[!ind , ]
+
+avg_S = train_data$Avg.Salary.K
+rating = train_data$Rating
+age = train_data$Age
+comp = train_data$comp_count
+
+lmsalary = lm(avg_S ~ comp + age  + rating)
+summary(lmsalary)
+
+library(relaimpo)
+calc.relimp(lmsalary, type=list('lmg'), rela=T)
+
+library(ggplot2)
+plot(lm(avg_S ~ comp + age  + rating))
+
+#relative importance metrics
+names <- c("comp", "age", "rating")
+count = c(0.2792880, 0.5205512, 0.2001608)
+
+barplot(count,names.arg=names,xlab="Explanatory Variables",ylab="Relative Importance of Variables")
+```
+
+From the results, Age of the company is the most important predictor variable. It accounts for approximately 52.1% of the average salary. Established companies are more stable and have funds to provide higher salaries as compared to start-ups. In contrast, other variables such as number of competitors and rating only account for 27.9% and 20% of the average salary. "comp" might be slightly higher than rating because companies have to offer more attractive salaries to employees so they will be less likely to job-hop to their competitor companies.
 #### 3.1.2.2. Theory behind the model
 
 ## 3.2. Summary of results
