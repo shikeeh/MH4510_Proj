@@ -665,10 +665,10 @@ Predicted Average Salary
 ```{r}
 #plot graph to compare actual vs. predicted
 ggplot(  ) + 
-  geom_point( aes(x = predictions, y = Y_test, color = 'red', alpha = 0.5) ) + 
-  geom_point( aes(x = predictions, y = Y_test, color = 'blue',  alpha = 0.5)) + 
-  labs(x = "Predicted Average Salary", y = "Actual Average Salary", color = "", alpha = 'Transperency') +
-  scale_color_manual(labels = c( "Predicted", "Actual"), values = c("navy", "green"))
+  geom_point( aes(x = Y_test, y = predictions, color = 'red', alpha = 0.5) ) + 
+  geom_point( aes(x = Y_test, y = predictions, color = 'blue',  alpha = 0.5)) + 
+  labs(x = "Actual Average Salary", y = "Predicted Average Salary", color = "", alpha = 'Transperency') +
+  scale_color_manual(labels = c( "Actual", "Predicted"), values = c("navy", "green"))
 ```
 
 ```{r}
