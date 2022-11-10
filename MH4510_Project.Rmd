@@ -480,6 +480,7 @@ test_data = D_dtm[!ind, ]
 model <- glmnet(x = train_data, y = train_data$Y, alpha = 0)
 summary(model)
 ```
+
 ```{r}
 #perform k-fold cross-validation to find optimal lambda value
 lambda = 10^seq(from = 1, to = 4, length = 100)
@@ -648,17 +649,21 @@ Then we create our XGBoost model from caret, using hyperparameters as
 shown below:
 
 ```{r}
+library(caret)
+
+set.seed(100)
+
 trControl <- trainControl(
     method = 'cv',
-    number = 10,
+    number = 5,
     verboseIter = TRUE,
     allowParallel = TRUE)
 
 xgbGrid <- expand.grid(
-  eta = 0.3,
-  max_depth = 10,
-  nrounds = 50,
-  gamma = 0,
+  nrounds = 350,
+  eta = 0.1,
+  max_depth = 4,
+  gamma = 0.02,
   colsample_bytree = 1,
   min_child_weight = 1,
   subsample = 1
@@ -681,6 +686,24 @@ xgb_caret <- train(Y ~.,
                    tuneGrid = xgbGrid)
 
 xgb_caret
+```
+
+```{r}
+pred_y = predict(xgb_caret, test_dtm)
+
+#measure prediction accuracy
+caret::MAE(test_dtm$Y, pred_y) #mae
+caret::RMSE(test_dtm$Y, pred_y) #rmse
+```
+
+```{r}
+library(xgboost)
+xgb_imp <- xgb.importance(feature_names = xgb_caret$finalModel$feature_names,
+               model = xgb_caret$finalModel)
+
+xgb_imp[1:20]
+
+xgb.plot.importance(xgb_imp[1:20])
 ```
 
 #### 3.1.1.3. Neural network
