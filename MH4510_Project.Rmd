@@ -131,63 +131,10 @@ D_clean <- D %>%
   mutate(cleaned_text = gsub("[^a-zA-Z0-9]", " ", Job.Description)) %>%
   mutate(cleaned_text = gsub("\\n", " ", cleaned_text)) %>%
   mutate(cleaned_text = tolower(cleaned_text)) %>%
-  # mutate Job.Title to lowercase
-  mutate(Job.Title = tolower(Job.Title)) %>%
   # create a new variable containing length of job description texts
   mutate('desc_len' = sapply(D$Job.Description, nchar))
 
 head(D_clean)
-```
-
-2.  Re-doing columns to reflect simplified job titles and seniority:
-
-```{r}
-# Drop the versions that the owner created, so we can control how it is done
-D_clean <- D_clean %>%
-  select(-c('job_title_sim', 'seniority_by_title'))
-
-# Create a function to collate general titles of job positions
-job_simp_fn <- function(title) {
-  if (grepl("data scientist", title)) {
-  output <- "data scientist"
-  } else if (grepl("director", title)) {
-    output <- "director"
-  } else if (grepl("manager", title)) {
-    output <- "manager"
-  } else if (grepl("data science", title)) {
-    output <- "data scientist"
-  } else if (grepl("data engineer", title)) {
-    output <- "data engineer"
-  } else if (grepl("data analyst", title)) {
-    output <- "data analyst"
-  } else if (grepl("data analytics", title)) {
-    output <- "data analyst"
-  } else if (grepl("machine learning", title)) {
-    output <- "MLE"
-  } else {
-    output <- "NA"
-  }}
-
-# Create a function to collate seniority of job positions
-seniority <- function(title) {
-  if (grepl("sr", title)) {
-  output <- "senior"
-  } else if (grepl("senior", title)) {
-    output <- "senior"
-  } else if (grepl("jr", title)) {
-    output <- "junior"
-  } else if (grepl("junior", title)) {
-    output <- "junior"
-  } else {
-    output <- 'NA'
-  }}
-
-# Apply both functions and create new variables 
-D_clean$'job_simp' <- sapply(D_clean$Job.Title, job_simp_fn)
-D_clean$'seniority' <- sapply(D_clean$Job.Title, seniority)
-
-# View head of only these three variables:
-head(D_clean[, c('Job.Title', 'job_simp', 'seniority')])
 ```
 
 3.  Create a new variable to count the number of competitors a company
@@ -217,8 +164,7 @@ analysis, and "Avg.Salary.K." will be our response variable.
 ```{r}
 #remove unnecessary columns 
 D_clean <- D_clean %>%
-  select(-c(index, Job.Title, Salary.Estimate, Job.Description, Company.Name, Location,
-            Founded, Competitors, Lower.Salary, Upper.Salary, job_simp))
+  select(c(Rating, Avg.Salary.K., Age, desc_len, comp_count, cleaned_text))
 head(D_clean)
 ```
 
@@ -320,35 +266,6 @@ D_num %>%
 D_num %>%
   select_if(is.numeric) %>%
   cor %>% round(3)
-```
-
-#### 2.2.2.2. Categorical variables data visualizations
-
-Creating a new dataframe consisting of categorical variables:
-
-```{r}
-D_cat <- D_clean %>%
-  select(-c(Avg.Salary.K., Rating, Age, desc_len, comp_count))
-head(D_cat)
-```
-
--   Note that variables like "Headquarters", "Industry", and
-    "company_txt" have too many variables to properly plot the graphs
-
-1.  Barplot of top 10 job locations (state):
-
-```{r}
-D_cat %>%
-  count(Job.Location) %>%
-  mutate(n_percent = prop.table(n)) %>%
-  arrange(-n_percent) %>%
-  slice(1:10) %>% # need to change this from slice to something else
-  ggplot(aes(x = reorder(Job.Location, -n_percent), y = n, fill = n, 
-             label = scales::percent(n_percent))) + 
-  geom_bar(position='dodge', stat="identity") + 
-  geom_text(size=3, vjust = -0.5) + 
-  geom_text(size=3, aes(label = n), vjust = 1.5, colour="white") +
-  xlab("Job Location (State)") + ylab("N")
 ```
 
 ## 2.3. Feature engineering
