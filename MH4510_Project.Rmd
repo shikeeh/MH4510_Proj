@@ -341,67 +341,49 @@ head(D_dtm)
 
 #### 3.1.1.1. Multiple linear regression
 
-In our first model, we will use multiple linear regression
-
 ```{r}
 # Libraries used:
 library(tidyverse)
 library(stargazer)
 library(caret)
 
-head(D_num)
-```
-
-Split our data into training and test sets
-
-```{r}
 set.seed(100)
-ind <- runif(nrow(D_num)) < 0.8
+ind <- runif(nrow(D_dtm)) < 0.8
 
-train_mlr <- D_num[ind , ]
-test_mlr <- D_num[!ind , ]
+train_mlr <- D_dtm[ind , ]
+test_mlr <- D_dtm[!ind , ]
 
 cat("Dimensions of the training set are", dim(train_mlr), "\n")
 cat("Dimensions of the test set are", dim(test_mlr), "\n")
 ```
 
 ```{r}
-mlr_1 <- lm(Avg.Salary.K. ~ ., data = train_mlr)
-stargazer(mlr_1, type = "text")
+lambda <- 10^seq(-3, 0 , length = 20)
+lambda
 ```
 
 ```{r}
-rmse <- function(x, y) {
-  sqrt(mean((x-y)^2))
-}
+lasso <- train(
+  Y ~., data = train_mlr, method = "glmnet",
+  trControl = trainControl("cv", number = 10),
+  tuneGrid = expand.grid(alpha = 1, lambda = lambda),
+  preProcess = c("center","scale")
+)
 
-mlr_1 %>% predict(test_mlr) %>%
-  rmse(test_mlr$Avg.Salary.K.)
+lasso
 ```
-
-Now we try a log-linear model:
 
 ```{r}
-mlr_log <- lm(log(Avg.Salary.K.) ~ ., data = train_mlr)
-stargazer(mlr_log, type = "text")
+store <- coef(lasso$finalModel, lasso$bestTune$lambda)
+
+##Go through each row and determine if a value is zero
+row_sub = apply(store, 1, function(row) all(row !=0 ))
+##Subset as usual
+D_coeff <- data.frame(store[row_sub,])
+
+D_coeff %>% 
+  arrange(desc(abs(D_coeff$store.row_sub...)))
 ```
-
-Then we calculate its RMSE:
-
-```{r}
-mlr_log %>%
-  predict(test_mlr) %>%
-  exp %>%
-  rmse(test_mlr$Avg.Salary.K.)
-```
-
-Not much a difference, in fact a slight increase. Thus a log
-transformation does not improve our model.
-
-Now we attempt to create cross-validation functions to perform cv for a
-range of degrees and report the cv error and test error.
-
-First we add 10 folds to our data:
 
 ```{r}
 k <- 10
