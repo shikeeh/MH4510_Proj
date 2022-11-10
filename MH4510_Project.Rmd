@@ -188,10 +188,6 @@ D_clean$'seniority' <- sapply(D_clean$Job.Title, seniority)
 
 # View head of only these three variables:
 head(D_clean[, c('Job.Title', 'job_simp', 'seniority')])
-
-D_clean <- D_clean %>%
-  filter(job_simp %in% c("data scientist", "data engineer", "data analyst", "MLE"))
-dim(D_clean)
 ```
 
 3.  Create a new variable to count the number of competitors a company
