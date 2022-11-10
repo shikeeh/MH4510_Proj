@@ -467,6 +467,57 @@ We should perhaps perform regularization first to select continuous
 variables via cross-validation, and then apply cross-validation again to
 select the most appropriate degree.
 
+### Ridge Regression
+
+```{r}
+library(glmnet)
+
+ind <- runif(nrow(D_dtm)) < 0.8
+train_data = D_dtm[ind, ]
+test_data = D_dtm[!ind, ]
+
+#fit ridge regression model
+model <- glmnet(x = train_data, y = train_data$Y, alpha = 0)
+summary(model)
+```
+```{r}
+#perform k-fold cross-validation to find optimal lambda value
+lambda = 10^seq(from = 1, to = 4, length = 100)
+ridge <- train(Y ~., data = train_data, method = "glmnet",
+  trControl = trainControl("cv", number = 10),
+  tuneGrid = expand.grid(alpha = 1, lambda = lambda),
+  preProcess = c("scale")
+)
+ridge
+```
+
+```{r}
+#find optimal lambda value that minimizes test MSE
+best_lambda <- ridge$lambda.min
+best_lambda
+```
+
+```{r}
+#find coefficients of best model
+best_model <- glmnet(x = train_data, y = train_data$Y, alpha = 1, lambda = best_lambda)
+coef(best_model)
+```
+
+```{r}
+#use fitted best model to make predictions
+y_predicted <- predict(model, s = best_lambda, newx = train_data)
+```
+
+```{r}
+#find SSE
+sse <- sum((y_predicted - Y_test)^2)
+n <- nrow(y_predicted)
+
+#find RMSE
+rmse <- sqrt((1/n) / sse)
+rmse
+```
+
 #### 3.1.1.2. Random forest/deep forest (gcforest)/XGBoost
 
 Next, we want to visualise our data through the use of decision trees.
