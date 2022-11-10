@@ -358,11 +358,13 @@ cat("Dimensions of the test set are", dim(test_mlr), "\n")
 ```
 
 ```{r}
-lambda <- 10^seq(-3, 0 , length = 20)
+lambda <- 10^seq(-1, 0 , length = 20)
 lambda
 ```
 
 ```{r}
+set.seed(100)
+
 lasso <- train(
   Y ~., data = train_mlr, method = "glmnet",
   trControl = trainControl("cv", number = 10),
@@ -383,7 +385,28 @@ D_coeff <- data.frame(store[row_sub,])
 
 D_coeff %>% 
   arrange(desc(abs(D_coeff$store.row_sub...)))
+
+rownames(D_coeff)[2:293]
 ```
+
+```{r}
+set.seed(100)
+
+x <- train_mlr %>% select(contains(rownames(D_coeff)[2:293]) | Y)
+head(x)
+dim(x)
+
+lasso_final <- lm(Y ~ ., data = x)
+
+stargazer(lasso_final, type = "text")
+```
+
+```{r}
+pred_y = predict(lasso_final, test_mlr)
+caret::RMSE(test_mlr$Y, pred_y) #rmse
+```
+
+\
 
 ```{r}
 k <- 10
