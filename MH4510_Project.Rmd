@@ -406,6 +406,101 @@ pred_y = predict(lasso_final, test_mlr)
 caret::RMSE(test_mlr$Y, pred_y) #rmse
 ```
 
+```{r}
+library(leaps)
+subset_mod <- regsubsets(Y ~ . , data = train_dtm,
+                         nvmax = ncol(train_dtm) - 1,
+                         method = "forward")
+
+sum_subset_mod <- summary(subset_mod)
+t(sum_subset_mod$outmat)[ , 1:6]
+```
+
+```{r}
+coef(subset_mod, 1:6)
+```
+
+```{r}
+sum_subset_mod$cp
+```
+
+```{r}
+criteria <- tibble(
+  k = 1:length(sum_subset_mod$cp),
+  Cp = sum_subset_mod$cp,
+  BIC = sum_subset_mod$bic,
+  "1 - Adj.R2" = 1 - sum_subset_mod$adjr2
+)
+
+criteria
+```
+
+```{r}
+ggplot(data = criteria, aes(x = k, y = BIC)) +
+  geom_line() + geom_point() +
+  geom_vline(aes(xintercept = k[which.min(BIC)]), 
+             color = "blue", linetype = "dashed")
+```
+
+```{r}
+variable_selection_matrix <- sum_subset_mod$which
+colnames(variable_selection_matrix)[1] <- "Y"
+variable_selection_matrix[1:5, 1:5]
+```
+
+```{r}
+train_dtm %>%
+  select(which(variable_selection_matrix[3 , ])) %>%
+  head
+
+train_subset <- train_dtm %>%
+  select(which(variable_selection_matrix[3 , ]))
+```
+
+```{r}
+caret_mod <- train(Y ~ . , train_subset,
+      method = "lm", trControl = trainControl(method = "cv", number = 5))
+caret_mod
+```
+
+```{r}
+cv_error <- function(vars_to_select) {
+  train_subset <- train_dtm %>% select(which(vars_to_select))
+  caret_mod <- train(Y ~ . , train_subset,
+      method = "lm", trControl = trainControl(method = "cv", number = 5))
+  caret_mod$results$RMSE
+}
+
+cv_error(variable_selection_matrix[ 3, ])
+```
+
+```{r}
+CV_errors <- apply(variable_selection_matrix, 1, cv_error)
+CV_errors
+```
+
+```{r}
+criteria$CV <- CV_errors
+criteria
+```
+
+```{r}
+ggplot(data = criteria, aes(x = k, y = CV)) +
+  geom_line() + geom_point() +
+  geom_vline(aes(xintercept = k[which.min(CV)]), 
+             color = "blue", linetype = "dashed")
+```
+
+```{r}
+criteria$k[which.min(criteria$CV)]
+```
+
+```{r}
+criteria %>% filter(k == 6)
+```
+
+\
+
 \
 
 ```{r}
