@@ -95,12 +95,9 @@ library(RColorBrewer)
 library(scales)
 library(text2vec)
 library(caret)
-library(neuralnet)
 library(fastDummies) # for creating dummy variables
 library(randomForest)
 library(Metrics)
-library(keras)
-library(tensorflow)
 
 # import data from local csv file
 D <- read.csv("data_cleaned_2021.csv")
@@ -585,59 +582,7 @@ We should perhaps perform regularization first to select continuous
 variables via cross-validation, and then apply cross-validation again to
 select the most appropriate degree.
 
-### Ridge Regression
-
-```{r}
-library(glmnet)
-
-ind <- runif(nrow(D_dtm)) < 0.8
-train_data = D_dtm[ind, ]
-test_data = D_dtm[!ind, ]
-
-#fit ridge regression model
-model <- glmnet(x = train_data, y = train_data$Y, alpha = 0)
-summary(model)
-```
-
-```{r}
-#perform k-fold cross-validation to find optimal lambda value
-lambda = 10^seq(from = 1, to = 4, length = 100)
-ridge <- train(Y ~., data = train_data, method = "glmnet",
-  trControl = trainControl("cv", number = 10),
-  tuneGrid = expand.grid(alpha = 1, lambda = lambda),
-  preProcess = c("scale")
-)
-ridge
-```
-
-```{r}
-#find optimal lambda value that minimizes test MSE
-best_lambda <- ridge$lambda.min
-best_lambda
-```
-
-```{r}
-#find coefficients of best model
-best_model <- glmnet(x = train_data, y = train_data$Y, alpha = 1, lambda = best_lambda)
-coef(best_model)
-```
-
-```{r}
-#use fitted best model to make predictions
-y_predicted <- predict(model, s = best_lambda, newx = train_data)
-```
-
-```{r}
-#find SSE
-sse <- sum((y_predicted - Y_test)^2)
-n <- nrow(y_predicted)
-
-#find RMSE
-rmse <- sqrt((1/n) / sse)
-rmse
-```
-
-#### 3.1.1.2. Random forest/deep forest (gcforest)/XGBoost
+#### 3.1.1.2. Random forest
 
 Next, we want to visualise our data through the use of decision trees.
 However, decision trees alone have a high variance which can cause the
@@ -747,7 +692,7 @@ data.frame(variable = names(var_importance), importance = var_importance) %>%
   xlab("Variables") + ylab("Importance") + theme(axis.text.x = element_text(angle = 45))
 ```
 
-#### 3.1.1.2.1 XGBoost
+#### 3.1.1.3. XGBoost
 
 First we split our data into test and training sets
 
@@ -824,48 +769,85 @@ xgb_imp[1:20]
 xgb.plot.importance(xgb_imp[1:20])
 ```
 
-#### 3.1.1.3. Neural network
+#### 3.1.1.4. Multivariate Adaptive Regression Splines (MARS)
 
 In order to predict the salary with neural network, we used Continuous
 Bag of Words (CBOW) as follows. It enables us to do downstream tasks,
 such as regression on texts.
 
 ```{r}
-dtm <- create_dtm(it, vectorizer)
-cbow_data <- as.matrix(dtm %*% word_vectors)
+library(earth)
+library(vip)       # for variable importance
+library(pdp)       # for variable relationships
+
+set.seed(8888)
+
+ind_mars <- which(runif(nrow(D_dtm)) < 0.7)
+
+train_mars <- D_dtm %>% slice(ind_nn)
+test_mars <- D_dtm %>% slice(-ind_nn)
+
 ```
 
 Here is the model:
 
 ```{r}
-set.seed(8888)
-all_data <- cbow_data %>%
-  as_tibble %>%
-  mutate(Y = D_clean$Avg.Salary.K.)
 
-ind <- which(runif(nrow(all_data)) < 0.7)
-
-train_data <- all_data %>% slice(ind)
-test_data <- all_data %>% slice(-ind)
-
-mod_nn <- neuralnet(Y ~ ., data = train_data, 
-                                    hidden = c(20, 20),
-                    threshold = 0.5,
-                    lifesign = "full",
-                    lifesign.step = 100,
-                    stepmax = 10000,
-                    err.fct = "sse",
-                    linear.output = TRUE)
-
-pred_nn <- compute(mod_nn,test_data[,1:100])
-RMSE_nn <- (sum((test_data$Y - pred_nn$net.result)^2)/nrow(test_data))^0.5
-
-RMSE_nn #41.20078
 ```
 
-#### 3.1.1.4. Symbolic regression
+#### 3.1.1.5. Ridge Regression
 
-#### 3.1.1.5. Elastic net regression/LASSO
+```{r}
+library(glmnet)
+
+ind <- runif(nrow(D_dtm)) < 0.8
+train_data = D_dtm[ind, ]
+test_data = D_dtm[!ind, ]
+
+#fit ridge regression model
+model <- glmnet(x = train_data, y = train_data$Y, alpha = 0)
+summary(model)
+```
+
+```{r}
+#perform k-fold cross-validation to find optimal lambda value
+lambda = 10^seq(from = 1, to = 4, length = 100)
+ridge <- train(Y ~., data = train_data, method = "glmnet",
+  trControl = trainControl("cv", number = 10),
+  tuneGrid = expand.grid(alpha = 1, lambda = lambda),
+  preProcess = c("scale")
+)
+ridge
+```
+
+```{r}
+#find optimal lambda value that minimizes test MSE
+best_lambda <- ridge$lambda.min
+best_lambda
+```
+
+```{r}
+#find coefficients of best model
+best_model <- glmnet(x = train_data, y = train_data$Y, alpha = 1, lambda = best_lambda)
+coef(best_model)
+```
+
+```{r}
+#use fitted best model to make predictions
+y_predicted <- predict(model, s = best_lambda, newx = train_data)
+```
+
+```{r}
+#find SSE
+sse <- sum((y_predicted - Y_test)^2)
+n <- nrow(y_predicted)
+
+#find RMSE
+rmse <- sqrt((1/n) / sse)
+rmse
+```
+
+#### 3.1.1.6. Elastic net regression/LASSO
 
 The Least Absolute Shrinkage and Selection Operator (LASSO) is a
 modification of linear regression, as there is an extra regularization
@@ -882,7 +864,7 @@ L_E(\beta)=\sum_{i=1}^{N}
 $$ We will need to choose the optimum values for these two
 hyperparameters before generating predictions.
 
-##Elastic Net
+##### 3.1.1.6.1. Elastic Net
 
 ```{r}
 elasticnet <- train(Avg.Salary.K. ~., data = D_clean, method = "glmnet", trControl = trainControl("cv", number = 5))
@@ -890,7 +872,7 @@ elasticnet <- train(Avg.Salary.K. ~., data = D_clean, method = "glmnet", trContr
 elasticnet
 ```
 
-##LASSO
+##### 3.1.1.6.2. LASSO
 
 ```{r}
 lambda <- 10^seq(-3, 0, length = 20)
