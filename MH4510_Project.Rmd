@@ -771,21 +771,45 @@ xgb.plot.importance(xgb_imp[1:20])
 
 #### 3.1.1.4. Multivariate Adaptive Regression Splines (MARS)
 
-We used multivariate adaptive regression splines (MARS) (Friedman 1991) model here, it is an approach that automatically generates a piecewise linear model that serves as an understandable stepping stone into non-linearity after learning the notion of multiple linear regression.
+We used multivariate adaptive regression splines (MARS) (Friedman 1991)
+model here, it is an approach that automatically generates a piecewise
+linear model that serves as an understandable stepping stone into
+non-linearity after learning the notion of multiple linear regression.
 
-By evaluating cutpoints (knots) similar to step functions, MARS offers a practical method to capture the nonlinear relationships in the data. This method evaluates every data point for every predictor as a knot and builds a linear regression model using the candidate feature(s).
+By evaluating cutpoints (knots) similar to step functions, MARS offers a
+practical method to capture the nonlinear relationships in the data.
+This method evaluates every data point for every predictor as a knot and
+builds a linear regression model using the candidate feature(s).
 
-Consider non-linear, non-monotonic data where $Y = f(X)$. The MARS method will initially search for a single point within a range of $X$ values where two distinct linear relationships between $Y$ and $X$ provide the lowest loss. The outcome is referred to as a hinge function $h(x-a)$, where $a$ is the cutpoint value.
+Consider non-linear, non-monotonic data where $Y = f(X)$. The MARS
+method will initially search for a single point within a range of $X$
+values where two distinct linear relationships between $Y$ and $X$
+provide the lowest loss. The outcome is referred to as a hinge function
+$h(x-a)$, where $a$ is the cutpoint value.
 
-For example, if $a = 1$, our hinge function is $h(x-1)$ such that the linear models for $y$ are:
-$$y=\left\{\begin{array}{1} \beta_0 + \beta_1(1-x) & \textrm{if x < 1} \\ \beta_0 + \beta_1(x-1) & \textrm{if x > 1} \end{array}\right$$
-After the first knot is identified, the search for a second one begins, and it is discovered at $x=2$. Now the linear models for $y$ are:
+For example, if $a = 1$, our hinge function is $h(x-1)$ such that the
+linear models for $y$ are:
 
-$$y=\left\{\begin{array}{2} \beta_0 + \beta_1(1-x) & \textrm{if x < 1} \\ \beta_0 + \beta_1(x-1) & \textrm{if x > 1 & x < 2} \\ \beta_0 + \beta_1(2-x) & \textrm{if x > 2} \end{array}\right$$
+$$ y = \begin{cases} \beta_0 + \beta_1(1-x) \, ,& x < 1 
+\\ \beta_0 + \beta_1(x-1) \, ,& x > 1 \\ \end{cases}$$
+After the first knot is identified, the search for a second one begins,
+and it is discovered at $x=2$. Now the linear models for $y$ are:
 
-This process is repeated until several knots are identified, leading to the creation of a highly non-linear prediction equation. Even if using a lot of knots could help us fit a particularly excellent relationship to our training data, it might not perform well to unseen data. Once all of the knots have been found, we may systematically eliminate knots that do not significantly improve predictive accuracy. This is pruning process, and we may use cross-validation to determine the optimal number of knots.
+$$ y = \begin{cases} \beta_0 + \beta_1(1-x) \, ,& x < 1
+\\ \beta_0 + \beta_1(x-1) \, ,& 1 < x < 2 
+\\ \beta_0 + \beta_1(2-x) \, ,& x > 2 \\ \end{cases}$$
 
-We will use the following packages. First of all, we divided the dataset into training dataset and test dataset:
+This process is repeated until several knots are identified, leading to
+the creation of a highly non-linear prediction equation. Even if using a
+lot of knots could help us fit a particularly excellent relationship to
+our training data, it might not perform well to unseen data. Once all of
+the knots have been found, we may systematically eliminate knots that do
+not significantly improve predictive accuracy. This is pruning process,
+and we may use cross-validation to determine the optimal number of
+knots.
+
+We will use the following packages. First of all, we divided the dataset
+into training dataset and test dataset:
 
 ```{r}
 library(dplyr)
@@ -805,9 +829,14 @@ cat("Dimensions of the training dataset are", dim(train_mars), "\n")
 cat("Dimensions of the test dataset are", dim(test_mars), "\n")
 ```
 
-MARS model have two hyperparameters: the maximum degree of interactions and the number of terms retained in the final model. To achieve the optimal combination of these tuning parameters, we must conduct a grid search that minimize the error of prediction.
+MARS model have two hyperparameters: the maximum degree of interactions
+and the number of terms retained in the final model. To achieve the
+optimal combination of these tuning parameters, we must conduct a grid
+search that minimize the error of prediction.
 
-Here, we built up a grid with 30 different combinations of interaction complexity (degree) and the number of terms to include in the final model (nprune).
+Here, we built up a grid with 30 different combinations of interaction
+complexity (degree) and the number of terms to include in the final
+model (nprune).
 
 ```{r}
 marsgrid <- expand.grid(
@@ -836,11 +865,22 @@ mars_cv$results %>%
 ggplot(mars_cv)
 ```
 
-The backwards elimination feature selection process used in MARS models seeks for reductions in the generalized cross-validation (GCV) estimate of error when each additional predictor is introduced to the model. The variable importance is based on this overall reduction. MARS effectively accomplishes automated feature selection since it will automatically include and remove variables throughout the pruning phase. 
+The backwards elimination feature selection process used in MARS models
+seeks for reductions in the generalized cross-validation (GCV) estimate
+of error when each additional predictor is introduced to the model. The
+variable importance is based on this overall reduction. MARS effectively
+accomplishes automated feature selection since it will automatically
+include and remove variables throughout the pruning phase.
 
-After pruning, a predictor's significance value is 0 if it was never used in any of the MARS basis functions in the final model. There are only 17 features have importance values greater than 0, whereas the other features all have importance values of zero since they were excluded from the final model. 
+After pruning, a predictor's significance value is 0 if it was never
+used in any of the MARS basis functions in the final model. There are
+only 17 features have importance values greater than 0, whereas the
+other features all have importance values of zero since they were
+excluded from the final model.
 
-We also kept track of how the residual sums of squares (RSS) change when terms are added. However, we noticed that there is no much difference between these two measures.
+We also kept track of how the residual sums of squares (RSS) change when
+terms are added. However, we noticed that there is no much difference
+between these two measures.
 
 ```{r}
 plot_GCV <- vip(mars_cv, num_features = 20, geom = "point", value = "gcv") + ggtitle("GCV")
@@ -849,7 +889,8 @@ plot_RSS <- vip(mars_cv, num_features = 20, geom = "point", value = "rss") + ggt
 gridExtra::grid.arrange(plot_GCV, plot_RSS, ncol = 2)
 ```
 
-We used the optimal hyperparameters to train the model and then calculated the RMSE:
+We used the optimal hyperparameters to train the model and then
+calculated the RMSE:
 
 ```{r}
 set.seed(7777)
