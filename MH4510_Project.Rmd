@@ -17,20 +17,11 @@ Wei Keong
 
 ## Abstract
 
-How to use Github:
+Data mining is the process of sorting through large data sets to identify patterns and relationships, where we aim to gain meaningful insights through the use of algorithms to predict future trends in textual data. In this project, we aim to uncover key insights in data science salary by developing a model to effectively associate keywords in job descriptions to high paying data science jobs. For data cleaning, we filtered the keywords in job descriptions with a minimum occurrence of 40. 
+We then use Least Absolute Shrinkage and Selection Operator (LASSO) for variable selection
+The models used include Multiple Linear Regression (MLR), Random Forest, XGBoost and Neural Network Analysis. 
+We then compare the individual model in terms of root mean squared error (rmse) and decide on the best model 
 
-1.  Open GitHub Desktop app
-2.  Pull from origin to receive the most updated .Rmd file
-3.  Make your edits on the MH4510_Project.Rmd file
-4.  Save your edits in the same file
-5.  Add descriptions for changes made
-6.  Commit changes
-7.  Push changes
-
-Note that pulling the most update project file will override the project
-file existing in your project folder. You may either create a fork to
-save your changes, or simply create a separate .Rmd file to work on
-personally before copying your edits to the main project file.
 
 # 1. Introduction to the problem
 
@@ -674,13 +665,11 @@ ggplot(  ) +
 ```{r}
 #using metrics to calculate RMSE
 print(paste0('MAE: ' , mae(predictions , Y_test) ))
-print(paste0('MSE: ' ,caret::postResample(predictions , Y_test)['RMSE']^2 ))
 print(paste0('RMSE: ' ,caret::postResample(predictions , Y_test)['RMSE'])) #21.48
-print(paste0('R2: ' ,caret::postResample(predictions , Y_test)['Rsquared'] ))
 ```
 
-The bar graph below shows the top 5 most important variables in this
-prediction
+The bar graph below shows the top 20 most important variables in this
+prediction. Based on the bar graph, the top 5 most important variables are ..
 
 ```{r}
 #top 20 most important predictors 
