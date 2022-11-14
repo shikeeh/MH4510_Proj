@@ -17,39 +17,49 @@ Wei Keong
 
 ## Abstract
 
-Data mining is the process of sorting through large data sets to identify patterns and relationships, where we aim to gain meaningful insights through
-the use of algorithms to predict future trends in textual data. In this project, we aim to uncover key insights in data science salary by developing a
-model to effectively associate keywords in job descriptions to high paying analytics roles. The data is cleaned by filtering the keywords in job
-descriptions with a minimum occurrence of 40. Least Absolute Shrinkage and Selection Operator (LASSO) is then applied to select the most important
-variables to be used in the model. The models used are Multiple Linear Regression (MLR), Partial Least Squares (PLS), Random Forest, XGBoost and
-Multivariate Adaptive Regression Splines (MARS), where their performances will be assess in relation to one another. Across all models, XGBoost has the
-lowest Root Mean Square Error (RMSE) of (insert value). In other words, XGBoost is the best model that accurately predicts salary. Based on XGBoost
-results, some of the most important keywords in job descriptions towards getting a higher salary in a Data Scientist Role are (insert top 5 words). 
+Data mining is the process of sorting through large data sets to identify patterns and relationships, 
+where we aim to gain meaningful insights through the use of algorithms to predict future trends in 
+textual data. In this project, we aim to uncover key insights in data science salary by developing a
+model to effectively associate keywords in job descriptions to high paying analytics roles. The data is 
+cleaned by filtering the keywords in job descriptions with a minimum occurrence of 40. Least Absolute 
+Shrinkage and Selection Operator (LASSO) is then applied to select the most important variables to be 
+used in the model. The models used are Multiple Linear Regression (MLR), Partial Least Squares (PLS), 
+Random Forest, XGBoost and Multivariate Adaptive Regression Splines (MARS), where their performances 
+will be assess in relation to one another. Across all models, XGBoost has the lowest Root Mean Square 
+Error (RMSE) of (insert value). In other words, XGBoost is the best model that accurately predicts salary. 
+Based on XGBoost results, some of the most important keywords in job descriptions towards getting a higher 
+salary in a Data Scientist Role are (insert top 5 words). 
 
 # 1. Introduction to the problem
 
 ## 1.1. Literature review
 
-A rapid shift towards digitalisation of businesses has radically changed the employment landscape in Singapore, which means Singaporeans need to keep up
-with the changes if they wish to stay competitive at work (My Skills Future, 2021). Employers in Singapore are starting to place an emphasis on skills
-rather than education (Tan, 2021). New hires today are assessed not just by their qualifications and work history, but also by their soft skills as there
-are a variety of soft skills in demand (The Straits Times, 2021).
+A rapid shift towards digitalisation of businesses has radically changed the employment landscape in 
+Singapore, which means Singaporeans need to keep up with the changes if they wish to stay competitive 
+at work (My Skills Future, 2021). Employers in Singapore are starting to place an emphasis on skills
+rather than education (Tan, 2021). New hires today are assessed not just by their qualifications and 
+work history, but also by their soft skills as there are a variety of soft skills in demand (The Straits 
+Times, 2021).
 
-According to a new report by Instant Offices, 73% of Singaporean workers are dissatisfied with their jobs. When asked if they planned to change jobs over
-the following six months, 31% of respondents responded "yes". Millions of workers worldwide are no longer willing to return home with just a fair
-paycheck. They prefer to know how well they are progressing towards a meaningful career, which is a wellness, freedom, security, and experience at work,
-so as to achieve job satisfaction. As a result, job seekers should take all these factors into consideration when applying for a job.
+According to a new report by Instant Offices, 73% of Singaporean workers are dissatisfied with their jobs. 
+When asked if they planned to change jobs over the following six months, 31% of respondents responded "yes". 
+Millions of workers worldwide are no longer willing to return home with just a fair paycheck. They prefer to 
+know how well they are progressing towards a meaningful career, which is a wellness, freedom, security, and 
+experience at work, so as to achieve job satisfaction. As a result, job seekers should take all these factors 
+into consideration when applying for a job.
 
-These factors can be further broken down into keywords in job descriptions. Keywords are crucial to job advertisements because they allow job seekers to
-narrow their search related to a role, skill, or industry for suitable employment. Ideal individuals are more likely to find the job post when hirers and
-recruiters add key terms and phrases that are relevant to a particular role. This increases the percentage of successfully matching job seekers with
-their ideal jobs. 
+These factors can be further broken down into keywords in job descriptions. Keywords are crucial to job 
+advertisements because they allow job seekers to narrow their search related to a role, skill, or industry 
+for suitable employment. Ideal individuals are more likely to find the job post when hirers and recruiters 
+add key terms and phrases that are relevant to a particular role. This increases the percentage of 
+successfully matching job seekers with their ideal jobs. 
 
 ## 1.2. Objective
 
-As most hirers will be impressed when they notice that resume is customised, highlighting relevant skills and using certain keywords suited to that
-particular company or position, job seekers can use these findings to narrow down their job search based on their own preferences such as salary range or
-skills set. As such, this project aims to predict data science salary based on the keywords in job descriptions.
+As most hirers will be impressed when they notice that resume is customised, highlighting relevant skills 
+and using certain keywords suited to that particular company or position, job seekers can use these findings 
+to narrow down their job search based on their own preferences such as salary range or skills set. As such, 
+this project aims to predict data science salary based on the keywords in job descriptions.
 
 # 2. Dataset
 
