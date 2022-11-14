@@ -17,11 +17,14 @@ Wei Keong
 
 ## Abstract
 
-Data mining is the process of sorting through large data sets to identify patterns and relationships, where we aim to gain meaningful insights through the use of algorithms to predict future trends in textual data. In this project, we aim to uncover key insights in data science salary by developing a model to effectively associate keywords in job descriptions to high paying data science jobs. For data cleaning, we filtered the keywords in job descriptions with a minimum occurrence of 40. 
-We then use Least Absolute Shrinkage and Selection Operator (LASSO) for variable selection
-The models used include Multiple Linear Regression (MLR), Random Forest, XGBoost and Neural Network Analysis. 
-We then compare the individual model in terms of root mean squared error (rmse) and decide on the best model 
-
+Data mining is the process of sorting through large data sets to identify patterns and relationships, where we aim to gain meaningful insights through
+the use of algorithms to predict future trends in textual data. In this project, we aim to uncover key insights in data science salary by developing a
+model to effectively associate keywords in job descriptions to high paying analytics roles. The data is cleaned by filtering the keywords in job
+descriptions with a minimum occurrence of 40. Least Absolute Shrinkage and Selection Operator (LASSO) is then applied to select the most important
+variables to be used in the model. The models used are Multiple Linear Regression (MLR), Partial Least Squares (PLS), Random Forest, XGBoost and
+Multivariate Adaptive Regression Splines (MARS), where their performances will be assess in relation to one another. Across all models, XGBoost has the
+lowest Root Mean Square Error (RMSE) of (insert value). In other words, XGBoost is the best model that accurately predicts salary. Based on XGBoost
+results, some of the most important keywords in job descriptions towards getting a higher salary in a Data Scientist Role are (insert top 5 words). 
 
 # 1. Introduction to the problem
 
