@@ -30,43 +30,26 @@ results, some of the most important keywords in job descriptions towards getting
 
 ## 1.1. Literature review
 
-There is no doubt that COVID-19 has changed the employment landscape in
-Singapore. A rapid shift towards digitalisation of businesses amidst a
-recession means that Singaporeans have to keep pace with the change in
-order to remain competitive at work (My Skills Future, 2021).
+A rapid shift towards digitalisation of businesses has radically changed the employment landscape in Singapore, which means Singaporeans need to keep up
+with the changes if they wish to stay competitive at work (My Skills Future, 2021). Employers in Singapore are starting to place an emphasis on skills
+rather than education (Tan, 2021). New hires today are assessed not just by their qualifications and work history, but also by their soft skills as there
+are a variety of soft skills in demand (The Straits Times, 2021).
 
-Singapore employers have prioritised skills over education (Tan, 2021).
-Employers are starting to realise that new hires should be assessed
-based on their existing skill sets --- instead of just their paper
-qualifications and work history --- as there are various in-demand soft
-skills transferable from one job to another. Other skills relevant to
-the job may be learned through on-the-job training and development (The
-Straits Times, 2021).
+According to a new report by Instant Offices, 73% of Singaporean workers are dissatisfied with their jobs. When asked if they planned to change jobs over
+the following six months, 31% of respondents responded "yes". Millions of workers worldwide are no longer willing to return home with just a fair
+paycheck. They prefer to know how well they are progressing towards a meaningful career, which is a wellness, freedom, security, and experience at work,
+so as to achieve job satisfaction. As a result, job seekers should take all these factors into consideration when applying for a job.
 
-However, there is a gap between what individuals expect they will
-require and what they have been taught in school among students. Just
-27% of students say they are well equipped for future positions, while
-22% say they are not at all prepared. According to a [2019
-survey](https://www.cbi.org.uk/media/3841/12546_tess_2019.pdf) (Grimes,
-2019), two out of five employers believe school and college graduates
-are unprepared for employment. One-third say they are dissatisfied with
-the quantity of relevant work experience young people have (EconoTimes,
-2021).
-
-The last decade has also shown us that whether or not one has a degree,
-continual learning is imperative. In an age of ubiquitous disruption and
-massive unpredictability, both employers and job seekers concede that
-the knowledge and skills gained from a university degree can easily
-become obsolete (Lim, 2021).
+These factors can be further broken down into keywords in job descriptions. Keywords are crucial to job advertisements because they allow job seekers to
+narrow their search related to a role, skill, or industry for suitable employment. Ideal individuals are more likely to find the job post when hirers and
+recruiters add key terms and phrases that are relevant to a particular role. This increases the percentage of successfully matching job seekers with
+their ideal jobs. 
 
 ## 1.2. Objective
 
-As the world grows more volatile, uncertain, complex and ambiguous,
-graduates have to catch up with real-world needs and equip themselves
-with the necessary skills. Considering that more employers are placing a
-greater emphasis on individuals' skill sets and key traits than they are
-on a piece of paper, this project aims to predict data scientist salary
-based on the relevant variables in the dataset.
+As most hirers will be impressed when they notice that resume is customised, highlighting relevant skills and using certain keywords suited to that
+particular company or position, job seekers can use these findings to narrow down their job search based on their own preferences such as salary range or
+skills set. As such, this project aims to predict data science salary based on the keywords in job descriptions.
 
 # 2. Dataset
 
