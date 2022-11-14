@@ -787,7 +787,6 @@ and it is discovered at $x=2$. Now the linear models for $y$ are:
 $$ y = \begin{cases} \beta_0 + \beta_1(1-x) \, ,& x < 1
 \\ \beta_0 + \beta_1(x-1) \, ,& 1 < x < 2 
 \\ \beta_0 + \beta_1(2-x) \, ,& x > 2 \\ \end{cases}$$
-
 This process is repeated until several knots are identified, leading to
 the creation of a highly non-linear prediction equation. Even if using a
 lot of knots could help us fit a particularly excellent relationship to
@@ -994,6 +993,83 @@ lasso
 
 ```{r}
 lasso$bestTune
+```
+
+#### 3.1.1.7. Partial Least Squares (PLS)
+
+Partial Least Squares (PLS) is a common technique to analyse relative importance when the data includes more predictors than observations. It is an useful dimension reduction method which is similar with principal component analysis (PCA).
+
+We do a regression against the response variable inside the narrower space created by mapping the predictor variables to a smaller set of variables. The response variable is not taken into account during the dimension reduction process in PCA. PLS, on the other hand, seeks to select newly mapped factors that best describe the response variable.
+
+Below are the required packages. We divided the dataset into training dataset and test dataset first:
+
+```{r}
+library(pls)
+
+set.seed(77777)
+# 80/20 split
+inTraining <- createDataPartition(D_dtm$Y, p = .80, list = FALSE)
+train_pls <- D_dtm[inTraining,]
+test_pls  <- D_dtm[-inTraining,]
+```
+
+The hyperparameter for PLS model is the number of components used in the model (ncomp) .We conduct a grid search that minimize the prediction error to achieve the optimal hyperparameter. The grid search was conducted by 10-fold cross-validation:
+
+```{r}
+set.seed(88888)
+
+plsGrid <- expand.grid(
+  ncomp   = seq(1, 100, by = 1)
+)
+
+pls_cv <- train(
+  Y ~ .,
+  data = train_pls,
+  method = 'pls',
+  metric = "RMSE",
+  preProcess = c("center", "scale"),
+  trControl = trainControl(method = "cv", number = 10),
+  tuneGrid = plsGrid
+)
+
+pls_cv
+
+pls_cv$bestTune #6
+
+plot(pls_cv)
+```
+
+We used the optimal hyperparameter to train the model and calculated the RMSE as well:
+
+```{r}
+set.seed(99999)
+
+plsGrid_tuned <- expand.grid(
+  ncomp = 6
+)
+
+pls_cv_tuned <- train( Y~., data = train_pls,
+  method = "pls",
+  metric = "RMSE",
+  trControl = trainControl(method = "cv", number = 10),
+  tuneGrid = plsGrid_tuned
+)
+
+pred_pls = predict(pls_cv_tuned, test_pls)
+
+print(caret::MAE(test_pls$Y, pred_pls)) #19.02091
+print(caret::RMSE(test_pls$Y, pred_pls)) #27.3268
+```
+
+The barplots below show that 'credit', 'lead', 'mission', 'actuarial' and 'scientists' are positive predictors, while 'support', 'use', 'project', 'solutions' and 'food' are negative predictors:
+```{r}
+coefficients = coef(pls_cv_tuned$finalModel)
+sum.coef = sum(sapply(coefficients, abs))
+coefficients = coefficients * 100 / sum.coef
+coefficients = sort(coefficients[, 1 , 1])
+
+barplot(tail(coefficients, 5))
+barplot(head(coefficients, 5))
 ```
 
 ### 3.1.2. Beyond the syllabus
