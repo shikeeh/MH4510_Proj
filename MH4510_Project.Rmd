@@ -36,30 +36,30 @@ accurately predicts salary, and we identified keywords used in this model.
 
 ## 1.1. Literature review
 
-A rapid shift towards digitalisation of businesses has radically changed 
-the employment landscape in Singapore, which means Singaporeans need to 
-keep up with the changes if they wish to stay competitive at work (My Skills 
-Future, 2021). Employers in Singapore are starting to place an emphasis on 
-skills rather than education (Tan, 2021). New hires today are assessed not 
-just by their qualifications and work history, but also by their soft skills 
-as there are a variety of soft skills in demand (The Straits Times, 2021).
+A rapid shift towards digitalisation of businesses has radically changed the 
+employment landscape in Singapore, which means Singaporeans need to keep up 
+with the changes if they wish to stay competitive at work (My Skills Future, 
+2021). Employers in Singapore are starting to place an emphasis on skills 
+rather than education (Tan, 2021). New hires today are assessed not just by 
+their qualifications and work history, but also by their soft skills as there 
+are a variety of soft skills in demand (The Straits Times, 2021).
 
 According to a new report by Instant Offices, 73% of Singaporean workers are 
-dissatisfied with their jobs. When asked if they planned to change jobs over 
-the following six months, 31% of respondents responded "yes". Millions of 
-workers worldwide are no longer willing to return home with just a fair paycheck. 
-They prefer to know how well they are progressing towards a meaningful career, 
-which is a wellness, freedom, security, and experience at work, so as to achieve 
-job satisfaction. As a result, job seekers should take all these factors into 
-consideration when applying for a job.
+dissatisfied with their jobs (Arora, 2022). When asked if they planned to change 
+jobs over the following six months, 31% of respondents responded "yes" (Chong, 
+2022). Millions of workers worldwide are no longer willing to return home with 
+just a fair paycheck. They prefer to know how well they are progressing towards 
+a meaningful career, which is a wellness, freedom, security, and experience at 
+work, so as to achieve job satisfaction. As a result, job seekers should take 
+all these factors into consideration when applying for a job.
 
 These factors can be further broken down into keywords in job descriptions. 
 Keywords are crucial to job adverts because they allow job seekers to narrow 
-their search related to a role, skill, or industry for suitable employment. 
-Suitable individuals are more likely to find the job post when hirers and 
-recruiters add key terms and phrases that are relevant to a particular role. 
-This increases the percentage of successfully matching job seekers with their 
-ideal jobs. 
+their search related to a role, skill, or industry for suitable employment 
+(Alexander, 2019). Suitable individuals are more likely to find the job post 
+when hirers and recruiters add key terms and phrases that are relevant to a 
+particular role. This increases the percentage of successfully matching job 
+seekers with their ideal jobs.  
 
 ## 1.2. Objective
 
@@ -743,6 +743,26 @@ XGBoost does not identify the direction of relationship between the key
 terms and predicted salary. Our linear regression models are thus useful
 in this aspect, and further research could focus on extracting benefits
 from both models.
+
+# 5. References
+
+Alexander, L. (2019). The importance of keywords in job ads. SEEK. 
+Retrieved November 16, 2022, from https://www.seek.com.au/employer/hiring-advice/the-importance-of-keywords-in-job-ads 
+Arora, P. (2022, August 29). What's keeping Singapore employees unhappy 
+at work? - ETHRWorldSEA. HR News Southeast Asia. Retrieved November 7, 2022, 
+from https://hrsea.economictimes.indiatimes.com/news/employee-experience/whats-keeping-singapore-employees-unhappy-at-work/93833788 
+Chong, C. (2022, May 17). Nearly 1 in 3 workers in S'pore plans to change 
+employers in first half of 2022: Survey. The Straits Times. Retrieved November 
+4, 2022, from https://www.straitstimes.com/singapore/jobs/nearly-1-in-3-workers-in-spore-plan-to-change-employers-in-first-half-of-2022-survey 
+My Skills Future. (2021, June 21). 5 Crucial Skills You Need to Remain Employable 
+in the Wake of Covid-19 | Myskillsfuture.gov.sg. MySkillsFuture. Retrieved October 
+14, 2022, from https://www.myskillsfuture.gov.sg/content/portal/en/career-resources/career-resources/education-career-personal-development/5-crucial-skills-you-need-to-remain-employable-during-covid.html 
+The Straits Times. (2021, December 22). It's a match: How skills-based hiring fits 
+in the future of work. The Straits Times. Retrieved October 14, 2022, from 
+https://www.straitstimes.com/singapore/jobs/its-a-match-how-skills-based-hiring-fits-in-the-future-of-work 
+Tan, E. (2021, April 14). S'pore employers prioritise skills over education, experience: 
+LinkedIn survey. The Straits Times. Retrieved October 14, 2022, from https://www.straitstimes.com/singapore/jobs/singapore-employers-prioritise-skills-over-education-experience-linkedin-survey 
+
 
 \
 \
