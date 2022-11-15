@@ -305,7 +305,7 @@ cat("Dimensions of the test set are", dim(test_data), "\n")
 #### 3.1.1.1. Multiple linear regression
 
 ```{r}
-k <- 10
+k <- 5
 
 set.seed(100)
 
@@ -328,12 +328,22 @@ Then we check to see if our data was properly split
 table(train_mlr$fold)
 ```
 
+```{r}
+var_list <- paste(names(train_mlr[2:355]), collapse = ", ")
+var_list
+
+mlr_mod <- lm(Y_salary ~ polym(var_list, degree = 1, raw = TRUE),
+               data = train_mlr)
+
+stargazer(mlr_mod, type = 'text')
+```
+
 We build functions to train models of different degrees and to calculate
 RMSE
 
 ```{r}
 train_poly_model <- function(deg, dataset = train_mlr) {
-  mlr_mod <- lm(Y_salary ~ polym(., degree = deg, raw = TRUE),
+  mlr_mod <- lm(Y_salary ~ polym(names(train_mlr[2:355]), degree = deg, raw = TRUE),
                data = dataset)
 }
 
@@ -353,7 +363,7 @@ Create a function to apply different degrees to our previous functions,
 and compile them altogether to create a data frame consisting of CV
 error and test error values
 
-```{r setup. warning = FALSE}
+```{r}
 cv_and_test_error <- function(d, K = k) {
   # K is the number of folds, the default value is whatever is specified above
   # when we assigned k
@@ -366,6 +376,8 @@ cv_and_test_error <- function(d, K = k) {
   
   c(deg = d, CV = cv_error, TEST = test_error)
 }
+
+cv_and_test_error(1)
 
 all_degrees <- 1:5
 final_errors <- sapply(all_degrees, cv_and_test_error) %>% t %>%
