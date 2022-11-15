@@ -305,6 +305,21 @@ cat("Dimensions of the test set are", dim(test_data), "\n")
 #### 3.1.1.1. Multiple linear regression
 
 ```{r}
+mlr_mod <- lm(Y_salary ~ .,
+               data = train_data)
+
+mlr_mod %>%
+    predict(test_data) %>%
+    rmse(test_data$Y_salary)
+
+data.frame(coefficients(mlr_mod)) %>% 
+  arrange(desc(abs(coefficients(mlr_mod)))) %>%
+  slice(2:21)
+```
+
+# NOT IN USE:
+
+```{r}
 k <- 5
 
 set.seed(100)
@@ -326,16 +341,6 @@ Then we check to see if our data was properly split
 
 ```{r}
 table(train_mlr$fold)
-```
-
-```{r}
-var_list <- paste(names(train_mlr[2:355]), collapse = ", ")
-var_list
-
-mlr_mod <- lm(Y_salary ~ polym(var_list, degree = 1, raw = TRUE),
-               data = train_mlr)
-
-stargazer(mlr_mod, type = 'text')
 ```
 
 We build functions to train models of different degrees and to calculate
@@ -508,20 +513,6 @@ data.frame(variable = names(var_importance), importance = var_importance) %>%
 
 #### 3.1.1.3. XGBoost
 
-First we split our data into test and training sets
-
-```{r}
-set.seed(100)
-
-ind <- runif(nrow(D_dtm)) < 0.8
-
-train_dtm <- D_dtm[ind , ]
-test_dtm <- D_dtm[!ind , ]
-
-cat("Dimensions of the training set are", dim(train_dtm), "\n")
-cat("Dimensions of the test set are", dim(test_dtm), "\n")
-```
-
 Then we create our XGBoost model from caret, using hyperparameters as
 shown below:
 
@@ -537,10 +528,10 @@ trControl <- trainControl(
     allowParallel = TRUE)
 
 xgbGrid <- expand.grid(
-  nrounds = 350,
-  eta = 0.1,
-  max_depth = 4,
-  gamma = 0.02,
+  nrounds = 650,
+  eta = 0.21,
+  max_depth = 3,
+  gamma = 0.04,
   colsample_bytree = 1,
   min_child_weight = 1,
   subsample = 1
@@ -556,8 +547,8 @@ xgbGrid_2 <- expand.grid(
   subsample = 1
 )
 
-xgb_caret <- train(Y ~.,
-                   data = train_dtm,
+xgb_caret <- train(Y_salary ~.,
+                   data = train_data,
                    method = "xgbTree",
                    trControl = trControl,
                    tuneGrid = xgbGrid)
@@ -566,11 +557,11 @@ xgb_caret
 ```
 
 ```{r}
-pred_y = predict(xgb_caret, test_dtm)
+pred_y = predict(xgb_caret, test_data)
 
 #measure prediction accuracy
-caret::MAE(test_dtm$Y, pred_y) #mae
-caret::RMSE(test_dtm$Y, pred_y) #rmse
+caret::MAE(test_data$Y_salary, pred_y) #mae
+caret::RMSE(test_data$Y_salary, pred_y) #rmse
 ```
 
 ```{r}
@@ -660,16 +651,16 @@ marsgrid <- expand.grid(
 We performed required grid search by using 10-fold cross-validation:
 
 ```{r}
-set.seed(9999)
+set.seed(100)
 
-mars_cv <- train( Y~., data = train_mars,
+mars_cv <- train(Y_salary ~., data = train_data,
   method = "earth",
   metric = "RMSE",
   trControl = trainControl(method = "cv", number = 10),
   tuneGrid = marsgrid
 )
 
-mars_cv$bestTune #nprune = 16, degree = 2
+mars_cv$bestTune #nprune = 21, degree = 3
 
 mars_cv$results %>%
   filter(nprune == mars_cv$bestTune$nprune, degree == mars_cv$bestTune$degree)
@@ -705,24 +696,24 @@ We used the optimal hyperparameters to train the model and then
 calculated the RMSE:
 
 ```{r}
-set.seed(7777)
+set.seed(100)
 
 marsgrid_tuned <- expand.grid(
-  degree = 2, 
-  nprune = 16
+  degree = 3, 
+  nprune = 21
 )
 
-mars_cv_tuned <- train( Y~., data = train_mars,
+mars_cv_tuned <- train(Y_salary ~., data = train_data,
   method = "earth",
   metric = "RMSE",
   trControl = trainControl(method = "cv", number = 10),
   tuneGrid = marsgrid_tuned
 )
 
-pred_mars = predict(mars_cv_tuned, test_mars)
+pred_mars = predict(mars_cv_tuned, test_data)
 
-print(caret::MAE(test_mars$Y, pred_mars)) #23.6061
-print(caret::RMSE(test_mars$Y, pred_mars)) #34.19323
+print(caret::MAE(test_data$Y_salary, pred_mars)) #23.6061
+print(caret::RMSE(test_data$Y_salary, pred_mars)) #34.19323
 ```
 
 #### 3.1.1.5. Ridge Regression
