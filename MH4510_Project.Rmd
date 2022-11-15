@@ -1,80 +1,75 @@
 ---
-title: "Data Science Salary Prediction"
-output:
-  pdf_document: default
-  html_document:
-    df_print: paged
+title: "**Studying the Impact of Job Descriptions on Data Science Salaries**"
+subtitle: "Team Humilty"
 date: "`r Sys.Date()`"
+author: 
+  - CHLOE NEO TZE CHING
+  - ENG JING KEAT
+  - GOH WEI LUN GLENN
+  - KANEKO YOSHIKI
+  - TAN WEI KEONG
+output: 
+  pdf_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    df_print: paged
+abstract: "Data mining is the process of sorting through large data sets to identify patterns and relationships, where we aim to gain meaningful insights through the use of algorithms to predict future trends in textual data. In this project, we aim to uncover key insights in data science salaries by comparing models that effectively associate keywords in job descriptions to high paying data science roles. The data is cleaned by preparing job description text for analysis, and filtering the keywords in job descriptions with a minimum occurrence of 40. Least Absolute Shrinkage and Selection Operator (LASSO) is then applied to select the most important variables to be used in three of the models. The models used are Multiple Linear Regression (MLR), Random Forest, XGBoost, Multivariate Adaptive Regression Splines (MARS), and Partial Least Squares (PLS), where their performances will be assessed in relation to one another. Across all models, MLR has the lowest Root Mean Square Error (RMSE) of 16.2. In other words, MLR is the best model that accurately predicts salary, and we identified keywords used in this model."
 editor_options: 
   markdown: 
     wrap: 72
 ---
 
-# Team Humility
+\newpage
 
-Chloe Neo Tze Ching Eng Jing Keat Goh Wei Lun Glenn Kaneko Yoshiki Tan
-Wei Keong
+# Introduction to the problem
 
-## Abstract
+## Literature review
 
-Data mining is the process of sorting through large data sets to identify 
-patterns and relationships, where we aim to gain meaningful insights through 
-the use of algorithms to predict future trends in textual data. In this 
-project, we aim to uncover key insights in data science salaries by comparing 
-models that effectively associate keywords in job descriptions to high paying 
-data science roles. The data is cleaned by preparing job description text for
-analysis, and filtering the keywords in job descriptions with a minimum occurrence
-of 40. Least Absolute Shrinkage and Selection Operator (LASSO) is then applied to 
-select the most important variables to be used in the model. The models used are 
-Multiple Linear Regression (MLR), Partial Least Squares (PLS), Random Forest, 
-XGBoost, and Multivariate Adaptive Regression Splines (MARS), where their performances 
-will be assessed in relation to one another. Across all models, MLR has the lowest 
-Root Mean Square Error (RMSE) of 16.2. In other words, MLR is the best model that 
-accurately predicts salary, and we identified keywords used in this model.
+A rapid shift towards digitalisation of businesses has radically changed
+the employment landscape in Singapore, which means Singaporeans need to
+keep up with the changes if they wish to stay competitive at work (My
+Skills Future, 2021). Employers in Singapore are starting to place an
+emphasis on skills rather than education (Tan, 2021). New hires today
+are assessed not just by their qualifications and work history, but also
+by their soft skills as there are a variety of soft skills in demand
+(The Straits Times, 2021).
 
-# 1. Introduction to the problem
+According to a new report by Instant Offices, 73% of Singaporean workers
+are dissatisfied with their jobs (Arora, 2022). When asked if they
+planned to change jobs over the following six months, 31% of respondents
+responded "yes" (Chong, 2022). Millions of workers worldwide are no
+longer willing to return home with just a fair paycheck. They prefer to
+know how well they are progressing towards a meaningful career, which is
+a wellness, freedom, security, and experience at work, so as to achieve
+job satisfaction. As a result, job seekers should take all these factors
+into consideration when applying for a job.
 
-## 1.1. Literature review
+These factors can be further broken down into keywords in job
+descriptions. Keywords are crucial to job adverts because they allow job
+seekers to narrow their search related to a role, skill, or industry for
+suitable employment (Alexander, 2019). Suitable individuals are more
+likely to find the job post when hirers and recruiters add key terms and
+phrases that are relevant to a particular role. This increases the
+percentage of successfully matching job seekers with their ideal jobs.
 
-A rapid shift towards digitalisation of businesses has radically changed the 
-employment landscape in Singapore, which means Singaporeans need to keep up 
-with the changes if they wish to stay competitive at work (My Skills Future, 
-2021). Employers in Singapore are starting to place an emphasis on skills 
-rather than education (Tan, 2021). New hires today are assessed not just by 
-their qualifications and work history, but also by their soft skills as there 
-are a variety of soft skills in demand (The Straits Times, 2021).
+## Objective
 
-According to a new report by Instant Offices, 73% of Singaporean workers are 
-dissatisfied with their jobs (Arora, 2022). When asked if they planned to change 
-jobs over the following six months, 31% of respondents responded "yes" (Chong, 
-2022). Millions of workers worldwide are no longer willing to return home with 
-just a fair paycheck. They prefer to know how well they are progressing towards 
-a meaningful career, which is a wellness, freedom, security, and experience at 
-work, so as to achieve job satisfaction. As a result, job seekers should take 
-all these factors into consideration when applying for a job.
+As most employers will be impressed when they notice that the resume is
+customised, highlighting relevant skills and using certain keywords
+suited to that particular company or position, job seekers can use these
+findings to narrow down their job search based on their own preferences
+such as salary range or skills set. As such, this project aims to
+predict data science salary based on the keywords in job descriptions.
 
-These factors can be further broken down into keywords in job descriptions. 
-Keywords are crucial to job adverts because they allow job seekers to narrow 
-their search related to a role, skill, or industry for suitable employment 
-(Alexander, 2019). Suitable individuals are more likely to find the job post 
-when hirers and recruiters add key terms and phrases that are relevant to a 
-particular role. This increases the percentage of successfully matching job 
-seekers with their ideal jobs.  
+\newpage
 
-## 1.2. Objective
-
-As most hirers will be impressed when they notice that the resume is customised, 
-highlighting relevant skills and using certain keywords suited to that particular 
-company or position, job seekers can use these findings to narrow down their job 
-search based on their own preferences such as salary range or skills set. As such, 
-this project aims to predict data science salary based on the keywords in job descriptions.
-
-# 2. Dataset
+# Dataset
 
 Dataset:
 <https://www.kaggle.com/datasets/nikhilbhathi/data-scientist-salary-us-glassdoor>
 
-## 2.1. Description of dataset
+## Description of dataset
 
 Import relevant libraries:
 
@@ -93,19 +88,31 @@ library(caret)
 library(fastDummies) # for creating dummy variables
 library(randomForest)
 library(Metrics)
+library(knitr)
+library(earth)
+library(vip)
+library(dplyr)
+library(pls)
+```
 
+Below is a sample of our dataset:
+
+```{r}
 # import data from local csv file
 D <- read.csv("data_cleaned_2021.csv")
-head(D)
+knitr::kable(head(D[, 20:25]), 
+             caption = "A sample of our dataset.")
 ```
 
 This dataset has 41 variables, consisting of numerical, categorical, and
 text. Some variables are derivations from others, and as such we will
 not be using all 41 variables.
 
-## 2.2. Exploratory data analysis
+\newpage
 
-### 2.2.1. Data cleaning
+## Exploratory data analysis
+
+### Data cleaning
 
 Note: the dataset downloaded has already been cleaned by the owner, but
 we will do some additional cleaning and data preparation so that it is
@@ -122,11 +129,9 @@ D_clean <- D %>%
   mutate(cleaned_text = gsub("[^a-zA-Z0-9]", " ", Job.Description)) %>%
   mutate(cleaned_text = gsub("\\n", " ", cleaned_text)) %>%
   mutate(cleaned_text = tolower(cleaned_text)) 
-
-head(D_clean)
 ```
 
-### 2.2.2. Feature selection
+### Feature selection
 
 Our project's focus is on job descriptions and their relationship with
 data science salaries. As such, we will only keep these two variables
@@ -135,28 +140,32 @@ data science salaries. As such, we will only keep these two variables
 #remove unnecessary columns 
 D_clean <- D_clean %>%
   select(c(Avg.Salary.K., cleaned_text))
-head(D_clean)
 ```
 
-### 2.2.3. Data visualizations
+### Data visualizations
 
 1.  Histograms of average salaries in thousands:
 
 ```{r}
 ggplot(D_clean, aes(x=Avg.Salary.K.)) + 
-  geom_histogram(fill = "blue", alpha = 0.65, bins = 20)
+  geom_histogram(fill = "darkgreen", alpha = 0.65, bins = 20)
 ```
 
 2.  Boxplots of average salaries:
 
 ```{r}
 ggplot(D_clean, aes(y=Avg.Salary.K.)) +
-  geom_boxplot(fill = "blue", alpha = 0.65)
+  geom_boxplot(fill = "darkgreen", alpha = 0.65)
 ```
 
 3.  Word cloud for job descriptions:
 
-```{r}
+We visualise the job descriptions with a word cloud after removal of
+words whose total frequency is below 40, and stopwords such as "the",
+"he" etc. as these are common words that do not store any informational
+value in our analysis.
+
+```{r warning = FALSE}
 visualize_text <- function(x) {
   # x is a character vector
   # the function will extract
@@ -175,15 +184,12 @@ visualize_text(D_clean$cleaned_text)
 We set the minimum occurrence of words to 40, and show the 100 most
 common words above.
 
-### 2.2.4. Feature engineering
+### Feature engineering
 
 Next we create a document-term matrix for our job descriptions, setting
-minimum word frequency to 40
+minimum word frequency to 40.
 
 ```{r}
-library(tm)
-library(wordcloud)
-
 corpus <- VCorpus(VectorSource(D_clean$cleaned_text))
 dtm <- DocumentTermMatrix(corpus)
 
@@ -200,37 +206,48 @@ dtm <- dtm[ , names(frequent_words)]
 cat("Our document-term matrix consists of", nrow(dtm), "job descriptions against", ncol(dtm), 'words present in our vocab after removing stopwords.', '\n')
 ```
 
-Next, we create a new dataframe for our DTM
+Next, we create a new dataframe for our DTM.
 
 ```{r}
 D_dtm <- dtm %>%
   as.matrix %>%
   as_tibble %>% 
-  mutate(Y = D_clean$Avg.Salary.K.)
+  mutate(Y_salary = D_clean$Avg.Salary.K.) %>%
+  select(c(Y_salary, everything()))
 
-head(D_dtm)
+knitr::kable(head(D_dtm[, 1:5]), 
+             caption = "A sample of our DTM.")
 ```
 
-# 3. Objectives
+\newpage
 
-## 3.1. Modelling
+# Modelling
 
-LASSO
+## Feature selection using LASSO
 
-We will try the following values of lambda for our LASSO regularization:
+We will use LASSO regularization to select features to prepare our data
+for three of our models: Multiple LInear Regression, Random Forest, and
+XGBoost. The last two models use their own methods of feature selection,
+so we will not use features selected by LASSO for those two models, but
+the entire dataset instead.
+
+The LASSO procedure is as follows:
+
+-   We will try the following values of lambda for our LASSO
+    regularization:
 
 ```{r}
 lambda <- 10^seq(-1, 0 , length = 10)
 lambda
 ```
 
-Below we train our LASSO:
+-   Below we train our LASSO:
 
 ```{r}
 set.seed(100)
 
 lasso <- train(
-  Y ~., data = D_dtm, method = "glmnet",
+  Y_salary ~., data = D_dtm, method = "glmnet",
   trControl = trainControl("cv", number = 10),
   tuneGrid = expand.grid(alpha = 1, lambda = lambda),
   preProcess = c("center","scale")
@@ -239,14 +256,13 @@ lasso <- train(
 lasso
 ```
 
-Let us plot coefficients of LASSO
+-   Let us plot coefficients of LASSO.
 
 ```{r}
 lambda_for_plotting <- 10^seq(from = -1, to = 1.5, length = 100)
 lasso_coefs <- coef(lasso$finalModel, lambda_for_plotting) %>%
   as.matrix %>% t %>% as_tibble %>%
   mutate(lambda = lambda_for_plotting)
-head(lasso_coefs)
 
 lasso_coefs %>%
   pivot_longer(-c(1, ncol(lasso_coefs)), names_to = "variable", values_to = "coef") %>%
@@ -254,35 +270,30 @@ lasso_coefs %>%
   geom_line() + scale_x_log10() + theme(legend.position = "none")
 ```
 
-Now we store our variables selected by LASSO
+-   Now we store our variables selected by LASSO.
 
 ```{r}
 store <- filter(lasso_coefs, lambda == lasso$bestTune$lambda) %>% 
   select_if(function(col) !all(col == 0))
 
 selected_var <- names(store[2:(ncol(store)-1)])
-
-head(selected_var)
 ```
 
-Finally we prepare our final dataset to be used for our models
+-   Finally we prepare our final dataset to be used for our models.
 
 ```{r}
 D_final <- D_dtm[c(gsub("`","", selected_var))] %>%
-  mutate(Y_salary = D_clean$Avg.Salary.K.) %>%
+  mutate(Y_salary = D_dtm$Y_salary) %>%
   select(c(Y_salary, everything()))
 
-head(D_final)
+knitr::kable(head(D_final[, 1:6]), 
+             caption = "A sample of our final dataset.")
 ```
 
-Now we can prepare our training and test data:
+-   Now we can prepare our training and test data for MLR, Random
+    Forest, and XGBoost:
 
 ```{r}
-# Libraries used:
-library(tidyverse)
-library(stargazer)
-library(caret)
-
 set.seed(100)
 ind <- runif(nrow(D_final)) < 0.8
 
@@ -293,9 +304,14 @@ cat("Dimensions of the training set are", dim(train_data), "\n")
 cat("Dimensions of the test set are", dim(test_data), "\n")
 ```
 
-### 3.1.1. Proposed models
+\newpage
 
-#### 3.1.1.1. Multiple linear regression
+## Models
+
+### Multiple Linear Regression
+
+The first model we use is Multiple Linear Regression, using the 354
+features selected by LASSO.
 
 ```{r}
 mlr_mod <- lm(Y_salary ~ .,
@@ -304,23 +320,51 @@ mlr_mod <- lm(Y_salary ~ .,
 mlr_mod %>%
     predict(test_data) %>%
     rmse(test_data$Y_salary)
-
-data.frame(coefficients(mlr_mod)) %>% 
-  arrange(desc(abs(coefficients(mlr_mod)))) %>%
-  slice(2:21)
 ```
 
-#### 3.1.1.2. Random forest
+Our MLR model's RMSE value is 16.20561, the lowest we will achieve in
+this project.
 
-The next step is to visualize our data using decision trees. Nevertheless, 
-decision trees alone have a significant variance, which can make the trees 
-trained on various datasets appear quite distinct from one another. Random 
-forest was chosen over a bagged ensemble as there may be one or more really 
-powerful predictors in our dataset, preventing other predictors from having 
-a chance to be included. As a result, the predictions made by the trees will 
-be strongly correlated and increasing the number of trees will not make the 
-variance smaller Therefore, in order to lower the variance, we shall propose 
-an ensemble technique.
+Below is a bar plot of the top 20 variables with the highest absolute
+coefficients.
+
+```{r}
+var_coeff <- data.frame(coefficients(mlr_mod)) %>% 
+  arrange(desc(abs(coefficients(mlr_mod)))) %>%
+  dplyr::slice(2:21)
+
+ggplot(var_coeff, aes(x=abs(coefficients.mlr_mod.), 
+                      y=reorder(rownames(var_coeff), +abs(coefficients.mlr_mod.)))) +
+  geom_bar(stat = "identity", fill="darkgreen", alpha = 0.65) +
+  xlab("Absolute Coefficients") + ylab("Key words") +
+  coord_cartesian(xlim = c(10, 25))
+```
+
+Below is a bar plot of the top 20 variables with the highest absolute
+coefficients, but this time we reflect their relationship with salary as
+well.
+
+```{r}
+ggplot(var_coeff, aes(x=coefficients.mlr_mod., 
+                      y=reorder(rownames(var_coeff), +coefficients.mlr_mod.))) +
+  geom_bar(stat = "identity", fill="darkgreen", alpha = 0.65) +
+  xlab("Coefficients") + ylab("Key words")
+```
+
+\newpage
+
+### Random Forest
+
+The next step is to visualize our data using decision trees.
+Nevertheless, decision trees alone have a significant variance, which
+can make the trees trained on various datasets appear quite distinct
+from one another. Random forest was chosen over a bagged ensemble as
+there may be one or more really powerful predictors in our dataset,
+preventing other predictors from having a chance to be included. As a
+result, the predictions made by the trees will be strongly correlated
+and increasing the number of trees will not make the variance smaller
+Therefore, in order to lower the variance, we shall propose an ensemble
+technique.
 
 We performed grid search with oob (out-of-bag error) while tuning the
 random forest to select the optimal values of the hyper-parameters try
@@ -328,7 +372,7 @@ random forest to select the optimal values of the hyper-parameters try
 
 ```{r}
 #getting optimal hyper parameters
-mod_rf <- train(Y~., data = D_dtm, method = "ranger",
+mod_rf <- train(Y_salary ~., data = D_final, method = "ranger",
                 num.trees = 50, importance = 'impurity',
                 trControl = trainControl("oob"))
 mod_rf
@@ -337,18 +381,18 @@ mod_rf
 The optimal values of the hyper-parameters are:
 
 ```{r}
-mod_rf$bestTune
+knitr::kable(mod_rf$bestTune)
 ```
 
 Now, we retrain the model with the selected hyperparameters to produce
 the following output:
 
 ```{r}
-rfGrid <- expand.grid(mtry = 1237,
+rfGrid <- expand.grid(mtry = 178,
                       min.node.size = 5,
                       splitrule = "variance")
                       
-mod_rf_tune <- train(Y~., data = D_dtm, method = "ranger",
+mod_rf_tune <- train(Y_salary ~., data = D_final, method = "ranger",
                      num.trees = 50, importance = 'impurity',
                      tuneGrid = rfGrid, trControl = trainControl("oob"))
 mod_rf_tune
@@ -363,13 +407,18 @@ train_data_rf <- train_data %>%
 test_data_rf <- test_data %>%
   select(-c(Y_salary))
 
-regr <- randomForest(x = train_data_rf, y = train_data$Y_salary , maxnodes = 100 , ntree = 1000)
+regr <- randomForest(x = train_data_rf, 
+                     y = train_data$Y_salary, 
+                     maxnodes = 100 , 
+                     ntree = 1000)
+
 predictions <- predict(regr, test_data_rf)
 
 result <- test_data
 result['predictions'] <- predictions
 
-head(result)
+knitr::kable(head(result[, 1:6]), 
+             caption = "A sample of our prediction results.")
 ```
 
 The graph below shows the data between Actual Average Salary vs.
@@ -398,20 +447,50 @@ are "machine", "give", "expression", "predictive", and "groups".
 #top 20 most important predictors 
 var_importance = mod_rf_tune$finalModel$variable.importance %>% 
   sort(decreasing = TRUE) %>% head(20)
-var_importance
+
 data.frame(variable = names(var_importance), importance = var_importance) %>% 
   ggplot(aes(x = reorder(variable, -importance), y = importance)) + geom_col() + 
   xlab("Variables") + ylab("Importance") + theme(axis.text.x = element_text(angle = 45))
 ```
 
-#### 3.1.1.3. XGBoost
+\newpage
 
-Then we create our XGBoost model from caret, using hyperparameters as
-shown below:
+### XGBoost
+
+Like random forests, gradient boosting machines does classification
+based on decision trees. However, while random forest builds an ensemble
+of deep (i.e complex) trees that are independent of one another,
+gradient boosting machines build shallow trees sequentially, where each
+tree learns and improves from the previous tree. This means that one
+would start with a weak model and sequentially boost its performance by
+allowing each new tree to focus on training data where the previous tree
+had the largest errors in prediction (or residuals). This is done by
+fitting each tree in the sequence according to the residuals of the
+previous tree.
+
+Moreover, it computes the second-order gradients, i.e. second partial
+derivatives of the loss function, which provides more information about
+the direction of gradients and how to get to the minimum of our loss
+function while gradient boost uses the loss function of simple decision
+tree model as a proxy to minimize the error of the overall model. In
+addition, it uses advanced regularization (L1 and L2), which improves
+model generalization.
+
+Each weight in all the trees would be multiplied by the learning rate in
+an XGBoost model, such that
+
+$$
+w_j = \text{Learning Rate} \times \frac{\sum_{i\in I_j}\frac{\partial Loss}{\partial(\hat y=0)}}{\sum_{i\in I_j}\frac{\partial^2 Loss}{\partial(\hat y=0)^2} + \lambda}
+$$
+
+where $I_j$ is a set containing all the instances (($x, y$) data points)
+at a leaf, and $wj$ is the weight at leaf $j$ with regularization from
+the $\lambda$ constant.
+
+We create our XGBoost model from the caret library, using
+hyperparameters as shown below:
 
 ```{r}
-library(caret)
-
 set.seed(100)
 
 trControl <- trainControl(
@@ -430,16 +509,6 @@ xgbGrid <- expand.grid(
   subsample = 1
 )
 
-xgbGrid_2 <- expand.grid(
-  nrounds = seq(40, 100, length = 7),
-  eta = seq(0.1, 0.6, length = 5),
-  max_depth = seq(11, 20, length = 10),
-  gamma = 0,
-  colsample_bytree = 1,
-  min_child_weight = 1,
-  subsample = 1
-)
-
 xgb_caret <- train(Y_salary ~.,
                    data = train_data,
                    method = "xgbTree",
@@ -449,6 +518,32 @@ xgb_caret <- train(Y_salary ~.,
 xgb_caret
 ```
 
+As shown above, we have used these hyperparameters:
+
+1.  *gamma*: Pseudo-regularisation hyperparameter that controls the
+    complexity of each tree.
+
+2.  *nrounds*: Number of decision trees in the final model
+
+3.  *eta*: Learning rate; determines the contribution of each tree on
+    the final outcome and also how quickly the algorithm goes down the
+    gradient descent.
+
+4.  *max_depth*: Depth of each tree
+
+5.  *min_child_weight*: Minimum number of observations in terminal
+    nodes; controls complexity of the trees
+
+6.  *colsample_bytree*: subsample of columns used for each tree
+    (repeated for every tree)
+
+7.  *subsample*: subsampling ratio of training data for growing trees to
+    prevent over-fitting
+
+The hyperparameters were tuned using 5-fold cross validation and grid
+search to find the best model, and we arrived at the optimal values for
+the hyperparameters.
+
 ```{r}
 pred_y = predict(xgb_caret, test_data)
 
@@ -457,17 +552,29 @@ caret::MAE(test_data$Y_salary, pred_y) #mae
 caret::RMSE(test_data$Y_salary, pred_y) #rmse
 ```
 
+Overall, XGBoost gave an RMSE value of 16.5914.
+
+Below we extracted the 20 most important features (words) from the
+XGBoost model.
+
 ```{r}
 library(xgboost)
 xgb_imp <- xgb.importance(feature_names = xgb_caret$finalModel$feature_names,
                model = xgb_caret$finalModel)
 
-xgb_imp[1:20]
+knitr::kable(head(xgb_imp), 
+             caption = "Some of our 20 most important features.")
+```
 
+Plotting our top 20 most important variables:
+
+```{r}
 xgb.plot.importance(xgb_imp[1:20])
 ```
 
-#### 3.1.1.4. Multivariate Adaptive Regression Splines (MARS)
+\newpage
+
+### Multivariate Adaptive Regression Splines (MARS)
 
 We used multivariate adaptive regression splines (MARS) (Friedman 1991)
 model here, it is an approach that automatically generates a piecewise
@@ -508,18 +615,12 @@ We will use the following packages. First of all, we divided the dataset
 into training dataset and test dataset:
 
 ```{r}
-library(dplyr)
-library(ggplot2)
-library(caret) 
-library(earth)
-library(vip)
-
-set.seed(8888)
+set.seed(100)
 
 ind_mars <- which(runif(nrow(D_dtm)) < 0.7)
 
-train_mars <- D_dtm %>% slice(ind_mars)
-test_mars <- D_dtm %>% slice(-ind_mars)
+train_mars <- D_dtm %>% dplyr::slice(ind_mars)
+test_mars <- D_dtm %>% dplyr::slice(-ind_mars)
 
 cat("Dimensions of the training dataset are", dim(train_mars), "\n")
 cat("Dimensions of the test dataset are", dim(test_mars), "\n")
@@ -543,21 +644,27 @@ marsgrid <- expand.grid(
 
 We performed required grid search by using 10-fold cross-validation:
 
+-   Our chosen parameters.
+
 ```{r}
 set.seed(100)
 
-mars_cv <- train(Y_salary ~., data = train_data,
+mars_cv <- train(Y_salary ~., data = train_mars,
   method = "earth",
   metric = "RMSE",
   trControl = trainControl(method = "cv", number = 10),
   tuneGrid = marsgrid
 )
 
-mars_cv$bestTune #nprune = 21, degree = 3
+knitr::kable(mars_cv$bestTune) #nprune = 11, degree = 1
+```
 
-mars_cv$results %>%
-  filter(nprune == mars_cv$bestTune$nprune, degree == mars_cv$bestTune$degree)
+```{r}
+knitr::kable(mars_cv$results %>%
+  filter(nprune == mars_cv$bestTune$nprune, degree == mars_cv$bestTune$degree))
+```
 
+```{r}
 ggplot(mars_cv)
 ```
 
@@ -570,7 +677,7 @@ include and remove variables throughout the pruning phase.
 
 After pruning, a predictor's significance value is 0 if it was never
 used in any of the MARS basis functions in the final model. There are
-only 17 features have importance values greater than 0, whereas the
+only 11 features have importance values greater than 0, whereas the
 other features all have importance values of zero since they were
 excluded from the final model.
 
@@ -592,8 +699,8 @@ calculated the RMSE:
 set.seed(100)
 
 marsgrid_tuned <- expand.grid(
-  degree = 3, 
-  nprune = 21
+  degree = 1, 
+  nprune = 11
 )
 
 mars_cv_tuned <- train(Y_salary ~., data = train_data,
@@ -609,24 +716,9 @@ print(caret::MAE(test_data$Y_salary, pred_mars)) #23.6061
 print(caret::RMSE(test_data$Y_salary, pred_mars)) #34.19323
 ```
 
-#### 3.1.1.6. Elastic net regression/LASSO
+\newpage
 
-The Least Absolute Shrinkage and Selection Operator (LASSO) is a
-modification of linear regression, as there is an extra regularization
-term in its loss function as compared to that of linear regression. This
-is to lower the complexity of the model by limiting the sum of the
-absolute values of the coefficients. Meanwhile, elastic net regression
-combines the properties of both linear and LASSO regressions, and there
-are two hyperparameters, namely β and α. Here is the loss function of
-elastic net regression: $$
-L_E(\beta)=\sum_{i=1}^{N}
-\left(y^i - \beta_0 - \sum_{j=1}^{p}\beta_jx_j^i\right)^2+
-(1-\alpha)\lambda\sum_{j=1}^{p}\beta_j^2+
-\alpha\lambda\sum_{j=1}^{p}|\beta_j|
-$$ We will need to choose the optimum values for these two
-hyperparameters before generating predictions.
-
-#### 3.1.1.7. Partial Least Squares (PLS)
+### Partial Least Squares (PLS)
 
 Partial Least Squares (PLS) is a common technique to analyse relative
 importance when the data includes more predictors than observations. It
@@ -643,11 +735,9 @@ Below are the required packages. We divided the dataset into training
 dataset and test dataset first:
 
 ```{r}
-library(pls)
-
 set.seed(100)
 # 80/20 split
-inTraining <- createDataPartition(D_dtm$Y, p = .80, list = FALSE)
+inTraining <- createDataPartition(D_dtm$Y_salary, p = .7, list = FALSE)
 train_pls <- D_dtm[inTraining,]
 test_pls  <- D_dtm[-inTraining,]
 ```
@@ -658,14 +748,14 @@ error to achieve the optimal hyperparameter. The grid search was
 conducted by 10-fold cross-validation:
 
 ```{r}
-set.seed(88888)
+set.seed(100)
 
 plsGrid <- expand.grid(
   ncomp   = seq(1, 100, by = 1)
 )
 
 pls_cv <- train(
-  Y ~ .,
+  Y_salary ~ .,
   data = train_pls,
   method = 'pls',
   metric = "RMSE",
@@ -675,9 +765,9 @@ pls_cv <- train(
 )
 
 pls_cv
+```
 
-pls_cv$bestTune #6
-
+```{r}
 plot(pls_cv)
 ```
 
@@ -685,13 +775,13 @@ We used the optimal hyperparameter to train the model and calculated the
 RMSE as well:
 
 ```{r}
-set.seed(99999)
+set.seed(100)
 
 plsGrid_tuned <- expand.grid(
-  ncomp = 6
+  ncomp = 9
 )
 
-pls_cv_tuned <- train( Y~., data = train_pls,
+pls_cv_tuned <- train(Y_salary ~., data = train_pls,
   method = "pls",
   metric = "RMSE",
   trControl = trainControl(method = "cv", number = 10),
@@ -700,8 +790,8 @@ pls_cv_tuned <- train( Y~., data = train_pls,
 
 pred_pls = predict(pls_cv_tuned, test_pls)
 
-print(caret::MAE(test_pls$Y, pred_pls)) #19.02091
-print(caret::RMSE(test_pls$Y, pred_pls)) #27.3268
+print(caret::MAE(test_pls$Y_salary, pred_pls)) #16.63214
+print(caret::RMSE(test_pls$Y_salary, pred_pls)) #23.87552
 ```
 
 The barplots below show that 'credit', 'lead', 'mission', 'actuarial'
@@ -715,54 +805,80 @@ coefficients = coefficients * 100 / sum.coef
 coefficients = sort(coefficients[, 1 , 1])
 
 barplot(tail(coefficients, 5))
+```
+
+```{r}
 barplot(head(coefficients, 5))
 ```
 
-## 3.2. Summary of results
+\newpage
 
-# 4. Conclusion
+## Summary of results
+
+```{r}
+final_results <- data.frame(Model = c('MLR', 'Random Forest', 'XGBoost', 'MARS', 'PLS'),
+                            RMSE = c(16.20561, 21.6223370884116, 16.5914, 30.0025, 23.87552))
+knitr::kable(final_results, 
+             caption = "Accuracy of models.")
+```
+
+\newpage
+
+# Conclusion
 
 Recommendation engines are a commonly found solution applied to job
-search portals, such as the Singapore government\'s national jobs
-portal, MyCareersFuture. However, more can be done to bridge the gap
-between job seekers and their desired careers. In this project, we have
-produced models that predict the expected average salary earned given a
-job description. Our chosen model, MLR, can be used to help workers
-set expectations of salary based on keywords they value as important in
-search of a job. This will help job seekers focus on searching for their
-desired job role rather than focus on maximizing salary earned, which
-will hopefully increase job satisfaction. The model also identifies key
-terms such as \"eligible\", \"mongodb\", \"upon\", \"francisco\", and
-\"hypotheses\", which are strongly related with data science
-salaries, which job seekers can then use to help them focus on
-upskilling in areas related to these key terms.
+search portals, such as the Singapore government's national jobs portal,
+MyCareersFuture. However, more can be done to bridge the gap between job
+seekers and their desired careers. In this project, we have produced
+models that predict the expected average salary earned given a job
+description. Our best performing model, Multiple Linear Regression, can
+be used to help workers set expectations of salary based on keywords
+they value as important in search of a job. This will help job seekers
+focus on searching for their desired job role rather than focus on
+maximizing salary earned, which will hopefully increase job
+satisfaction. The model also identifies key terms such as "eligible",
+"mongodb", "upon", "francisco", and "hypotheses". Some of these keywords
+may not seem to make sense, and understanding the importance of these
+words is unclear. Some of these words, on the other hand, give insight
+into areas that job seekers can focus on, be it upskilling (for example,
+learning MongoDB), or narrowing their job search to sectors such as
+actuarial science or molecular chemistry in order to maximize their
+potential salary.
 
-Based on RMSE, our best model uses XGBoost, and it has identified key
-terms that have a significant impact on data science salary. However,
-XGBoost does not identify the direction of relationship between the key
-terms and predicted salary. Our linear regression models are thus useful
-in this aspect, and further research could focus on extracting benefits
-from both models.
+Based on RMSE, our best model uses Multiple Linear Regression, and it
+has identified key terms that have a significant impact on data science
+salary. However, Multiple Linear Regression does not identify the same
+important features (words) as our other models. Further research is
+required to better understand the difference between models and why they
+identify vastly different features as important.
 
-# 5. References
+\newpage
 
-Alexander, L. (2019). The importance of keywords in job ads. SEEK. 
-Retrieved November 16, 2022, from https://www.seek.com.au/employer/hiring-advice/the-importance-of-keywords-in-job-ads 
-Arora, P. (2022, August 29). What's keeping Singapore employees unhappy 
-at work? - ETHRWorldSEA. HR News Southeast Asia. Retrieved November 7, 2022, 
-from https://hrsea.economictimes.indiatimes.com/news/employee-experience/whats-keeping-singapore-employees-unhappy-at-work/93833788 
-Chong, C. (2022, May 17). Nearly 1 in 3 workers in S'pore plans to change 
-employers in first half of 2022: Survey. The Straits Times. Retrieved November 
-4, 2022, from https://www.straitstimes.com/singapore/jobs/nearly-1-in-3-workers-in-spore-plan-to-change-employers-in-first-half-of-2022-survey 
-My Skills Future. (2021, June 21). 5 Crucial Skills You Need to Remain Employable 
-in the Wake of Covid-19 | Myskillsfuture.gov.sg. MySkillsFuture. Retrieved October 
-14, 2022, from https://www.myskillsfuture.gov.sg/content/portal/en/career-resources/career-resources/education-career-personal-development/5-crucial-skills-you-need-to-remain-employable-during-covid.html 
-The Straits Times. (2021, December 22). It's a match: How skills-based hiring fits 
-in the future of work. The Straits Times. Retrieved October 14, 2022, from 
-https://www.straitstimes.com/singapore/jobs/its-a-match-how-skills-based-hiring-fits-in-the-future-of-work 
-Tan, E. (2021, April 14). S'pore employers prioritise skills over education, experience: 
-LinkedIn survey. The Straits Times. Retrieved October 14, 2022, from https://www.straitstimes.com/singapore/jobs/singapore-employers-prioritise-skills-over-education-experience-linkedin-survey 
+# References
 
+1.  Alexander, L. (2019). The importance of keywords in job ads. SEEK.
+    Retrieved November 16, 2022, from
+    <https://www.seek.com.au/employer/hiring-advice/the-importance-of-keywords-in-job-ads>
+2.  Arora, P. (2022, August 29). What's keeping Singapore employees
+    unhappy at work? - ETHRWorldSEA. HR News Southeast Asia. Retrieved
+    November 7, 2022, from
+    <https://hrsea.economictimes.indiatimes.com/news/employee-experience/whats-keeping-singapore-employees-unhappy-at-work/93833788>
+3.  Chong, C. (2022, May 17). Nearly 1 in 3 workers in S'pore plans to
+    change employers in first half of 2022: Survey. The Straits Times.
+    Retrieved November 4, 2022, from
+    <https://www.straitstimes.com/singapore/jobs/nearly-1-in-3-workers-in-spore-plan-to-change-employers-in-first-half-of-2022-survey>
+4.  My Skills Future. (2021, June 21). 5 Crucial Skills You Need to
+    Remain Employable in the Wake of Covid-19 \| Myskillsfuture.gov.sg.
+    MySkillsFuture. Retrieved October 14, 2022, from
+    <https://www.myskillsfuture.gov.sg/content/portal/en/career-resources/career-resources/education-career-personal-development/5-crucial-skills-you-need-to-remain-employable-during-covid.html>
+5.  The Straits Times. (2021, December 22). It's a match: How
+    skills-based hiring fits in the future of work. The Straits Times.
+    Retrieved October 14, 2022, from
+    <https://www.straitstimes.com/singapore/jobs/its-a-match-how-skills-based-hiring-fits-in-the-future-of-work>
+6.  Tan, E. (2021, April 14). S'pore employers prioritise skills over
+    education, experience: LinkedIn survey. The Straits Times. Retrieved
+    October 14, 2022, from
+    <https://www.straitstimes.com/singapore/jobs/singapore-employers-prioritise-skills-over-education-experience-linkedin-survey>
 
 \
 \
