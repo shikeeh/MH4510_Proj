@@ -716,58 +716,6 @@ print(caret::MAE(test_data$Y_salary, pred_mars)) #23.6061
 print(caret::RMSE(test_data$Y_salary, pred_mars)) #34.19323
 ```
 
-#### 3.1.1.5. Ridge Regression
-
-```{r}
-library(glmnet)
-
-ind <- runif(nrow(D_dtm)) < 0.8
-train_data = D_dtm[ind, ]
-test_data = D_dtm[!ind, ]
-
-#fit ridge regression model
-model <- glmnet(x = train_data, y = train_data$Y, alpha = 0)
-summary(model)
-```
-
-```{r}
-#perform k-fold cross-validation to find optimal lambda value
-lambda = 10^seq(from = 1, to = 4, length = 100)
-ridge <- train(Y ~., data = train_data, method = "glmnet",
-  trControl = trainControl("cv", number = 10),
-  tuneGrid = expand.grid(alpha = 1, lambda = lambda),
-  preProcess = c("scale")
-)
-ridge
-```
-
-```{r}
-#find optimal lambda value that minimizes test MSE
-best_lambda <- ridge$lambda.min
-best_lambda
-```
-
-```{r}
-#find coefficients of best model
-best_model <- glmnet(x = train_data, y = train_data$Y, alpha = 1, lambda = best_lambda)
-coef(best_model)
-```
-
-```{r}
-#use fitted best model to make predictions
-y_predicted <- predict(model, s = best_lambda, newx = train_data)
-```
-
-```{r}
-#find SSE
-sse <- sum((y_predicted - Y_test)^2)
-n <- nrow(y_predicted)
-
-#find RMSE
-rmse <- sqrt((1/n) / sse)
-rmse
-```
-
 #### 3.1.1.6. Elastic net regression/LASSO
 
 The Least Absolute Shrinkage and Selection Operator (LASSO) is a
@@ -784,31 +732,6 @@ L_E(\beta)=\sum_{i=1}^{N}
 \alpha\lambda\sum_{j=1}^{p}|\beta_j|
 $$ We will need to choose the optimum values for these two
 hyperparameters before generating predictions.
-
-##### 3.1.1.6.1. Elastic Net
-
-```{r}
-elasticnet <- train(Avg.Salary.K. ~., data = D_clean, method = "glmnet", trControl = trainControl("cv", number = 5))
-
-elasticnet
-```
-
-##### 3.1.1.6.2. LASSO
-
-```{r}
-lambda <- 10^seq(-3, 0, length = 20)
-lambda
-```
-
-```{r}
-lasso <- train(Avg.Salary.K. ~., data = D_clean, method = "glmnet", trControl = trainControl("cv", number = 10), tuneGrid = expand.grid(alpha = 1, lambda = lambda), preProcess = c("scale"))
-
-lasso
-```
-
-```{r}
-lasso$bestTune
-```
 
 #### 3.1.1.7. Partial Least Squares (PLS)
 
@@ -829,7 +752,7 @@ dataset and test dataset first:
 ```{r}
 library(pls)
 
-set.seed(77777)
+set.seed(100)
 # 80/20 split
 inTraining <- createDataPartition(D_dtm$Y, p = .80, list = FALSE)
 train_pls <- D_dtm[inTraining,]
@@ -901,55 +824,6 @@ coefficients = sort(coefficients[, 1 , 1])
 barplot(tail(coefficients, 5))
 barplot(head(coefficients, 5))
 ```
-
-### 3.1.2. Beyond the syllabus
-
-#### 3.1.2.1. Shapley Value Regression
-
-Shapley Value Regression is a technique used to determine the relative
-importance of predictor variables in linear regression. It derives from
-game theory and its purpose is to evaluate the worth of each player's
-input over all possible combinations of players. In the study, it aims
-to identify main variables predicting data scientists' salaries and to
-avoid the problem of high correlation between variables.
-
-```{r}
-set.seed(1234)
-ind <- runif(nrow(D_clean)) < 0.7
-
-train_data <- D_clean[ind , ] 
-test_data <- D_clean[!ind , ]
-
-avg_S = train_data$Avg.Salary.K
-rating = train_data$Rating
-age = train_data$Age
-comp = train_data$comp_count
-
-lmsalary = lm(avg_S ~ comp + age  + rating)
-summary(lmsalary)
-
-library(relaimpo)
-calc.relimp(lmsalary, type=list('lmg'), rela=T)
-
-library(ggplot2)
-plot(lm(avg_S ~ comp + age  + rating))
-
-#relative importance metrics
-names <- c("comp", "age", "rating")
-count = c(0.2792880, 0.5205512, 0.2001608)
-
-barplot(count,names.arg=names,xlab="Explanatory Variables",ylab="Relative Importance of Variables")
-```
-
-From the results, Age of the company is the most important predictor
-variable. It accounts for approximately 52.1% of the average salary.
-Established companies are more stable and have funds to provide higher
-salaries as compared to start-ups. In contrast, other variables such as
-number of competitors and rating only account for 27.9% and 20% of the
-average salary. "comp" might be slightly higher than rating because
-companies have to offer more attractive salaries to employees so they
-will be less likely to job-hop to their competitor companies. \####
-3.1.2.2. Theory behind the model
 
 ## 3.2. Summary of results
 
