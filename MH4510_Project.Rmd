@@ -17,24 +17,23 @@ Wei Keong
 
 ## Abstract
 
-Data mining is the process of sorting through large data sets to
-identify patterns and relationships, where we aim to gain meaningful
-insights through the use of algorithms to predict future trends in
-textual data. In this project, we aim to uncover key insights in data
-science salary by developing a model to effectively associate keywords
-in job descriptions to high paying analytics roles. The data is cleaned
-by filtering the keywords in job descriptions with a minimum occurrence
-of 40. Least Absolute Shrinkage and Selection Operator (LASSO) is then
-applied to select the most important variables to be used in the model.
-The models used are Multiple Linear Regression (MLR), Partial Least
-Squares (PLS), Random Forest, XGBoost and Multivariate Adaptive
-Regression Splines (MARS), where their performances will be assess in
-relation to one another. Across all models, XGBoost has the lowest Root
-Mean Square Error (RMSE) of (insert value). In other words, XGBoost is
-the best model that accurately predicts salary. Based on XGBoost
-results, some of the most important keywords in job descriptions towards
-getting a higher salary in a Data Scientist Role are \"machine\",
-\"phd\", \"education\", \"analyst\", and \"infrastructure\".
+Data mining is the process of sorting through large data sets to identify 
+patterns and relationships, where we aim to gain meaningful insights through 
+the use of algorithms to predict future trends in textual data. In this 
+project, we aim to uncover key insights in data science salaries by comparing 
+models that effectively associate keywords in job descriptions to high paying 
+data science roles. The data is cleaned by preparing job description text for
+analysis, and filtering the keywords in job descriptions with a minimum occurrence
+of 40. Least Absolute Shrinkage and Selection Operator (LASSO) is then applied to 
+select the most important variables to be used in the model. The models used are 
+Multiple Linear Regression (MLR), Partial Least Squares (PLS), Random Forest, 
+XGBoost, and Multivariate Adaptive Regression Splines (MARS), where their performances 
+will be assessed in relation to one another. Across all models, MLR has the lowest 
+Root Mean Square Error (RMSE) of 16.2. In other words, MLR is the best model that 
+accurately predicts salary, and we identified keywords used in this model. Based on 
+MLR results, some of the most important keywords in job descriptions towards getting 
+a higher salary in a Data Scientist Role are \“eligible\”, \“mongodb”\, \“upon\”, 
+\“francisco\”, and \“hypotheses\”. 
 
 # 1. Introduction to the problem
 
