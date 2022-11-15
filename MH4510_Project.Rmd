@@ -17,49 +17,64 @@ Wei Keong
 
 ## Abstract
 
-Data mining is the process of sorting through large data sets to identify patterns and relationships, 
-where we aim to gain meaningful insights through the use of algorithms to predict future trends in 
-textual data. In this project, we aim to uncover key insights in data science salary by developing a
-model to effectively associate keywords in job descriptions to high paying analytics roles. The data is 
-cleaned by filtering the keywords in job descriptions with a minimum occurrence of 40. Least Absolute 
-Shrinkage and Selection Operator (LASSO) is then applied to select the most important variables to be 
-used in the model. The models used are Multiple Linear Regression (MLR), Partial Least Squares (PLS), 
-Random Forest, XGBoost and Multivariate Adaptive Regression Splines (MARS), where their performances 
-will be assess in relation to one another. Across all models, XGBoost has the lowest Root Mean Square 
-Error (RMSE) of (insert value). In other words, XGBoost is the best model that accurately predicts salary. 
-Based on XGBoost results, some of the most important keywords in job descriptions towards getting a higher 
-salary in a Data Scientist Role are (insert top 5 words). 
+Data mining is the process of sorting through large data sets to
+identify patterns and relationships, where we aim to gain meaningful
+insights through the use of algorithms to predict future trends in
+textual data. In this project, we aim to uncover key insights in data
+science salary by developing a model to effectively associate keywords
+in job descriptions to high paying analytics roles. The data is cleaned
+by filtering the keywords in job descriptions with a minimum occurrence
+of 40. Least Absolute Shrinkage and Selection Operator (LASSO) is then
+applied to select the most important variables to be used in the model.
+The models used are Multiple Linear Regression (MLR), Partial Least
+Squares (PLS), Random Forest, XGBoost and Multivariate Adaptive
+Regression Splines (MARS), where their performances will be assess in
+relation to one another. Across all models, XGBoost has the lowest Root
+Mean Square Error (RMSE) of (insert value). In other words, XGBoost is
+the best model that accurately predicts salary. Based on XGBoost
+results, some of the most important keywords in job descriptions towards
+getting a higher salary in a Data Scientist Role are \"machine\",
+\"phd\", \"education\", \"analyst\", and \"infrastructure\".
 
 # 1. Introduction to the problem
 
 ## 1.1. Literature review
 
-A rapid shift towards digitalisation of businesses has radically changed the employment landscape in 
-Singapore, which means Singaporeans need to keep up with the changes if they wish to stay competitive 
-at work (My Skills Future, 2021). Employers in Singapore are starting to place an emphasis on skills
-rather than education (Tan, 2021). New hires today are assessed not just by their qualifications and 
-work history, but also by their soft skills as there are a variety of soft skills in demand (The Straits 
-Times, 2021).
+A rapid shift towards digitalisation of businesses has radically changed
+the employment landscape in Singapore, which means Singaporeans need to
+keep up with the changes if they wish to stay competitive at work (My
+Skills Future, 2021). Employers in Singapore are starting to place an
+emphasis on skills rather than education (Tan, 2021). New hires today
+are assessed not just by their qualifications and work history, but also
+by their soft skills as there are a variety of soft skills in demand
+(The Straits Times, 2021).
 
-According to a new report by Instant Offices, 73% of Singaporean workers are dissatisfied with their jobs. 
-When asked if they planned to change jobs over the following six months, 31% of respondents responded "yes". 
-Millions of workers worldwide are no longer willing to return home with just a fair paycheck. They prefer to 
-know how well they are progressing towards a meaningful career, which is a wellness, freedom, security, and 
-experience at work, so as to achieve job satisfaction. As a result, job seekers should take all these factors 
-into consideration when applying for a job.
+According to a new report by Instant Offices, 73% of Singaporean workers
+are dissatisfied with their jobs. When asked if they planned to change
+jobs over the following six months, 31% of respondents responded "yes".
+Millions of workers worldwide are no longer willing to return home with
+just a fair paycheck. They prefer to know how well they are progressing
+towards a meaningful career, which is a wellness, freedom, security, and
+experience at work, so as to achieve job satisfaction. As a result, job
+seekers should take all these factors into consideration when applying
+for a job.
 
-These factors can be further broken down into keywords in job descriptions. Keywords are crucial to job 
-advertisements because they allow job seekers to narrow their search related to a role, skill, or industry 
-for suitable employment. Ideal individuals are more likely to find the job post when hirers and recruiters 
-add key terms and phrases that are relevant to a particular role. This increases the percentage of 
-successfully matching job seekers with their ideal jobs. 
+These factors can be further broken down into keywords in job
+descriptions. Keywords are crucial to job advertisements because they
+allow job seekers to narrow their search related to a role, skill, or
+industry for suitable employment. Ideal individuals are more likely to
+find the job post when hirers and recruiters add key terms and phrases
+that are relevant to a particular role. This increases the percentage of
+successfully matching job seekers with their ideal jobs.
 
 ## 1.2. Objective
 
-As most hirers will be impressed when they notice that resume is customised, highlighting relevant skills 
-and using certain keywords suited to that particular company or position, job seekers can use these findings 
-to narrow down their job search based on their own preferences such as salary range or skills set. As such, 
-this project aims to predict data science salary based on the keywords in job descriptions.
+As most employers will be impressed when they notice that resume is
+customised, highlighting relevant skills and using certain keywords
+suited to that particular company or position, job seekers can use these
+findings to narrow down their job search based on their own preferences
+such as salary range or skills set. As such, this project aims to
+predict data science salary based on the keywords in job descriptions.
 
 # 2. Dataset
 
@@ -89,7 +104,6 @@ library(Metrics)
 # import data from local csv file
 D <- read.csv("data_cleaned_2021.csv")
 head(D)
-names(D)
 ```
 
 This dataset has 41 variables, consisting of numerical, categorical, and
@@ -114,157 +128,40 @@ D_clean <- D %>%
   # create a new variable containing only lowercase text from Job.Description
   mutate(cleaned_text = gsub("[^a-zA-Z0-9]", " ", Job.Description)) %>%
   mutate(cleaned_text = gsub("\\n", " ", cleaned_text)) %>%
-  mutate(cleaned_text = tolower(cleaned_text)) %>%
-  # create a new variable containing length of job description texts
-  mutate('desc_len' = sapply(D$Job.Description, nchar))
+  mutate(cleaned_text = tolower(cleaned_text)) 
 
 head(D_clean)
 ```
 
-3.  Create a new variable to count the number of competitors a company
-    has:
+### 2.2.2. Feature selection
 
-```{r}
-# Function to convert "Competitors" variable from "-1" and strings to a count variable
-my_strsplit <- function(string) {
-  if (string == -1){
-    output <- 0
-  } else {
-  output <- length(strsplit(toString(string), ", ")[[1]])
-  }}
-
-# Apply the function and create a new variable comp_count
-D_clean$comp_count <- sapply(D_clean$Competitors, my_strsplit)
-
-# View head of variables 'Competitors' and 'comp_count'
-head(D_clean[, c('Competitors', 'comp_count')])
-```
-
-4.  Variables Selection
-
-After removing unnecessary columns, our data contains 33 variables for
-analysis, and "Avg.Salary.K." will be our response variable.
+Our project's focus is on job descriptions and their relationship with
+data science salaries. As such, we will only keep these two variables
 
 ```{r}
 #remove unnecessary columns 
 D_clean <- D_clean %>%
-  select(c(Rating, Avg.Salary.K., Age, desc_len, comp_count, cleaned_text))
+  select(c(Avg.Salary.K., cleaned_text))
 head(D_clean)
 ```
 
-### 2.2.2. Data visualizations
+### 2.2.3. Data visualizations
 
-Below is a summary of our numeric variables:
-
-```{r}
-summary(D_clean%>%select(c(Rating, Avg.Salary.K., Age, desc_len, comp_count)))
-```
-
-#### 2.2.2.1. Numerical variables data visualizations
-
-1.  Histograms
-
-Histogram of rating:
-
-```{r}
-avg <- D_clean %>% filter(Rating >= 0)
-D_clean$Rating[D_clean$Rating == -1] <- mean(avg$Rating)
-
-ggplot(D_clean, aes(x=Rating)) +
-  geom_histogram(fill = "blue", alpha = 0.7)
-```
-
--   Companies without rating are given a -1 rating. Since the rest of
-    the ratings follow a normal distribution, we replace the ratings
-    with a mean value instead.
-
-Histogram of average salary in thousands:
+1.  Histograms of average salaries in thousands:
 
 ```{r}
 ggplot(D_clean, aes(x=Avg.Salary.K.)) + 
-  geom_histogram(fill = "blue", alpha = 0.7)
+  geom_histogram(fill = "blue", alpha = 0.65, bins = 20)
 ```
 
-Histogram of age of companies:
-
-```{r}
-ggplot(D_clean, aes(x=Age)) + 
-  geom_histogram(fill = "blue", alpha = 0.7)
-```
-
-Histogram of job description text length:
-
-```{r}
-ggplot(D_clean, aes(x=desc_len)) +
-  geom_histogram(fill = "blue", alpha = 0.7)
-```
-
-2.  Boxplots
-
-Boxplot of salaries
+2.  Boxplots of average salaries:
 
 ```{r}
 ggplot(D_clean, aes(y=Avg.Salary.K.)) +
-  geom_boxplot(fill = "blue", alpha = 0.5)
+  geom_boxplot(fill = "blue", alpha = 0.65)
 ```
 
-Boxplot of Rating:
-
-```{r}
-ggplot(D_clean, aes(y=Rating)) +
-  geom_boxplot(fill = "blue", alpha = 0.5)
-```
-
-Boxplot of Age:
-
-```{r}
-ggplot(D_clean, aes(y=Age)) +
-  geom_boxplot(fill = "blue", alpha = 0.5)
-```
-
-Boxplot of Job Description Length:
-
-```{r}
-ggplot(D_clean, aes(y=desc_len)) + 
-  geom_boxplot(fill = "blue", alpha = 0.5)
-```
-
-4.  Corrplot
-
-```{r}
-D_num <- D_clean %>%
-  select(c(Avg.Salary.K., Rating, Age, desc_len, comp_count)) 
-
-D_num %>%
-  rename('comp' = 'comp_count', 'desc' = 'desc_len', 'avg_S' = 'Avg.Salary.K.') %>%
-  ggcorr(palette = "RdBu", label = TRUE)
-```
-
-```{r}
-D_num %>% 
-  select_if(is.numeric) %>%
-  ggpairs()
-```
-
-```{r}
-D_num %>%
-  select_if(is.numeric) %>%
-  cor %>% round(3)
-```
-
-## 2.3. Feature engineering
-
-### 2.3.1. Identifying variables
-
-Perhaps the best choice now would be to narrow down our variables
-selected.
-
-We can narrow down our variables to only numerical variables and job
-description.
-
-### 2.3.2. Variable selection
-
-First we generate a word cloud for our Job Description variable
+3.  Word cloud for job descriptions:
 
 ```{r}
 visualize_text <- function(x) {
@@ -273,7 +170,7 @@ visualize_text <- function(x) {
   frequent_words <- termFreq(x)
   frequent_words <- frequent_words[!(names(frequent_words) %in% stopwords())]
   wordcloud(words = names(frequent_words), 
-            freq = frequent_words, min.freq = 0,
+            freq = frequent_words, min.freq = 40,
             max.words = 100, random.order=FALSE, rot.per=0.35, 
             colors=brewer.pal(9, "Dark2"))
 
@@ -282,10 +179,13 @@ visualize_text <- function(x) {
 visualize_text(D_clean$cleaned_text)
 ```
 
-s/n: We should take a look at what words appear if the min. occurrence
-is 50. i.e. is 50 a good threshold?
+We set the minimum occurrence of words to 40, and show the 100 most
+common words above.
 
-For now, we set the threshold as 40
+### 2.2.4. Feature engineering
+
+Next we create a document-term matrix for our job descriptions, setting
+minimum word frequency to 40
 
 ```{r}
 library(tm)
@@ -296,15 +196,16 @@ dtm <- DocumentTermMatrix(corpus)
 
 words_freq <- termFreq(D_clean$cleaned_text)
 frequent_words <- words_freq[words_freq >= 40]
-length(frequent_words)
 
-frequent_words <- frequent_words[!(names(frequent_words) %in% stopwords())]
-dtm <- dtm[ , names(frequent_words)]
-dim(dtm)
+cat("Setting minimum word frequency to 40, we retain", length(frequent_words), "words out of the original", length(words_freq), "words.", "\n")
 ```
 
-\^ this is total number of job descriptions (536) by the words present
-in our vocab (from the job descriptions) (932)
+```{r}
+frequent_words <- frequent_words[!(names(frequent_words) %in% stopwords())]
+dtm <- dtm[ , names(frequent_words)]
+
+cat("Our document-term matrix consists of", nrow(dtm), "job descriptions against", ncol(dtm), 'words present in our vocab after removing stopwords.', '\n')
+```
 
 Next, we create a new dataframe for our DTM
 
@@ -321,36 +222,22 @@ head(D_dtm)
 
 ## 3.1. Modelling
 
-### 3.1.1. Proposed models
+LASSO
 
-#### 3.1.1.1. Multiple linear regression
-
-```{r}
-# Libraries used:
-library(tidyverse)
-library(stargazer)
-library(caret)
-
-set.seed(100)
-ind <- runif(nrow(D_dtm)) < 0.8
-
-train_mlr <- D_dtm[ind , ]
-test_mlr <- D_dtm[!ind , ]
-
-cat("Dimensions of the training set are", dim(train_mlr), "\n")
-cat("Dimensions of the test set are", dim(test_mlr), "\n")
-```
+We will try the following values of lambda for our LASSO regularization:
 
 ```{r}
-lambda <- 10^seq(-1, 0 , length = 20)
+lambda <- 10^seq(-1, 0 , length = 10)
 lambda
 ```
+
+Below we train our LASSO:
 
 ```{r}
 set.seed(100)
 
 lasso <- train(
-  Y ~., data = train_mlr, method = "glmnet",
+  Y ~., data = D_dtm, method = "glmnet",
   trControl = trainControl("cv", number = 10),
   tuneGrid = expand.grid(alpha = 1, lambda = lambda),
   preProcess = c("center","scale")
@@ -359,133 +246,63 @@ lasso <- train(
 lasso
 ```
 
+Let us plot coefficients of LASSO
+
 ```{r}
-store <- coef(lasso$finalModel, lasso$bestTune$lambda)
+lambda_for_plotting <- 10^seq(from = -1, to = 1.5, length = 100)
+lasso_coefs <- coef(lasso$finalModel, lambda_for_plotting) %>%
+  as.matrix %>% t %>% as_tibble %>%
+  mutate(lambda = lambda_for_plotting)
+head(lasso_coefs)
 
-##Go through each row and determine if a value is zero
-row_sub = apply(store, 1, function(row) all(row !=0 ))
-##Subset as usual
-D_coeff <- data.frame(store[row_sub,])
-
-D_coeff %>% 
-  arrange(desc(abs(D_coeff$store.row_sub...)))
-
-rownames(D_coeff)[2:293]
+lasso_coefs %>%
+  pivot_longer(-c(1, ncol(lasso_coefs)), names_to = "variable", values_to = "coef") %>%
+  ggplot(aes(x = lambda, y = coef, group = variable, colour = variable)) +
+  geom_line() + scale_x_log10() + theme(legend.position = "none")
 ```
 
+Now we store our variables selected by LASSO
+
 ```{r}
+store <- filter(lasso_coefs, lambda == lasso$bestTune$lambda) %>% 
+  select_if(function(col) !all(col == 0))
+
+selected_var <- names(store2[2:(ncol(store)-1)])
+
+head(selected_var)
+```
+
+Finally we prepare our final dataset to be used for our models
+
+```{r}
+D_final <- D_dtm[c(gsub("`","", selected_var))] %>%
+  mutate(Y_salary = D_clean$Avg.Salary.K.) %>%
+  select(c(Y_salary, everything()))
+
+head(D_final)
+```
+
+Now we can prepare our training and test data:
+
+```{r}
+# Libraries used:
+library(tidyverse)
+library(stargazer)
+library(caret)
+
 set.seed(100)
+ind <- runif(nrow(D_final)) < 0.8
 
-x <- train_mlr %>% select(contains(rownames(D_coeff)[2:293]) | Y)
-head(x)
-dim(x)
+train_data <- D_final[ind , ]
+test_data <- D_final[!ind , ]
 
-lasso_final <- lm(Y ~ ., data = x)
-
-stargazer(lasso_final, type = "text")
+cat("Dimensions of the training set are", dim(train_data), "\n")
+cat("Dimensions of the test set are", dim(test_data), "\n")
 ```
 
-```{r}
-pred_y = predict(lasso_final, test_mlr)
-caret::RMSE(test_mlr$Y, pred_y) #rmse
-```
+### 3.1.1. Proposed models
 
-```{r}
-library(leaps)
-subset_mod <- regsubsets(Y ~ . , data = train_dtm,
-                         nvmax = ncol(train_dtm) - 1,
-                         method = "forward")
-
-sum_subset_mod <- summary(subset_mod)
-t(sum_subset_mod$outmat)[ , 1:6]
-```
-
-```{r}
-coef(subset_mod, 1:6)
-```
-
-```{r}
-sum_subset_mod$cp
-```
-
-```{r}
-criteria <- tibble(
-  k = 1:length(sum_subset_mod$cp),
-  Cp = sum_subset_mod$cp,
-  BIC = sum_subset_mod$bic,
-  "1 - Adj.R2" = 1 - sum_subset_mod$adjr2
-)
-
-criteria
-```
-
-```{r}
-ggplot(data = criteria, aes(x = k, y = BIC)) +
-  geom_line() + geom_point() +
-  geom_vline(aes(xintercept = k[which.min(BIC)]), 
-             color = "blue", linetype = "dashed")
-```
-
-```{r}
-variable_selection_matrix <- sum_subset_mod$which
-colnames(variable_selection_matrix)[1] <- "Y"
-variable_selection_matrix[1:5, 1:5]
-```
-
-```{r}
-train_dtm %>%
-  select(which(variable_selection_matrix[3 , ])) %>%
-  head
-
-train_subset <- train_dtm %>%
-  select(which(variable_selection_matrix[3 , ]))
-```
-
-```{r}
-caret_mod <- train(Y ~ . , train_subset,
-      method = "lm", trControl = trainControl(method = "cv", number = 5))
-caret_mod
-```
-
-```{r}
-cv_error <- function(vars_to_select) {
-  train_subset <- train_dtm %>% select(which(vars_to_select))
-  caret_mod <- train(Y ~ . , train_subset,
-      method = "lm", trControl = trainControl(method = "cv", number = 5))
-  caret_mod$results$RMSE
-}
-
-cv_error(variable_selection_matrix[ 3, ])
-```
-
-```{r}
-CV_errors <- apply(variable_selection_matrix, 1, cv_error)
-CV_errors
-```
-
-```{r}
-criteria$CV <- CV_errors
-criteria
-```
-
-```{r}
-ggplot(data = criteria, aes(x = k, y = CV)) +
-  geom_line() + geom_point() +
-  geom_vline(aes(xintercept = k[which.min(CV)]), 
-             color = "blue", linetype = "dashed")
-```
-
-```{r}
-criteria$k[which.min(criteria$CV)]
-```
-
-```{r}
-criteria %>% filter(k == 6)
-```
-
-\
-
-\
+#### 3.1.1.1. Multiple linear regression
 
 ```{r}
 k <- 10
@@ -499,7 +316,7 @@ add_folds_to_data <- function(dataset, k) {
     mutate(fold = sample(folds, N))
 }
 
-train_mlr <- train_mlr %>%
+train_mlr <- train_data %>%
   add_folds_to_data(k)
 
 head(train_mlr)
@@ -516,18 +333,17 @@ RMSE
 
 ```{r}
 train_poly_model <- function(deg, dataset = train_mlr) {
-  mlr_mod <- lm(Avg.Salary.K. ~ polym(comp_count, desc_len, Age, Rating, 
-                                      degree = deg, raw = TRUE),
+  mlr_mod <- lm(Y_salary ~ polym(., degree = deg, raw = TRUE),
                data = dataset)
 }
 
-error_rate <- function(mlr_mod, dataset = test_mlr) {
+error_rate <- function(mlr_mod, dataset = test_data) {
   mlr_mod %>%
     predict(dataset) %>%
-    rmse(dataset$Avg.Salary.K.)
+    rmse(dataset$Y_salary)
 }
 
-train_and_validate <- function(deg, train = train_mlr, test = test_mlr) {
+train_and_validate <- function(deg, train = train_mlr, test = test_data) {
   train_poly_model(deg, train) %>%
     error_rate(test)
 }
@@ -546,7 +362,7 @@ cv_and_test_error <- function(d, K = k) {
                                  train_mlr %>% filter(fold == i))
     ) %>% mean
   
-  test_error <- train_and_validate(d, train_mlr, test_mlr)
+  test_error <- train_and_validate(d, train_mlr, test_data)
   
   c(deg = d, CV = cv_error, TEST = test_error)
 }
@@ -665,7 +481,8 @@ print(paste0('RMSE: ' ,caret::postResample(predictions , Y_test)['RMSE'])) #21.4
 ```
 
 The bar graph below shows the top 20 most important variables in this
-prediction. Based on the bar graph, the top 5 most important variables are ..
+prediction. Based on the bar graph, the top 5 most important variables
+are ..
 
 ```{r}
 #top 20 most important predictors 
@@ -776,21 +593,20 @@ For example, if $a = 1$, our hinge function is $h(x-1)$ such that the
 linear models for $y$ are:
 
 $$ y = \begin{cases} \beta_0 + \beta_1(1-x) \, ,& x < 1 
-\\ \beta_0 + \beta_1(x-1) \, ,& x > 1 \\ \end{cases}$$
-After the first knot is identified, the search for a second one begins,
-and it is discovered at $x=2$. Now the linear models for $y$ are:
+\\ \beta_0 + \beta_1(x-1) \, ,& x > 1 \\ \end{cases}$$ After the first
+knot is identified, the search for a second one begins, and it is
+discovered at $x=2$. Now the linear models for $y$ are:
 
 $$ y = \begin{cases} \beta_0 + \beta_1(1-x) \, ,& x < 1
 \\ \beta_0 + \beta_1(x-1) \, ,& 1 < x < 2 
-\\ \beta_0 + \beta_1(2-x) \, ,& x > 2 \\ \end{cases}$$
-This process is repeated until several knots are identified, leading to
-the creation of a highly non-linear prediction equation. Even if using a
-lot of knots could help us fit a particularly excellent relationship to
-our training data, it might not perform well to unseen data. Once all of
-the knots have been found, we may systematically eliminate knots that do
-not significantly improve predictive accuracy. This is pruning process,
-and we may use cross-validation to determine the optimal number of
-knots.
+\\ \beta_0 + \beta_1(2-x) \, ,& x > 2 \\ \end{cases}$$ This process is
+repeated until several knots are identified, leading to the creation of
+a highly non-linear prediction equation. Even if using a lot of knots
+could help us fit a particularly excellent relationship to our training
+data, it might not perform well to unseen data. Once all of the knots
+have been found, we may systematically eliminate knots that do not
+significantly improve predictive accuracy. This is pruning process, and
+we may use cross-validation to determine the optimal number of knots.
 
 We will use the following packages. First of all, we divided the dataset
 into training dataset and test dataset:
@@ -993,11 +809,19 @@ lasso$bestTune
 
 #### 3.1.1.7. Partial Least Squares (PLS)
 
-Partial Least Squares (PLS) is a common technique to analyse relative importance when the data includes more predictors than observations. It is an useful dimension reduction method which is similar with principal component analysis (PCA).
+Partial Least Squares (PLS) is a common technique to analyse relative
+importance when the data includes more predictors than observations. It
+is an useful dimension reduction method which is similar with principal
+component analysis (PCA).
 
-We do a regression against the response variable inside the narrower space created by mapping the predictor variables to a smaller set of variables. The response variable is not taken into account during the dimension reduction process in PCA. PLS, on the other hand, seeks to select newly mapped factors that best describe the response variable.
+We do a regression against the response variable inside the narrower
+space created by mapping the predictor variables to a smaller set of
+variables. The response variable is not taken into account during the
+dimension reduction process in PCA. PLS, on the other hand, seeks to
+select newly mapped factors that best describe the response variable.
 
-Below are the required packages. We divided the dataset into training dataset and test dataset first:
+Below are the required packages. We divided the dataset into training
+dataset and test dataset first:
 
 ```{r}
 library(pls)
@@ -1009,7 +833,10 @@ train_pls <- D_dtm[inTraining,]
 test_pls  <- D_dtm[-inTraining,]
 ```
 
-The hyperparameter for PLS model is the number of components used in the model (ncomp) .We conduct a grid search that minimize the prediction error to achieve the optimal hyperparameter. The grid search was conducted by 10-fold cross-validation:
+The hyperparameter for PLS model is the number of components used in the
+model (ncomp) .We conduct a grid search that minimize the prediction
+error to achieve the optimal hyperparameter. The grid search was
+conducted by 10-fold cross-validation:
 
 ```{r}
 set.seed(88888)
@@ -1035,7 +862,8 @@ pls_cv$bestTune #6
 plot(pls_cv)
 ```
 
-We used the optimal hyperparameter to train the model and calculated the RMSE as well:
+We used the optimal hyperparameter to train the model and calculated the
+RMSE as well:
 
 ```{r}
 set.seed(99999)
@@ -1057,7 +885,10 @@ print(caret::MAE(test_pls$Y, pred_pls)) #19.02091
 print(caret::RMSE(test_pls$Y, pred_pls)) #27.3268
 ```
 
-The barplots below show that 'credit', 'lead', 'mission', 'actuarial' and 'scientists' are positive predictors, while 'support', 'use', 'project', 'solutions' and 'food' are negative predictors:
+The barplots below show that 'credit', 'lead', 'mission', 'actuarial'
+and 'scientists' are positive predictors, while 'support', 'use',
+'project', 'solutions' and 'food' are negative predictors:
+
 ```{r}
 coefficients = coef(pls_cv_tuned$finalModel)
 sum.coef = sum(sapply(coefficients, abs))
@@ -1120,3 +951,28 @@ will be less likely to job-hop to their competitor companies. \####
 ## 3.2. Summary of results
 
 # 4. Conclusion
+
+Recommendation engines are a commonly found solution applied to job
+search portals, such as the Singapore government\'s national jobs
+portal, MyCareersFuture. However, more can be done to bridge the gap
+between job seekers and their desired careers. In this project, we have
+produced models that predict the expected average salary earned given a
+job description. Our chosen model, XGBoost, can be used to help workers
+set expectations of salary based on keywords they value as important in
+search of a job. This will help job seekers focus on searching for their
+desired job role rather than focus on maximizing salary earned, which
+will hopefully increase job satisfaction. The model also identifies key
+terms such as \"machine\", \"phd\", \"education\", \"analyst\", and
+\"infrastructure\", which are strongly related with data science
+salaries, which job seekers can then use to help them focus on
+upskilling in areas related to these key terms.
+
+Based on RMSE, our best model uses XGBoost, and it has identified key
+terms that have a significant impact on data science salary. However,
+XGBoost does not identify the direction of relationship between the key
+terms and predicted salary. Our linear regression models are thus useful
+in this aspect, and further research could focus on extracting benefits
+from both models.
+
+\
+\
