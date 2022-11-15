@@ -727,13 +727,13 @@ search portals, such as the Singapore government\'s national jobs
 portal, MyCareersFuture. However, more can be done to bridge the gap
 between job seekers and their desired careers. In this project, we have
 produced models that predict the expected average salary earned given a
-job description. Our chosen model, XGBoost, can be used to help workers
+job description. Our chosen model, MLR, can be used to help workers
 set expectations of salary based on keywords they value as important in
 search of a job. This will help job seekers focus on searching for their
 desired job role rather than focus on maximizing salary earned, which
 will hopefully increase job satisfaction. The model also identifies key
-terms such as \"machine\", \"phd\", \"education\", \"analyst\", and
-\"infrastructure\", which are strongly related with data science
+terms such as \"eligible\", \"mongodb\", \"upon\", \"francisco\", and
+\"hypotheses\", which are strongly related with data science
 salaries, which job seekers can then use to help them focus on
 upskilling in areas related to these key terms.
 
