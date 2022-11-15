@@ -267,7 +267,7 @@ Now we store our variables selected by LASSO
 store <- filter(lasso_coefs, lambda == lasso$bestTune$lambda) %>% 
   select_if(function(col) !all(col == 0))
 
-selected_var <- names(store2[2:(ncol(store)-1)])
+selected_var <- names(store[2:(ncol(store)-1)])
 
 head(selected_var)
 ```
@@ -319,16 +319,15 @@ data.frame(coefficients(mlr_mod)) %>%
 
 #### 3.1.1.2. Random forest
 
-Next, we want to visualise our data through the use of decision trees.
-However, decision trees alone have a high variance which can cause the
-trees trained on different parts of the dataset to look very different.
-Hence, we will introduce an ensemble method to reduce the variance.
-Random forest is chosen over a bagged ensemble as there may exist one or
-more very strong predictors in our dataset, causing other predictors to
-not have a chance to be included. This will cause the predictions of
-trees to be highly correlated and adding more trees will not reduce the
-variance. Variable selection can also be done by looking at the variable
-importance of the random forest.
+The next step is to visualize our data using decision trees. Nevertheless, 
+decision trees alone have a significant variance, which can make the trees 
+trained on various datasets appear quite distinct from one another. Random 
+forest was chosen over a bagged ensemble as there may be one or more really 
+powerful predictors in our dataset, preventing other predictors from having 
+a chance to be included. As a result, the predictions made by the trees will 
+be strongly correlated and increasing the number of trees will not make the 
+variance smaller Therefore, in order to lower the variance, we shall propose 
+an ensemble technique.
 
 We performed grid search with oob (out-of-bag error) while tuning the
 random forest to select the optimal values of the hyper-parameters try
@@ -352,7 +351,7 @@ Now, we retrain the model with the selected hyperparameters to produce
 the following output:
 
 ```{r}
-rfGrid <- expand.grid(mtry = 43,
+rfGrid <- expand.grid(mtry = 1237,
                       min.node.size = 5,
                       splitrule = "variance")
                       
@@ -362,33 +361,19 @@ mod_rf_tune <- train(Y~., data = D_dtm, method = "ranger",
 mod_rf_tune
 ```
 
-Then, we split our data into train and test data sets:
-
-```{r}
-#splitting into train and test data
-X <- D_dtm %>%
-  select(-c(Y))
-y <- D_dtm$Y
-
-index <- createDataPartition(y, p=0.7, list=FALSE)
-X_train <- X[index, ]
-X_test <- X[-index, ]
-Y_train <- y[index]
-Y_test<- y[-index]
-
-cat("Dimensions of the training set are", dim(X_train), "\n")
-cat("Dimensions of the test set are", dim(X_test), "\n")
-```
-
 Next, we perform random forest on the train data set
 
 ```{r}
 #random forest regression
-regr <- randomForest(x = X_train, y = Y_train , maxnodes = 100 , ntree = 1000)
-predictions <- predict(regr, X_test)
+train_data_rf <- train_data %>%
+  select(-c(Y_salary))
+test_data_rf <- test_data %>%
+  select(-c(Y_salary))
 
-result <- X_test
-result['Y'] <- Y_test
+regr <- randomForest(x = train_data_rf, y = train_data$Y_salary , maxnodes = 100 , ntree = 1000)
+predictions <- predict(regr, test_data_rf)
+
+result <- test_data
 result['predictions'] <- predictions
 
 head(result)
@@ -400,21 +385,21 @@ Predicted Average Salary
 ```{r}
 #plot graph to compare actual vs. predicted
 ggplot(  ) + 
-  geom_point( aes(x = Y_test, y = predictions, color = 'red', alpha = 0.5) ) + 
-  geom_point( aes(x = Y_test, y = predictions, color = 'blue',  alpha = 0.5)) + 
+  geom_point( aes(x = test_data$Y_salary, y = predictions, color = 'red', alpha = 0.5) ) + 
+  geom_point( aes(x = test_data$Y_salary, y = predictions, color = 'blue',  alpha = 0.5)) + 
   labs(x = "Actual Average Salary", y = "Predicted Average Salary", color = "", alpha = 'Transperency') +
   scale_color_manual(labels = c( "Actual", "Predicted"), values = c("navy", "green"))
 ```
 
 ```{r}
 #using metrics to calculate RMSE
-print(paste0('MAE: ' , mae(predictions , Y_test) ))
-print(paste0('RMSE: ' ,caret::postResample(predictions , Y_test)['RMSE'])) #21.48
+print(paste0('MAE: ' , mae(predictions , test_data$Y_salary) ))
+print(paste0('RMSE: ' ,caret::postResample(predictions , test_data$Y_salary)['RMSE'])) #21.44
 ```
 
 The bar graph below shows the top 20 most important variables in this
 prediction. Based on the bar graph, the top 5 most important variables
-are ..
+are "machine", "give", "expression", "predictive", and "groups".
 
 ```{r}
 #top 20 most important predictors 
