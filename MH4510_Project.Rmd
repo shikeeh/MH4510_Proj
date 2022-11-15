@@ -30,10 +30,7 @@ Multiple Linear Regression (MLR), Partial Least Squares (PLS), Random Forest,
 XGBoost, and Multivariate Adaptive Regression Splines (MARS), where their performances 
 will be assessed in relation to one another. Across all models, MLR has the lowest 
 Root Mean Square Error (RMSE) of 16.2. In other words, MLR is the best model that 
-accurately predicts salary, and we identified keywords used in this model. Based on 
-MLR results, some of the most important keywords in job descriptions towards getting 
-a higher salary in a Data Scientist Role are \“eligible\”, \“mongodb”\, \“upon\”, 
-\“francisco\”, and \“hypotheses\”. 
+accurately predicts salary, and we identified keywords used in this model.
 
 # 1. Introduction to the problem
 
