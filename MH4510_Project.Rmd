@@ -14,7 +14,7 @@ output:
     toc_depth: 3
     number_sections: true
     df_print: paged
-abstract: "Data mining is the process of sorting through large data sets to identify patterns and relationships, where we aim to gain meaningful insights through the use of algorithms to predict future trends in textual data. In this project, we aim to uncover key insights in data science salaries by comparing models that effectively associate keywords in job descriptions to high paying data science roles. The data is cleaned by preparing job description text for analysis, and filtering the keywords in job descriptions with a minimum occurrence of 40. Least Absolute Shrinkage and Selection Operator (LASSO) is then applied to select the most important variables to be used in three of the models. The models used are Multiple Linear Regression (MLR), Random Forest, XGBoost, Multivariate Adaptive Regression Splines (MARS), and Partial Least Squares (PLS), where their performances will be assessed in relation to one another. Across all models, MLR has the lowest Root Mean Square Error (RMSE) of 16.2. In other words, MLR is the best model that accurately predicts salary, and we identified keywords used in this model."
+abstract: "In this project, we aim to uncover key insights in data science salaries by comparing models that effectively associate keywords in job descriptions to high paying data science roles. The data is cleaned by preparing job description text for analysis, and filtering the keywords in job descriptions with a minimum occurrence of 40. Least Absolute Shrinkage and Selection Operator (LASSO) is then applied to select the most important variables to be used in three of the models. The models used are Multiple Linear Regression (MLR), Random Forest, XGBoost, Multivariate Adaptive Regression Splines (MARS), and Partial Least Squares (PLS), where their performances will be assessed in relation to one another. Across all models, MLR has the lowest Root Mean Square Error (RMSE) of 16.2. In other words, MLR is the best model that accurately predicts salary, and we identified keywords used in this model."
 editor_options: 
   markdown: 
     wrap: 72
@@ -73,7 +73,7 @@ Dataset:
 
 Import relevant libraries:
 
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 library(tidyverse)
 library(tm)
 library(wordcloud)
@@ -97,7 +97,7 @@ library(pls)
 
 Below is a sample of our dataset:
 
-```{r}
+```{r, echo = FALSE}
 # import data from local csv file
 D <- read.csv("data_cleaned_2021.csv")
 knitr::kable(head(D[, 20:25]), 
@@ -118,11 +118,11 @@ Note: the dataset downloaded has already been cleaned by the owner, but
 we will do some additional cleaning and data preparation so that it is
 suited for our needs.
 
-1.  Removing "\\n" from job descriptions, cleaning job descriptions
+-   Removing "\\n" from job descriptions, cleaning job descriptions
     text, and creating a new variable to store lengths of job
     description texts:
 
-```{r}
+```{r, echo = FALSE}
 # Keep only alphabets and spaces, changing texts to lowercase, and create a new variable to store length of job description texts
 D_clean <- D %>%
   # create a new variable containing only lowercase text from Job.Description
@@ -136,7 +136,7 @@ D_clean <- D %>%
 Our project's focus is on job descriptions and their relationship with
 data science salaries. As such, we will only keep these two variables
 
-```{r}
+```{r, echo = FALSE}
 #remove unnecessary columns 
 D_clean <- D_clean %>%
   select(c(Avg.Salary.K., cleaned_text))
@@ -146,14 +146,14 @@ D_clean <- D_clean %>%
 
 1.  Histograms of average salaries in thousands:
 
-```{r}
+```{r, echo = FALSE}
 ggplot(D_clean, aes(x=Avg.Salary.K.)) + 
   geom_histogram(fill = "darkgreen", alpha = 0.65, bins = 20)
 ```
 
 2.  Boxplots of average salaries:
 
-```{r}
+```{r, echo = FALSE}
 ggplot(D_clean, aes(y=Avg.Salary.K.)) +
   geom_boxplot(fill = "darkgreen", alpha = 0.65)
 ```
@@ -165,7 +165,7 @@ words whose total frequency is below 40, and stopwords such as "the",
 "he" etc. as these are common words that do not store any informational
 value in our analysis.
 
-```{r warning = FALSE}
+```{r, echo = FALSE, warning = FALSE}
 visualize_text <- function(x) {
   # x is a character vector
   # the function will extract
@@ -189,7 +189,7 @@ common words above.
 Next we create a document-term matrix for our job descriptions, setting
 minimum word frequency to 40.
 
-```{r}
+```{r, echo = FALSE, comment = ""}
 corpus <- VCorpus(VectorSource(D_clean$cleaned_text))
 dtm <- DocumentTermMatrix(corpus)
 
@@ -199,7 +199,7 @@ frequent_words <- words_freq[words_freq >= 40]
 cat("Setting minimum word frequency to 40, we retain", length(frequent_words), "words out of the original", length(words_freq), "words.", "\n")
 ```
 
-```{r}
+```{r, echo = FALSE, comment = ""}
 frequent_words <- frequent_words[!(names(frequent_words) %in% stopwords())]
 dtm <- dtm[ , names(frequent_words)]
 
@@ -208,7 +208,7 @@ cat("Our document-term matrix consists of", nrow(dtm), "job descriptions against
 
 Next, we create a new dataframe for our DTM.
 
-```{r}
+```{r, echo = FALSE}
 D_dtm <- dtm %>%
   as.matrix %>%
   as_tibble %>% 
@@ -236,14 +236,14 @@ The LASSO procedure is as follows:
 -   We will try the following values of lambda for our LASSO
     regularization:
 
-```{r}
+```{r, echo = FALSE, comment = ""}
 lambda <- 10^seq(-1, 0 , length = 10)
-lambda
+knitr::kable(lambda)
 ```
 
 -   Below we train our LASSO:
 
-```{r}
+```{r, echo = FALSE, comment = ""}
 set.seed(100)
 
 lasso <- train(
@@ -258,7 +258,7 @@ lasso
 
 -   Let us plot coefficients of LASSO.
 
-```{r}
+```{r, echo = FALSE}
 lambda_for_plotting <- 10^seq(from = -1, to = 1.5, length = 100)
 lasso_coefs <- coef(lasso$finalModel, lambda_for_plotting) %>%
   as.matrix %>% t %>% as_tibble %>%
@@ -272,7 +272,7 @@ lasso_coefs %>%
 
 -   Now we store our variables selected by LASSO.
 
-```{r}
+```{r, echo = FALSE}
 store <- filter(lasso_coefs, lambda == lasso$bestTune$lambda) %>% 
   select_if(function(col) !all(col == 0))
 
@@ -281,7 +281,7 @@ selected_var <- names(store[2:(ncol(store)-1)])
 
 -   Finally we prepare our final dataset to be used for our models.
 
-```{r}
+```{r, echo = FALSE}
 D_final <- D_dtm[c(gsub("`","", selected_var))] %>%
   mutate(Y_salary = D_dtm$Y_salary) %>%
   select(c(Y_salary, everything()))
@@ -293,7 +293,7 @@ knitr::kable(head(D_final[, 1:6]),
 -   Now we can prepare our training and test data for MLR, Random
     Forest, and XGBoost:
 
-```{r}
+```{r, echo = FALSE, comment = ""}
 set.seed(100)
 ind <- runif(nrow(D_final)) < 0.8
 
@@ -313,13 +313,18 @@ cat("Dimensions of the test set are", dim(test_data), "\n")
 The first model we use is Multiple Linear Regression, using the 354
 features selected by LASSO.
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 mlr_mod <- lm(Y_salary ~ .,
                data = train_data)
 
 mlr_mod %>%
-    predict(test_data) %>%
-    rmse(test_data$Y_salary)
+  predict(test_data) %>%
+  caret::RMSE(test_data$Y_salary)
+
+mlr_mod %>%
+  predict(test_data) %>%
+  caret::MAE(test_data$Y_salary)
+  
 ```
 
 Our MLR model's RMSE value is 16.20561, the lowest we will achieve in
@@ -328,7 +333,7 @@ this project.
 Below is a bar plot of the top 20 variables with the highest absolute
 coefficients.
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 var_coeff <- data.frame(coefficients(mlr_mod)) %>% 
   arrange(desc(abs(coefficients(mlr_mod)))) %>%
   dplyr::slice(2:21)
@@ -344,7 +349,7 @@ Below is a bar plot of the top 20 variables with the highest absolute
 coefficients, but this time we reflect their relationship with salary as
 well.
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 ggplot(var_coeff, aes(x=coefficients.mlr_mod., 
                       y=reorder(rownames(var_coeff), +coefficients.mlr_mod.))) +
   geom_bar(stat = "identity", fill="darkgreen", alpha = 0.65) +
@@ -370,7 +375,9 @@ We performed grid search with oob (out-of-bag error) while tuning the
 random forest to select the optimal values of the hyper-parameters try
 (number of variables) and min.node.size (minimal node size):
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
+set.seed(100)
+
 #getting optimal hyper parameters
 mod_rf <- train(Y_salary ~., data = D_final, method = "ranger",
                 num.trees = 50, importance = 'impurity',
@@ -380,14 +387,15 @@ mod_rf
 
 The optimal values of the hyper-parameters are:
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 knitr::kable(mod_rf$bestTune)
 ```
 
-Now, we retrain the model with the selected hyperparameters to produce
-the following output:
+Now, we retrain the model with the selected hyperparameters.
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
+set.seed(100)
+
 rfGrid <- expand.grid(mtry = 178,
                       min.node.size = 5,
                       splitrule = "variance")
@@ -395,12 +403,13 @@ rfGrid <- expand.grid(mtry = 178,
 mod_rf_tune <- train(Y_salary ~., data = D_final, method = "ranger",
                      num.trees = 50, importance = 'impurity',
                      tuneGrid = rfGrid, trControl = trainControl("oob"))
-mod_rf_tune
 ```
 
 Next, we perform random forest on the train data set
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
+set.seed(100)
+
 #random forest regression
 train_data_rf <- train_data %>%
   select(-c(Y_salary))
@@ -424,7 +433,7 @@ knitr::kable(head(result[, 1:6]),
 The graph below shows the data between Actual Average Salary vs.
 Predicted Average Salary
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 #plot graph to compare actual vs. predicted
 ggplot(  ) + 
   geom_point( aes(x = test_data$Y_salary, y = predictions, color = 'red', alpha = 0.5) ) + 
@@ -433,7 +442,7 @@ ggplot(  ) +
   scale_color_manual(labels = c( "Actual", "Predicted"), values = c("navy", "green"))
 ```
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 #using metrics to calculate RMSE
 print(paste0('MAE: ' , mae(predictions , test_data$Y_salary) ))
 print(paste0('RMSE: ' ,caret::postResample(predictions , test_data$Y_salary)['RMSE'])) #21.44
@@ -443,7 +452,7 @@ The bar graph below shows the top 20 most important variables in this
 prediction. Based on the bar graph, the top 5 most important variables
 are "machine", "give", "expression", "predictive", and "groups".
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 #top 20 most important predictors 
 var_importance = mod_rf_tune$finalModel$variable.importance %>% 
   sort(decreasing = TRUE) %>% head(20)
@@ -490,7 +499,7 @@ the $\lambda$ constant.
 We create our XGBoost model from the caret library, using
 hyperparameters as shown below:
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
 
 trControl <- trainControl(
@@ -544,12 +553,12 @@ The hyperparameters were tuned using 5-fold cross validation and grid
 search to find the best model, and we arrived at the optimal values for
 the hyperparameters.
 
-```{r}
-pred_y = predict(xgb_caret, test_data)
+```{r, echo = FALSE, comment = "", warning = FALSE}
+pred_y_xgb = predict(xgb_caret, test_data)
 
 #measure prediction accuracy
-caret::MAE(test_data$Y_salary, pred_y) #mae
-caret::RMSE(test_data$Y_salary, pred_y) #rmse
+caret::MAE(test_data$Y_salary, pred_y_xgb) #mae
+caret::RMSE(test_data$Y_salary, pred_y_xgb) #rmse
 ```
 
 Overall, XGBoost gave an RMSE value of 16.5914.
@@ -557,7 +566,7 @@ Overall, XGBoost gave an RMSE value of 16.5914.
 Below we extracted the 20 most important features (words) from the
 XGBoost model.
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 library(xgboost)
 xgb_imp <- xgb.importance(feature_names = xgb_caret$finalModel$feature_names,
                model = xgb_caret$finalModel)
@@ -568,7 +577,7 @@ knitr::kable(head(xgb_imp),
 
 Plotting our top 20 most important variables:
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 xgb.plot.importance(xgb_imp[1:20])
 ```
 
@@ -614,7 +623,7 @@ we may use cross-validation to determine the optimal number of knots.
 We will use the following packages. First of all, we divided the dataset
 into training dataset and test dataset:
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
 
 ind_mars <- which(runif(nrow(D_dtm)) < 0.7)
@@ -635,7 +644,7 @@ Here, we built up a grid with 30 different combinations of interaction
 complexity (degree) and the number of terms to include in the final
 model (nprune).
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 marsgrid <- expand.grid(
   degree = 1:3, 
   nprune = seq(1, 100, length.out = 20) %>% floor()
@@ -646,7 +655,7 @@ We performed required grid search by using 10-fold cross-validation:
 
 -   Our chosen parameters.
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
 
 mars_cv <- train(Y_salary ~., data = train_mars,
@@ -659,12 +668,12 @@ mars_cv <- train(Y_salary ~., data = train_mars,
 knitr::kable(mars_cv$bestTune) #nprune = 11, degree = 1
 ```
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 knitr::kable(mars_cv$results %>%
   filter(nprune == mars_cv$bestTune$nprune, degree == mars_cv$bestTune$degree))
 ```
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 ggplot(mars_cv)
 ```
 
@@ -685,7 +694,7 @@ We also kept track of how the residual sums of squares (RSS) change when
 terms are added. However, we noticed that there is no much difference
 between these two measures.
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 plot_GCV <- vip(mars_cv, num_features = 20, geom = "point", value = "gcv") + ggtitle("GCV")
 plot_RSS <- vip(mars_cv, num_features = 20, geom = "point", value = "rss") + ggtitle("RSS")
 
@@ -695,7 +704,7 @@ gridExtra::grid.arrange(plot_GCV, plot_RSS, ncol = 2)
 We used the optimal hyperparameters to train the model and then
 calculated the RMSE:
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
 
 marsgrid_tuned <- expand.grid(
@@ -734,7 +743,7 @@ select newly mapped factors that best describe the response variable.
 Below are the required packages. We divided the dataset into training
 dataset and test dataset first:
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
 # 80/20 split
 inTraining <- createDataPartition(D_dtm$Y_salary, p = .7, list = FALSE)
@@ -747,7 +756,7 @@ model (ncomp) .We conduct a grid search that minimize the prediction
 error to achieve the optimal hyperparameter. The grid search was
 conducted by 10-fold cross-validation:
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
 
 plsGrid <- expand.grid(
@@ -767,14 +776,14 @@ pls_cv <- train(
 pls_cv
 ```
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 plot(pls_cv)
 ```
 
 We used the optimal hyperparameter to train the model and calculated the
 RMSE as well:
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
 
 plsGrid_tuned <- expand.grid(
@@ -798,7 +807,7 @@ The barplots below show that 'credit', 'lead', 'mission', 'actuarial'
 and 'scientists' are positive predictors, while 'support', 'use',
 'project', 'solutions' and 'food' are negative predictors:
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 coefficients = coef(pls_cv_tuned$finalModel)
 sum.coef = sum(sapply(coefficients, abs))
 coefficients = coefficients * 100 / sum.coef
@@ -807,7 +816,7 @@ coefficients = sort(coefficients[, 1 , 1])
 barplot(tail(coefficients, 5))
 ```
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 barplot(head(coefficients, 5))
 ```
 
@@ -815,7 +824,7 @@ barplot(head(coefficients, 5))
 
 ## Summary of results
 
-```{r}
+```{r, echo = FALSE, comment = "", warning = FALSE}
 final_results <- data.frame(Model = c('MLR', 'Random Forest', 'XGBoost', 'MARS', 'PLS'),
                             RMSE = c(16.20561, 21.6223370884116, 16.5914, 30.0025, 23.87552))
 knitr::kable(final_results, 
