@@ -379,6 +379,7 @@ random forest to select the optimal values of the hyper-parameters try
 set.seed(100)
 
 #getting optimal hyper parameters
+set.seed(123)
 mod_rf <- train(Y_salary ~., data = D_final, method = "ranger",
                 num.trees = 50, importance = 'impurity',
                 trControl = trainControl("oob"))
