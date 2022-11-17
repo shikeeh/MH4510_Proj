@@ -417,18 +417,6 @@ knitr::kable(head(result[, c('predictions', 'Y_salary', 'education', 'learn',
              caption = "A sample of our Random Forest prediction results.")
 ```
 
-The graph below shows the data between Actual Average Salary vs.
-Predicted Average Salary
-
-```{r, echo = FALSE, comment = "", warning = FALSE, fig.cap="\\label{fig:figs}Actual average salary vs. predicted average salary"}
-#plot graph to compare actual vs. predicted
-ggplot(result, aes(x = Y_salary, y = predictions)) +
-  geom_point(colour = "darkgreen", alpha = 0.65) +
-  geom_abline(intercept = 0, slope = 1, alpha = 0.5) +
-  expand_limits(x = 25, y = 25) + 
-  labs(x = "Actual Average Salary", y = "Predicted Average Salary")
-```
-
 Our RMSE for the Random Forest model is shown below:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
