@@ -325,26 +325,14 @@ ggplot(var_coeff, aes(x=coefficients.mlr_mod.,
 
 ### Random Forest
 
-The next step is to visualize our data using decision trees.
-Nevertheless, decision trees alone have a significant variance, which
-can make the trees trained on various datasets appear quite distinct
-from one another. Random forest was chosen over a bagged ensemble as
-there may be one or more really powerful predictors in our dataset,
-preventing other predictors from having a chance to be included. As a
-result, the predictions made by the trees will be strongly correlated
-and increasing the number of trees will not make the variance smaller
-Therefore, in order to lower the variance, we shall propose an ensemble
-technique.
-
-We performed grid search with oob (out-of-bag error) while tuning the
-random forest to select the optimal values of the hyper-parameters try
-(number of variables) and min.node.size (minimal node size):
+The next step is to visualize our data using random forest decision trees. We 
+first train the data to obtain its optimal hyperparameters. We then perform 
+grid search for the optimal hyperparameter values to minimize the out-of-bag error. 
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
 
 #getting optimal hyper parameters
-set.seed(123)
 mod_rf <- train(Y_salary ~., data = D_final, method = "ranger",
                 num.trees = 50, importance = 'impurity',
                 trControl = trainControl("oob"))
