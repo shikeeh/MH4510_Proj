@@ -235,7 +235,6 @@ The LASSO procedure is as follows:
 
 ```{r, echo = FALSE, comment = ""}
 lambda <- 10^seq(-1, 0 , length = 10)
-knitr::kable(lambda)
 ```
 
 -   Below we train our LASSO:
@@ -249,22 +248,6 @@ lasso <- train(
   tuneGrid = expand.grid(alpha = 1, lambda = lambda),
   preProcess = c("center","scale")
 )
-
-lasso
-```
-
--   Let us plot coefficients of LASSO.
-
-```{r, echo = FALSE}
-lambda_for_plotting <- 10^seq(from = -1, to = 1.5, length = 100)
-lasso_coefs <- coef(lasso$finalModel, lambda_for_plotting) %>%
-  as.matrix %>% t %>% as_tibble %>%
-  mutate(lambda = lambda_for_plotting)
-
-lasso_coefs %>%
-  pivot_longer(-c(1, ncol(lasso_coefs)), names_to = "variable", values_to = "coef") %>%
-  ggplot(aes(x = lambda, y = coef, group = variable, colour = variable)) +
-  geom_line() + scale_x_log10() + theme(legend.position = "none")
 ```
 
 -   Now we store our variables selected by LASSO.
@@ -326,21 +309,6 @@ mlr_mod %>%
 
 Our MLR model's RMSE value is 16.20561, the lowest we will achieve in
 this project.
-
-Below is a bar plot of the top 20 variables with the highest absolute
-coefficients.
-
-```{r, echo = FALSE, comment = "", warning = FALSE}
-var_coeff <- data.frame(coefficients(mlr_mod)) %>% 
-  arrange(desc(abs(coefficients(mlr_mod)))) %>%
-  dplyr::slice(2:21)
-
-ggplot(var_coeff, aes(x=abs(coefficients.mlr_mod.), 
-                      y=reorder(rownames(var_coeff), +abs(coefficients.mlr_mod.)))) +
-  geom_bar(stat = "identity", fill="darkgreen", alpha = 0.65) +
-  xlab("Absolute Coefficients") + ylab("Key words") +
-  coord_cartesian(xlim = c(10, 25))
-```
 
 Below is a bar plot of the top 20 variables with the highest absolute
 coefficients, but this time we reflect their relationship with salary as
