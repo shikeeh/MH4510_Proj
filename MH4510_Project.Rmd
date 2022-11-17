@@ -15,7 +15,7 @@ output:
     toc_depth: 3
     number_sections: true
     df_print: paged
-abstract: "Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish achieve job satisfaction through meaningful career opportunities. In this project, we aim to uncover key insights in data science salaries by comparing models that effectively associate keywords in job descriptions to high paying data science roles. The data is cleaned by preparing job description text for analysis by converting it into a document-term matrix. The models used are Multiple Linear Regression (MLR), Partial Least Squares (PLS), Random Forest (RF), XGBoost (XGB), and Multivariate Adaptive Regression Splines (MARS), where their performances will be assessed in relation to one another. Across all models, MLR has the lowest Root Mean Square Error (RMSE) of 16.2. In other words, MLR is the best model that accurately predicts salary, and we identified keywords used in this model."
+abstract: "Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish to achieve job satisfaction through meaningful career opportunities. In this project, we aim to uncover key insights in data science salaries by comparing models that effectively associate keywords in job descriptions to high paying data science roles. The data is cleaned by preparing job description text for analysis by converting it into a document-term matrix. The models used are Multiple Linear Regression (MLR), Partial Least Squares (PLS), Random Forest (RF), XGBoost (XGB), and Multivariate Adaptive Regression Splines (MARS), where their performances will be assessed in relation to one another. Across all models, MLR has the lowest Root Mean Square Error (RMSE) of 16.2. In other words, MLR is the best model that accurately predicts salary, and we identified keywords used in this model."
 editor_options: 
   markdown: 
     wrap: 72
@@ -674,7 +674,7 @@ include and remove variables throughout the pruning phase.
 
 After pruning, a predictor's significance value is 0 if it was never
 used in any of the MARS basis functions in the final model. There are
-only 11 features have importance values greater than 0, whereas the
+only 9 features have importance values greater than 0, whereas the
 other features all have importance values of zero since they were
 excluded from the final model.
 
