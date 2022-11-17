@@ -155,15 +155,7 @@ D_clean <- D_clean %>%
 ggplot(D_clean, aes(x=Avg.Salary.K.)) + 
   geom_histogram(fill = "darkgreen", alpha = 0.65, bins = 20)
 ```
-
-2.  Boxplots of average salaries:
-
-```{r, echo = FALSE}
-ggplot(D_clean, aes(y=Avg.Salary.K.)) +
-  geom_boxplot(fill = "darkgreen", alpha = 0.65)
-```
-
-3.  Word cloud for job descriptions:
+2.  Word cloud for job descriptions:
 
 We visualise the job descriptions with a word cloud after removal of
 words whose total frequency is below 40, and stopwords such as "the",
