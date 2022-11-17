@@ -69,8 +69,6 @@ findings to narrow down their job search based on their own preferences
 such as salary range or skills set. As such, this project aims to
 predict data science salary based on the keywords in job descriptions.
 
-\newpage
-
 # Dataset
 
 Dataset:
