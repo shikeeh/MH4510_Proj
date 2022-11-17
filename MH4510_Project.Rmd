@@ -743,9 +743,9 @@ print(caret::MAE(test_pls$Y_salary, pred_pls)) #16.63214
 print(caret::RMSE(test_pls$Y_salary, pred_pls)) #23.87552
 ```
 
-The barplots below show that 'credit', 'lead', 'mission', 'actuarial'
-and 'scientists' are positive predictors, while 'support', 'use',
-'project', 'solutions' and 'food' are negative predictors:
+The barplots below show that 'infrastructure', 'actuarial', 'problems', 'years'
+and 'optimization' are positive predictors, while 'use', 'learn',
+'across', 'support' and 'evaluate' are negative predictors:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 coefficients = coef(pls_cv_tuned$finalModel)
