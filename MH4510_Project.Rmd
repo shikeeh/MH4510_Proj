@@ -15,7 +15,7 @@ output:
     toc_depth: 3
     number_sections: true
     df_print: paged
-abstract: "Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish to achieve job satisfaction through meaningful career opportunities. In this project, we aim to uncover key insights in data science salaries by comparing models that effectively associate keywords in job descriptions to high paying data science roles. The data is cleaned by preparing job description text for analysis by converting it into a document-term matrix. The models used are Multiple Linear Regression (MLR), Partial Least Squares (PLS), Random Forest (RF), XGBoost (XGB), and Multivariate Adaptive Regression Splines (MARS), where their performances will be assessed in relation to one another. Across all models, MLR has the lowest Root Mean Square Error (RMSE) of 16.2. In other words, MLR is the best model that accurately predicts salary, and we identified keywords used in this model."
+abstract: "Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish achieve job satisfaction through meaningful career opportunities. This project aims to interpret the relationship between data science salaries and keywords in job descriptions. The data is cleaned by preparing job description text for analysis by converting it into a document-term matrix. The models used are Multiple Linear Regression (MLR), Random Forest (RF), XGBoost (XGB), Multivariate Adaptive Regression Splines (MARS), and Partial Least Squares (PLS), where their performances will be assessed in relation to one another. We found that MLR has the lowest Root Mean Square Error (RMSE) of 16.2. Thus MLR is the best performing model that accurately predicts salary, and we identified keywords used in this model."
 editor_options: 
   markdown: 
     wrap: 72
@@ -42,39 +42,41 @@ planned to change jobs over the following six months, 31% of respondents
 responded "yes" (Chong, 2022). Millions of workers worldwide are no
 longer willing to return home with just a fair paycheck. They prefer to
 know how well they are progressing towards a meaningful career, which is
-a wellness, freedom, security, and experience at work, so as to achieve
+wellness, freedom, security, and experience at work, so as to achieve
 job satisfaction. As a result, job seekers should take all these factors
 into consideration when applying for a job.
 
-These factors can be further broken down into keywords in job
+These factors can be broken down and identified as keywords in job
 descriptions. Keywords are crucial to job adverts because they allow job
 seekers to narrow their search related to a role, skill, or industry for
 suitable employment (Alexander, 2019). Suitable individuals are more
-likely to find the job post when hirers and recruiters add key terms and
-phrases that are relevant to a particular role. This increases the
+likely to find the job post when employers and recruiters add key terms
+and phrases that are relevant to a particular role. This increases the
 percentage of successfully matching job seekers with their ideal jobs.
 
 ## Objective
 
-As most employers will be impressed when they notice that the resume is
-customised, highlighting relevant skills and using certain keywords
-suited to that particular company or position, job seekers can use these
-findings to narrow down their job search based on their own preferences
-such as salary range or skills set. As such, this project aims to
-predict data science salary based on the keywords in job descriptions.
+This project aims to interpret the relationship between data science
+salaries and keywords in job descriptions. Doing so will give insight to
+keywords that have a significant impact on salaries. Job seekers will
+also be able to set healthy salary expectations based on keywords that
+reflect their skill set and values. Identified keywords can also give
+insight to areas that job seekers can look to upskill in.
 
 \newpage
 
-# Dataset
+# Data set
 
-Dataset:
-<https://www.kaggle.com/datasets/nikhilbhathi/data-scientist-salary-us-glassdoor>
+## Description of data set
 
-## Description of dataset
-
-Import relevant libraries:
+[Click
+here](https://www.kaggle.com/datasets/nikhilbhathi/data-scientist-salary-us-glassdoor)
+to access our data set. The owner scrapped the data from Glassdoor and
+pre-processed it. It contains 41 variables, including the average data
+science salary measured in thousand, and has 742 observations.
 
 ```{r, include = FALSE}
+# Import relevant libraries:
 library(tidyverse)
 library(tm)
 library(wordcloud)
@@ -105,37 +107,31 @@ knitr::kable(head(D[, 20:25]),
              caption = "A sample of our dataset.")
 ```
 
-This dataset has 41 variables, consisting of numerical, categorical, and
-text. Some variables are derivations from others, and as such we will
-not be using all 41 variables.
-
 \newpage
 
 ## Exploratory data analysis
 
+### Feature selection
+
+Since this project focuses on job description and its relationship to
+salary, we will only keep the "Job Description" variable and the "Avg
+Salary(K)" variable. In the next section, we process our "Job
+Description" variable so that it is usable for our models.
+
 ### Data cleaning
 
-Note: the dataset downloaded has already been cleaned by the owner, but
-we will do some additional cleaning and data preparation so that it is
-suited for our needs.
-
--   Removing "\\n" from job descriptions, cleaning job descriptions
-    text, and creating a new variable to store lengths of job
-    description texts:
+We clean our "Job Description" variable by creating a new variable
+"cleaned_text" that stores only alphanumeric characters and converts all
+the text to lowercase. We then only keep the "Avg Salary(K)" and
+"cleaned_text" variables.
 
 ```{r, echo = FALSE}
-# Keep only alphabets and spaces, changing texts to lowercase, and create a new variable to store length of job description texts
+# Keep only alphabets and spaces, changing texts to lowercase, and remove all "\n"
 D_clean <- D %>%
-  # create a new variable containing only lowercase text from Job.Description
   mutate(cleaned_text = gsub("[^a-zA-Z0-9]", " ", D$`Job Description`)) %>%
   mutate(cleaned_text = gsub("\\n", " ", cleaned_text)) %>%
   mutate(cleaned_text = tolower(cleaned_text)) 
 ```
-
-### Feature selection
-
-Our project's focus is on job descriptions and their relationship with
-data science salaries. As such, we will only keep these two variables
 
 ```{r, echo = FALSE}
 #remove unnecessary columns 
@@ -145,7 +141,9 @@ D_clean <- D_clean %>%
 
 ### Data visualizations
 
-1.  Histograms of salaries in thousands:
+To get a better understanding of the data we are working with, we
+perform some data visualizations. First, we take a look at the
+distribution of the average salary (in thousands).
 
 ```{r, echo = FALSE, fig.cap="\\label{fig:figs}Histogram of salaries"}
 ggplot(D_clean, aes(x=`Avg Salary(K)`)) + 
@@ -156,12 +154,11 @@ From our histogram, we see that our average salary (in thousands)
 roughly follows a normal distribution. Hence we will predict the raw
 annual salary without further transformations.
 
-2.  Word cloud for job descriptions:
-
-We visualise the job descriptions with a word cloud after removal of
-words whose total frequency is below 40, and stopwords such as "the",
-"he" etc. as these are common words that do not store any informational
-value in our analysis.
+Secondly, we visualize the job descriptions with a word cloud after
+removing words that occur less than 40 times, and stopwords such as
+"the", "he" etc. as these are common words that do not store any
+informational value in our analysis. Below we show 100 of the most
+common words.
 
 ```{r, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:figs}Job description word cloud"}
 visualize_text <- function(x) {
@@ -179,13 +176,14 @@ visualize_text <- function(x) {
 visualize_text(D_clean$cleaned_text)
 ```
 
-We set the minimum occurrence of words to 40, and show the 100 most
-common words above.
+### Document-term matrix
 
-### Feature engineering
+The document-term matrix (DTM) is a table reflecting the frequency of
+each word where the column names represent words and the row names
+represent documents, i.e., the reviews.
 
-Next we create a document-term matrix (DTM) for our job descriptions,
-setting minimum word frequency to 40.
+We create a DTM for our job descriptions, setting minimum word frequency
+to 40.
 
 ```{r, echo = FALSE, comment = ""}
 corpus <- VCorpus(VectorSource(D_clean$cleaned_text))
@@ -193,18 +191,18 @@ dtm <- DocumentTermMatrix(corpus)
 
 words_freq <- termFreq(D_clean$cleaned_text)
 frequent_words <- words_freq[words_freq >= 40]
+frequent_words <- frequent_words[!(names(frequent_words) %in% stopwords())]
 
 cat("Setting minimum word frequency to 40, we retain", length(frequent_words), "words out of the original", length(words_freq), "words.", "\n")
 ```
 
 ```{r, echo = FALSE, comment = ""}
-frequent_words <- frequent_words[!(names(frequent_words) %in% stopwords())]
 dtm <- dtm[ , names(frequent_words)]
 
 cat("Our document-term matrix consists of", nrow(dtm), "job descriptions against", ncol(dtm), 'words present in our vocab after removing stopwords.', '\n')
 ```
 
-Next, we create a new dataframe for our DTM.
+We create a new data frame for our DTM and produce a sample of it below.
 
 ```{r, echo = FALSE}
 D_dtm <- dtm %>%
@@ -353,7 +351,7 @@ description will lower the predicted salary.
 ### Random Forest
 
 The next step is to visualize our data using random forest decision
-trees. We first train the data to obtain its optimal hyper-parameters. 
+trees. We first train the data to obtain its optimal hyper-parameters.
 We then perform grid search on the optimal hyper-parameter values to
 minimize the out-of-bag error.
 
@@ -656,9 +654,9 @@ include and remove variables throughout the pruning phase.
 
 After pruning, a predictor's significance value is 0 if it was never
 used in any of the MARS basis functions in the final model. There are
-only 9 features have importance values greater than 0, whereas the
-other features all have importance values of zero since they were
-excluded from the final model.
+only 9 features have importance values greater than 0, whereas the other
+features all have importance values of zero since they were excluded
+from the final model.
 
 We also kept track of how the residual sums of squares (RSS) change when
 terms are added. However, we noticed that there is no much difference
