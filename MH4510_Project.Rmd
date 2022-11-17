@@ -808,7 +808,7 @@ ggplot(coefficients_pls_df, aes(x=coefficients_pls,
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 final_results <- data.frame(Model = c('MLR', 'Random Forest', 'XGBoost', 'MARS', 'PLS'),
-                            RMSE = c(16.21, 21.62, 16.59, 30.00, 23.88))
+                            RMSE = c(16.21, 21.59, 16.59, 30.00, 23.88))
 knitr::kable(final_results, 
              caption = "Accuracy of models.")
 ```
