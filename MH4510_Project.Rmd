@@ -357,8 +357,8 @@ description will lower the predicted salary.
 ### Random Forest
 
 The next step is to visualize our data using random forest decision
-trees. We first train the data to obtain its optimal hyperparameters. We
-then perform grid search for the optimal hyper-parameter values to
+trees. We first train the data to obtain its optimal hyper-parameters. 
+We then perform grid search on the optimal hyper-parameter values to
 minimize the out-of-bag error.
 
 ```{r, include = FALSE}
@@ -390,7 +390,7 @@ set.seed(100)
 
 rfGrid <- expand.grid(mtry = 178,
                       min.node.size = 5,
-                      splitrule = "variance")
+                      splitrule = "extratrees")
                       
 mod_rf_tune <- train(Y_salary ~., data = D_final, method = "ranger",
                      num.trees = 50, importance = 'impurity',
@@ -432,14 +432,14 @@ ggplot(result, aes(x = Y_salary, y = predictions)) +
 Our RMSE for the Random Forest model is shown below:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
-#using metrics to calculate RMSE
-cat("MAE:", round(caret::MAE(test_data$Y_salary, predictions_rf), 2), "\n")
+#calculating RMSE and MAE
 cat("RMSE:", round(caret::RMSE(test_data$Y_salary, predictions_rf), 2), "\n")
+cat("MAE:", round(caret::MAE(test_data$Y_salary, predictions_rf), 2), "\n")
 ```
 
 The bar graph below shows the top 20 most important variables in this
 prediction. Based on the bar graph, the top 5 most important variables
-are "machine", "give", "expression", "predictive", and "groups".
+are "machine", "analyst", "give", "phd", and "scientists".
 
 ```{r, echo = FALSE, comment = "", warning = FALSE, fig.cap="\\label{fig:figs}Random forest top 20 most important variables"}
 #top 20 most important predictors 
