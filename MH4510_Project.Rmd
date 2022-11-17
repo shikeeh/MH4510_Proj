@@ -683,9 +683,9 @@ terms are added. However, we noticed that there is no much difference
 between these two measures.
 
 ```{r, echo = FALSE, comment = "", warning = FALSE, fig.cap="\\label{fig:figs}MARS top 20 most important variables"}
-plot_GCV <- vip(mars_cv, num_features = 20, geom = "col", value = "gcv", 
+plot_GCV <- vip(mars_cv, num_features = 20, geom = "col", type = "gcv", 
                 aesthetics = list(fill = "darkgreen", alpha = 0.7)) + ggtitle("GCV")
-plot_RSS <- vip(mars_cv, num_features = 20, geom = "col", value = "rss", 
+plot_RSS <- vip(mars_cv, num_features = 20, geom = "col", type = "rss", 
                 aesthetics = list(fill = "darkgreen", alpha = 0.7)) + ggtitle("RSS")
 
 gridExtra::grid.arrange(plot_GCV, plot_RSS, ncol = 2)
@@ -817,7 +817,7 @@ coefficients_pls_df <- data.frame(coefficients_pls) %>%
   dplyr::slice(1:20)
 
 ggplot(coefficients_pls_df, aes(x=coefficients_pls, 
-                      y=reorder(rownames(var_coeff), coefficients_pls))) +
+                      y=reorder(rownames(coefficients_pls_df), coefficients_pls))) +
   geom_bar(stat = "identity", fill="darkgreen", alpha = 0.65) +
   xlab("Coefficients") + ylab("Key words")
 ```
