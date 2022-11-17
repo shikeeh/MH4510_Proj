@@ -14,14 +14,7 @@ output:
     toc_depth: 3
     number_sections: true
     df_print: paged
-abstract: "Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish achieve job satisfaction 
-through meaningful career opportunities. In this project, we aim to uncover key insights in data science salaries by comparing models 
-that effectively associate keywords in job descriptions to high paying data science roles. The data is cleaned by preparing job description
-text for analysis, and filtering the keywords in job descriptions with a minimum occurrence of 40. Least Absolute Shrinkage and Selection 
-Operator (LASSO) is then applied to select the most important variables to be used in the model. The models used are Multiple Linear 
-Regression (MLR), Partial Least Squares (PLS), Random Forest, XGBoost, and Multivariate Adaptive Regression Splines (MARS), where their 
-performances will be assessed in relation to one another. Across all models, MLR has the lowest Root Mean Square Error (RMSE) of 16.2. 
-In other words, MLR is the best model that accurately predicts salary, and we identified keywords used in this model."
+abstract: "Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish achieve job satisfaction through meaningful career opportunities. In this project, we aim to uncover key insights in data science salaries by comparing models that effectively associate keywords in job descriptions to high paying data science roles. The data is cleaned by preparing job description text for analysis, and filtering the keywords in job descriptions with a minimum occurrence of 40. Least Absolute Shrinkage and Selection Operator (LASSO) is then applied to select the most important variables to be used in the model. The models used are Multiple Linear Regression (MLR), Partial Least Squares (PLS), Random Forest, XGBoost, and Multivariate Adaptive Regression Splines (MARS), where their performances will be assessed in relation to one another. Across all models, MLR has the lowest Root Mean Square Error (RMSE) of 16.2. In other words, MLR is the best model that accurately predicts salary, and we identified keywords used in this model."
 editor_options: 
   markdown: 
     wrap: 72
@@ -155,6 +148,7 @@ D_clean <- D_clean %>%
 ggplot(D_clean, aes(x=Avg.Salary.K.)) + 
   geom_histogram(fill = "darkgreen", alpha = 0.65, bins = 20)
 ```
+
 2.  Word cloud for job descriptions:
 
 We visualise the job descriptions with a word cloud after removal of
@@ -325,9 +319,10 @@ ggplot(var_coeff, aes(x=coefficients.mlr_mod.,
 
 ### Random Forest
 
-The next step is to visualize our data using random forest decision trees. We 
-first train the data to obtain its optimal hyperparameters. We then perform 
-grid search for the optimal hyperparameter values to minimize the out-of-bag error. 
+The next step is to visualize our data using random forest decision
+trees. We first train the data to obtain its optimal hyperparameters. We
+then perform grid search for the optimal hyperparameter values to
+minimize the out-of-bag error.
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
