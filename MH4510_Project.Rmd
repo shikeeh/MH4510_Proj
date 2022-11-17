@@ -420,7 +420,7 @@ knitr::kable(head(result[, c('predictions', 'Y_salary', 'education', 'learn',
 Our RMSE for the Random Forest model is shown below:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
-#calculating RMSE and MAE
+#measure prediction accuracy
 cat("RMSE:", round(caret::RMSE(test_data$Y_salary, predictions_rf), 2), "\n")
 cat("MAE:", round(caret::MAE(test_data$Y_salary, predictions_rf), 2), "\n")
 ```
@@ -535,8 +535,8 @@ Below we compute our RMSE.
 pred_y_xgb = predict(xgb_caret, test_data)
 
 #measure prediction accuracy
-cat("MAE:", round(caret::MAE(test_data$Y_salary, pred_y_xgb), 2), "\n")
 cat("RMSE:", round(caret::RMSE(test_data$Y_salary, pred_y_xgb), 2), "\n")
+cat("MAE:", round(caret::MAE(test_data$Y_salary, pred_y_xgb), 2), "\n")
 ```
 
 Overall, XGBoost gave an RMSE value of 16.59.
@@ -671,9 +671,9 @@ terms are added. However, we noticed that there is no much difference
 between these two measures.
 
 ```{r, echo = FALSE, comment = "", warning = FALSE, fig.cap="\\label{fig:figs}MARS top 20 most important variables"}
-plot_GCV <- vip(mars_cv, num_features = 20, geom = "col", type = "gcv", 
+plot_GCV <- vip(mars_cv, num_features = 20, geom = "col", value = "gcv", 
                 aesthetics = list(fill = "darkgreen", alpha = 0.7)) + ggtitle("GCV")
-plot_RSS <- vip(mars_cv, num_features = 20, geom = "col", type = "rss", 
+plot_RSS <- vip(mars_cv, num_features = 20, geom = "col", value = "rss", 
                 aesthetics = list(fill = "darkgreen", alpha = 0.7)) + ggtitle("RSS")
 
 gridExtra::grid.arrange(plot_GCV, plot_RSS, ncol = 2)
@@ -700,8 +700,8 @@ mars_cv_tuned <- train(Y_salary ~., data = train_data,
 pred_mars = predict(mars_cv_tuned, test_data)
 
 #measure prediction accuracy
-cat("MAE:", round(caret::MAE(test_data$Y_salary, pred_mars), 2), "\n")
 cat("RMSE:", round(caret::RMSE(test_data$Y_salary, pred_mars), 2), "\n")
+cat("MAE:", round(caret::MAE(test_data$Y_salary, pred_mars), 2), "\n")
 ```
 
 \newpage
@@ -785,8 +785,8 @@ pls_cv_tuned <- train(Y_salary ~., data = train_pls,
 pred_pls = predict(pls_cv_tuned, test_pls)
 
 #measure prediction accuracy
-cat("MAE:", round(caret::MAE(test_pls$Y_salary, pred_pls), 2), "\n")
 cat("RMSE:", round(caret::RMSE(test_pls$Y_salary, pred_pls), 2), "\n")
+cat("MAE:", round(caret::MAE(test_pls$Y_salary, pred_pls), 2), "\n")
 ```
 
 The barplots below show that 'addition', 'generate', 'hypotheses',
@@ -805,7 +805,7 @@ coefficients_pls_df <- data.frame(coefficients_pls) %>%
   dplyr::slice(1:20)
 
 ggplot(coefficients_pls_df, aes(x=coefficients_pls, 
-                      y=reorder(rownames(coefficients_pls_df), coefficients_pls))) +
+                      y=reorder(rownames(var_coeff), coefficients_pls))) +
   geom_bar(stat = "identity", fill="darkgreen", alpha = 0.65) +
   xlab("Coefficients") + ylab("Key words")
 ```
@@ -816,7 +816,7 @@ ggplot(coefficients_pls_df, aes(x=coefficients_pls,
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 final_results <- data.frame(Model = c('MLR', 'Random Forest', 'XGBoost', 'MARS', 'PLS'),
-                            RMSE = c(16.20561, 21.6223370884116, 16.5914, 30.0025, 23.87552))
+                            RMSE = c(16.21, 21.62, 16.59, 30.00, 23.88))
 knitr::kable(final_results, 
              caption = "Accuracy of models.")
 ```
