@@ -206,7 +206,8 @@ cat("Setting minimum word frequency to 40, we retain", length(frequent_words), "
 # finally, we filter our DTM as well
 dtm <- dtm[ , names(frequent_words)]
 
-cat("Our document-term matrix consists of", nrow(dtm), "job descriptions against", ncol(dtm), 'words present in our vocab after removing stopwords.', '\n')
+cat("Our document-term matrix consists of", nrow(dtm), "job descriptions against", ncol(dtm), 'words present in 
+our vocab after removing stopwords.', '\n')
 ```
 
 We create a new data frame for our DTM and produce a sample of it below.
