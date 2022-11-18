@@ -318,13 +318,16 @@ features selected by LASSO.
 mlr_mod <- lm(Y_salary ~ .,
                data = train_data)
 
-mlr_mod %>%
+mlr_rmse <- mlr_mod %>%
   predict(test_data) %>%
   caret::RMSE(test_data$Y_salary)
+
+cat("RMSE:", round(mlr_rmse, 2), "\n")
 ```
 
-Our MLR model's RMSE value is 16.20561, the lowest we will achieve in
-this project.
+After using cross-validation to find our lambda value for
+regularization, our MLR model's RMSE value (rounded to two decimal
+places) is 16.21, the lowest we will achieve in this project.
 
 Below is a bar plot of the top 20 variables with the highest absolute
 coefficients. The sign of their coefficients reflect a positive or
@@ -338,7 +341,7 @@ var_coeff <- data.frame(coefficients(mlr_mod)) %>%
 ggplot(var_coeff, aes(x=coefficients.mlr_mod., 
                       y=reorder(rownames(var_coeff), +coefficients.mlr_mod.))) +
   geom_bar(stat = "identity", fill="darkgreen", alpha = 0.65) +
-  xlab("Coefficients") + ylab("Key words")
+  xlab("Coefficients") + ylab("Keywords")
 ```
 
 This plot shows that the presence of words such as "eligible" and
@@ -393,7 +396,7 @@ mod_rf_tune <- train(Y_salary ~., data = D_final, method = "ranger",
 mod_rf_tune
 ```
 
-```{r, echo = FALSE, comment = "", warning = FALSE}
+```{r, include = FALSE}
 set.seed(100)
 
 regr <- randomForest(x = train_data_nolabel, 
@@ -402,16 +405,10 @@ regr <- randomForest(x = train_data_nolabel,
                      ntree = 1000)
 
 predictions_rf <- predict(regr, test_data_nolabel)
-
-result <- test_data
-result['predictions'] <- predictions_rf
-
-knitr::kable(head(result[, c('predictions', 'Y_salary', 'education', 'learn', 
-                              'machine', 'experience', 'analytics', 'support')]), 
-             caption = "A sample of our Random Forest prediction results.")
 ```
 
-Our RMSE for the Random Forest model is shown below:
+Our RMSE for the Random Forest model (rounded to two decimal places) is
+as shown below:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 #measure prediction accuracy
@@ -430,45 +427,48 @@ var_importance = mod_rf_tune$finalModel$variable.importance %>%
 data.frame(variable = names(var_importance), importance = var_importance) %>% 
   ggplot(aes(x = importance, y = reorder(variable, importance))) + 
   geom_col(fill = "darkgreen", alpha = 0.7) + 
-  xlab("Importance") + ylab("Variables") 
+  xlab("Importance") + ylab("Keywords") 
 ```
 
 \newpage
 
 ### XGBoost
 
-Like random forests, gradient boosting machines does classification
-based on decision trees. However, while random forest builds an ensemble
-of deep (i.e complex) trees that are independent of one another,
-gradient boosting machines build shallow trees sequentially, where each
-tree learns and improves from the previous tree. This means that one
-would start with a weak model and sequentially boost its performance by
-allowing each new tree to focus on training data where the previous tree
-had the largest errors in prediction (or residuals). This is done by
-fitting each tree in the sequence according to the residuals of the
-previous tree.
+Like random forests, gradient boosting machines are based on decision
+trees. However, while random forest builds an ensemble of deep (i.e
+complex) trees independent of one another, gradient boosting builds
+shallow trees sequentially, where each tree learns and improves from the
+previous tree. This is achieved by starting with a weak model and
+subsequently boosting its performance by allowing each new tree to focus
+on training data where the previous tree had the largest errors (or
+residuals) in prediction. Each tree in the sequence is thus fitted
+according to the residuals of the previous tree.
 
 Moreover, it computes the second-order gradients, i.e. second partial
 derivatives of the loss function, which provides more information about
 the direction of gradients and how to get to the minimum of our loss
 function while gradient boost uses the loss function of simple decision
-tree model as a proxy to minimize the error of the overall model. In
-addition, it uses advanced regularization (L1 and L2), which improves
-model generalization.
+tree model as a proxy to minimize the error of the overall model.
 
-Each weight in all the trees would be multiplied by the learning rate in
-an XGBoost model, such that
+The objective function (loss function and regularization) at an
+iteration $t$ that we need to minimize is as such:
 
 $$
-w_j = \text{Learning Rate} \times \frac{\sum_{i\in I_j}\frac{\partial Loss}{\partial(\hat y=0)}}{\sum_{i\in I_j}\frac{\partial^2 Loss}{\partial(\hat y=0)^2} + \lambda}
+\mathcal{L}^{(t)} = \sum_{i=1}^n l(y_i, \hat y_i ^{(t-1)} + f_t (\mathbf{x}_i)) + \Omega(f_t)
 $$
 
-where $I_j$ is a set containing all the instances (($x, y$) data points)
-at a leaf, and $w_j$ is the weight at leaf $j$ with regularization from
-the $\lambda$ constant.
+where $\Omega(f) = \gamma T + \frac{1}{2} \lambda \Vert w\Vert ^2$
+
+The XGBoost objective is trained in an additive manner. $l$ is a
+differentiable convex loss function that measures the difference between
+prediction $\hat y_i$ and target $y_i$. The second term $\Omega$
+penalizes the complexity of the model. From the equation, we greedily
+add the $f_t$ that improves our model the most. Second-order
+approximation can be used to quickly optimize the objective in the
+general setting.
 
 We create our XGBoost model from the caret library, using
-hyperparameters as shown below:
+hyper-parameters as shown below:
 
 ```{r, include = FALSE}
 set.seed(100)
@@ -489,6 +489,17 @@ xgbGrid <- expand.grid(
   subsample = 1
 )
 
+# To use for cross validation
+xgbGrid_2 <- expand.grid(
+  nrounds = seq(100, 650, length = 12),
+  eta = seq(0.2, 0.3, length = 11),
+  max_depth = seq(2, 10, length = 9),
+  gamma = seq(0, 0.1, length = 11),
+  colsample_bytree = 1,
+  min_child_weight = 1,
+  subsample = 1
+)
+
 xgb_caret <- train(Y_salary ~.,
                    data = train_data,
                    method = "xgbTree",
@@ -496,7 +507,7 @@ xgb_caret <- train(Y_salary ~.,
                    tuneGrid = xgbGrid)
 ```
 
-As shown above, we have used these hyperparameters:
+in our model, we have used these hyperparameters:
 
 1.  *gamma*: Pseudo-regularisation hyperparameter that controls the
     complexity of each tree.
@@ -522,7 +533,15 @@ The hyperparameters were tuned using 5-fold cross validation and grid
 search to find the best model, and we arrived at the optimal values for
 the hyperparameters.
 
-Below we compute our RMSE.
+Our chosen values for our hyper-parameters (through cross-validation)
+and our RMSE for the XGBoost model (rounded to two decimal places) are
+as shown below:
+
+```{r, echo = FALSE, comment = "", warning = FALSE}
+knitr::kable(data.frame(xgb_caret$finalModel$params) %>%
+  dplyr::select(1:6) %>% 
+  mutate(nrounds = 650))
+```
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 pred_y_xgb = predict(xgb_caret, test_data)
@@ -533,24 +552,21 @@ cat("RMSE:", round(caret::RMSE(test_data$Y_salary, pred_y_xgb), 2), "\n")
 
 Overall, XGBoost gave an RMSE value of 16.59.
 
-Below we extracted the 20 most important features (words) from the
-XGBoost model.
+We extracted the 20 most important features (words) from the XGBoost
+model. The bar graph below shows the top 20 most important words in this
+model. Based on the bar graph, the top 5 most important variables are
+"machine", "give", "education", "analyst", and "phd".
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 library(xgboost)
 xgb_imp <- xgb.importance(feature_names = xgb_caret$finalModel$feature_names,
                model = xgb_caret$finalModel)
-
-knitr::kable(head(xgb_imp), 
-             caption = "Some of our 20 most important features.")
 ```
-
-Plotting our top 20 most important variables:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE, fig.cap="\\label{fig:figs}XGBoost top 20 most important variables"}
 ggplot(xgb_imp[1:20], aes(x = Gain, y = reorder(Feature, Gain))) + 
   geom_col(fill = "darkgreen", alpha = 0.7) + 
-  xlab("Importance") + ylab("Variables") 
+  xlab("Importance") + ylab("Keywords") 
 ```
 
 \newpage
@@ -607,12 +623,12 @@ cat("Dimensions of the MARS training dataset are", dim(train_mars), "\n")
 cat("Dimensions of the MARS test dataset are", dim(test_mars), "\n")
 ```
 
-MARS model have two hyperparameters: the maximum degree of interactions
+MARS model have two hyper-parameters: the maximum degree of interactions
 and the number of terms retained in the final model. To achieve the
 optimal combination of these tuning parameters, we must conduct a grid
 search that minimize the error of prediction.
 
-Here, we built up a grid with 30 different combinations of interaction
+We built up a grid with 30 different combinations of interaction
 complexity (degree) and the number of terms to include in the final
 model (nprune).
 
@@ -623,9 +639,8 @@ marsgrid <- expand.grid(
 )
 ```
 
-We performed required grid search by using 10-fold cross-validation:
-
--   Our chosen parameters.
+We performed required grid search by using 10-fold cross-validation to
+determine our parameters:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
@@ -636,8 +651,6 @@ mars_cv <- train(Y_salary ~., data = train_mars,
   trControl = trainControl(method = "cv", number = 10),
   tuneGrid = marsgrid
 )
-
-knitr::kable(mars_cv$bestTune) #nprune = 11, degree = 1
 ```
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
@@ -671,7 +684,7 @@ plot_RSS <- vip(mars_cv, num_features = 20, geom = "col", value = "rss",
 gridExtra::grid.arrange(plot_GCV, plot_RSS, ncol = 2)
 ```
 
-We used the optimal hyperparameters to train the model and then
+We used the optimal hyper-parameters to train the model and then
 calculated the RMSE:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
@@ -710,8 +723,8 @@ variables. The response variable is not taken into account during the
 dimension reduction process in PCA. PLS, on the other hand, seeks to
 select newly mapped factors that best describe the response variable.
 
-Below are the required packages. We divided the dataset into training
-dataset and test dataset first:
+Similar to MARS, we divided the dataset into training dataset and test
+dataset first:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
@@ -719,12 +732,16 @@ set.seed(100)
 inTraining <- createDataPartition(D_dtm$Y_salary, p = .7, list = FALSE)
 train_pls <- D_dtm[inTraining,]
 test_pls  <- D_dtm[-inTraining,]
+
+cat("Dimensions of the MARS training dataset are", dim(train_pls), "\n")
+cat("Dimensions of the MARS test dataset are", dim(test_pls), "\n")
 ```
 
-The hyperparameter for PLS model is the number of components used in the
-model (ncomp) .We conduct a grid search that minimize the prediction
-error to achieve the optimal hyperparameter. The grid search was
-conducted by 10-fold cross-validation:
+The hyper-parameter for PLS model is the number of components used in
+the model (ncomp) .We conduct a grid search that minimize the prediction
+error to achieve the optimal hyper-parameter. The grid search was
+conducted by 10-fold cross-validation, and we used the optimal
+hyper-parameter to train the model and calculated the RMSE as well:
 
 ```{r, include = FALSE}
 set.seed(100)
@@ -745,19 +762,6 @@ pls_cv <- train(
 
 pls_cv
 ```
-
-```{r, echo = FALSE, comment = "", warning = FALSE, fig.cap="\\label{fig:figs}Number of components in PLS model vs. RMSE"}
-plot(pls_cv)
-
-head(pls_cv$results)
-
-ggplot(pls_cv$results, aes(x = ncomp, y = RMSE)) +
-  geom_point(colour = "darkgreen", alpha = 0.7) +
-  labs(x = "No. of Components", y = "RMSE (Cross-Validation)")
-```
-
-We used the optimal hyperparameter to train the model and calculated the
-RMSE as well:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
@@ -816,28 +820,32 @@ knitr::kable(final_results,
 Recommendation engines are a commonly found solution applied to job
 search portals, such as the Singapore government's national jobs portal,
 MyCareersFuture. However, more can be done to bridge the gap between job
-seekers and their desired careers. In this project, we have produced
-models that predict the expected average salary earned given a job
-description. Our best performing model, Multiple Linear Regression, can
-be used to help workers set expectations of salary based on keywords
-they value as important in search of a job. This will help job seekers
-focus on searching for their desired job role rather than focus on
-maximizing salary earned, which will hopefully increase job
-satisfaction. The model also identifies key terms such as "eligible",
-"mongodb", "upon", "francisco", and "hypotheses". Some of these keywords
-may not seem to make sense, and understanding the importance of these
-words is unclear. Some of these words, on the other hand, give insight
-into areas that job seekers can focus on, be it upskilling (for example,
-learning MongoDB), or narrowing their job search to sectors such as
-actuarial science or molecular chemistry in order to maximize their
-potential salary.
+seekers and job satisfaction. In this project, we have produced models
+that predict the expected average salary earned given a job description.
+Our best performing model, Multiple Linear Regression, can be used to
+help workers set expectations of salary based on keywords they value as
+important in search of a job. This will help job seekers focus on
+searching for their desired job role rather than focus on maximizing
+salary earned, which will hopefully increase job satisfaction.
+
+MLR also identified key terms such as "eligible", "mongodb", "upon",
+"francisco", and "hypotheses". Some of these keywords may not seem to
+make sense, and understanding the importance of these words is unclear.
+Some of these words, on the other hand, give insight into areas that job
+seekers can focus on, be it upskilling (for example, learning MongoDB),
+or narrowing their job search to sectors such as actuarial science or
+molecular chemistry in order to maximize their potential salary.
 
 Based on RMSE, our best model uses Multiple Linear Regression, and it
 has identified key terms that have a significant impact on data science
 salary. However, Multiple Linear Regression does not identify the same
-important features (words) as our other models. Further research is
-required to better understand the difference between models and why they
-identify vastly different features as important.
+important features (words) as our other models. Comparing identified
+important keywords between models was also not feasible within this
+project as each models used different methods of ranking the importance
+of variables. Different models also identified different keywords as
+important. Further research is required to better understand the
+difference between models and why they identify vastly different
+features as important.
 
 \newpage
 

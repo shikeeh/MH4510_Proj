@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.26)  17 NOV 2022 20:01
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.26)  18 NOV 2022 16:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -430,15 +430,6 @@ LaTeX Warning: Label `fig:figs' multiply defined.
 
 LaTeX Warning: Label `fig:figs' multiply defined.
 
-
-LaTeX Warning: Label `fig:figs' multiply defined.
-
-
-LaTeX Warning: Label `fig:figs' multiply defined.
-
-
-LaTeX Warning: Label `fig:figs' multiply defined.
-
 )
 \openout1 = `MH4510_Project.aux'.
 
@@ -602,166 +593,133 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 
 {/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-13.
+12.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-222.
+221.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [3]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 2
-92.
-(/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ts1lmr.fd
-File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
 <MH4510_Project_files/figure-latex/unnamed-chunk-5-1.pdf, id=75, 459.7175pt x 3
 15.1775pt>
 File: MH4510_Project_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (typ
 e pdf)
 <use MH4510_Project_files/figure-latex/unnamed-chunk-5-1.pdf>
 Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-5-1.pd
-f  used on input line 315.
+f  used on input line 302.
 (pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
-<MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pdf, id=76, 268.00125pt x 
-238.8925pt>
+<MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pdf, id=76, 253.94875pt x 
+249.93375pt>
 File: MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pdf Graphic file (typ
 e pdf)
 <use MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pdf>
 Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pd
-f  used on input line 338.
-(pdftex.def)             Requested size: 268.00058pt x 238.8919pt.
+f  used on input line 318.
+(pdftex.def)             Requested size: 253.95586pt x 249.94075pt.
 [4 <./MH4510_Project_files/figure-latex/unnamed-chunk-5-1.pdf>]
-Overfull \hbox (7.99359pt too wide) in paragraph at lines 353--353
-[]\T1/lmtt/m/n/10 Setting minimum word frequency to 40, we retain 1306 words ou
+Overfull \hbox (7.99359pt too wide) in paragraph at lines 334--334
+[]\T1/lmtt/m/n/10 Setting minimum word frequency to 40, we retain 1238 words ou
 t of the original 10314 words.[] 
  []
 
 
-Overfull \hbox (175.9931pt too wide) in paragraph at lines 357--357
+Overfull \hbox (175.9931pt too wide) in paragraph at lines 338--338
 []\T1/lmtt/m/n/10 Our document-term matrix consists of 742 job descriptions aga
 inst 1238 words present in our vocab after removing stopwords.[] 
  []
 
 [5 <./MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pdf>] [6]
-<MH4510_Project_files/figure-latex/unnamed-chunk-15-1.pdf, id=123, 459.7175pt x
+<MH4510_Project_files/figure-latex/unnamed-chunk-15-1.pdf, id=120, 459.7175pt x
  313.17pt>
 File: MH4510_Project_files/figure-latex/unnamed-chunk-15-1.pdf Graphic file (ty
 pe pdf)
 <use MH4510_Project_files/figure-latex/unnamed-chunk-15-1.pdf>
 Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-15-1.p
-df  used on input line 518.
+df  used on input line 496.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
 [7 <./MH4510_Project_files/figure-latex/unnamed-chunk-15-1.pdf>]
-<MH4510_Project_files/figure-latex/unnamed-chunk-20-1.pdf, id=143, 459.7175pt x
+<MH4510_Project_files/figure-latex/unnamed-chunk-21-1.pdf, id=140, 459.7175pt x
  315.1775pt>
-File: MH4510_Project_files/figure-latex/unnamed-chunk-20-1.pdf Graphic file (ty
+File: MH4510_Project_files/figure-latex/unnamed-chunk-21-1.pdf Graphic file (ty
 pe pdf)
-<use MH4510_Project_files/figure-latex/unnamed-chunk-20-1.pdf>
-Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-20-1.p
-df  used on input line 617.
+<use MH4510_Project_files/figure-latex/unnamed-chunk-21-1.pdf>
+Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-21-1.p
+df  used on input line 543.
 (pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
-<MH4510_Project_files/figure-latex/unnamed-chunk-22-1.pdf, id=144, 459.7175pt x
- 315.1775pt>
-File: MH4510_Project_files/figure-latex/unnamed-chunk-22-1.pdf Graphic file (ty
-pe pdf)
-<use MH4510_Project_files/figure-latex/unnamed-chunk-22-1.pdf>
-Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-22-1.p
-df  used on input line 639.
-(pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
-[8] [9 <./MH4510_Project_files/figure-latex/unnamed-chunk-20-1.pdf>] [10 <./MH4
-510_Project_files/figure-latex/unnamed-chunk-22-1.pdf>] [11]
-<MH4510_Project_files/figure-latex/unnamed-chunk-26-1.pdf, id=206, 459.7175pt x
+[8 <./MH4510_Project_files/figure-latex/unnamed-chunk-21-1.pdf>] [9]
+<MH4510_Project_files/figure-latex/unnamed-chunk-26-1.pdf, id=180, 459.7175pt x
  315.1775pt>
 File: MH4510_Project_files/figure-latex/unnamed-chunk-26-1.pdf Graphic file (ty
 pe pdf)
 <use MH4510_Project_files/figure-latex/unnamed-chunk-26-1.pdf>
 Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-26-1.p
-df  used on input line 760.
+df  used on input line 676.
 (pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
-[12 <./MH4510_Project_files/figure-latex/unnamed-chunk-26-1.pdf>] [13]
-<MH4510_Project_files/figure-latex/unnamed-chunk-31-1.pdf, id=231, 445.665pt x 
+[10 <./MH4510_Project_files/figure-latex/unnamed-chunk-26-1.pdf>] [11]
+<MH4510_Project_files/figure-latex/unnamed-chunk-31-1.pdf, id=202, 445.665pt x 
 315.1775pt>
 File: MH4510_Project_files/figure-latex/unnamed-chunk-31-1.pdf Graphic file (ty
 pe pdf)
 <use MH4510_Project_files/figure-latex/unnamed-chunk-31-1.pdf>
 Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-31-1.p
-df  used on input line 895.
+df  used on input line 797.
 (pdftex.def)             Requested size: 445.6707pt x 315.18153pt.
-[14 <./MH4510_Project_files/figure-latex/unnamed-chunk-31-1.pdf>]
-<MH4510_Project_files/figure-latex/unnamed-chunk-35-1.pdf, id=247, 436.63126pt 
-x 282.05376pt>
-File: MH4510_Project_files/figure-latex/unnamed-chunk-35-1.pdf Graphic file (ty
-pe pdf)
-<use MH4510_Project_files/figure-latex/unnamed-chunk-35-1.pdf>
-Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-35-1.p
-df  used on input line 937.
-(pdftex.def)             Requested size: 436.63019pt x 282.05305pt.
-<MH4510_Project_files/figure-latex/unnamed-chunk-35-2.pdf, id=248, 459.7175pt x
- 315.1775pt>
-File: MH4510_Project_files/figure-latex/unnamed-chunk-35-2.pdf Graphic file (ty
-pe pdf)
-<use MH4510_Project_files/figure-latex/unnamed-chunk-35-2.pdf>
-Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-35-2.p
-df  used on input line 943.
-(pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
-<MH4510_Project_files/figure-latex/unnamed-chunk-37-1.pdf, id=249, 459.7175pt x
+[12 <./MH4510_Project_files/figure-latex/unnamed-chunk-31-1.pdf>]
+<MH4510_Project_files/figure-latex/unnamed-chunk-36-1.pdf, id=218, 459.7175pt x
  313.17pt>
-File: MH4510_Project_files/figure-latex/unnamed-chunk-37-1.pdf Graphic file (ty
+File: MH4510_Project_files/figure-latex/unnamed-chunk-36-1.pdf Graphic file (ty
 pe pdf)
-<use MH4510_Project_files/figure-latex/unnamed-chunk-37-1.pdf>
-Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-37-1.p
-df  used on input line 965.
+<use MH4510_Project_files/figure-latex/unnamed-chunk-36-1.pdf>
+Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-36-1.p
+df  used on input line 853.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
-[15 <./MH4510_Project_files/figure-latex/unnamed-chunk-35-1.pdf>] [16 <./MH4510
-_Project_files/figure-latex/unnamed-chunk-35-2.pdf>] [17 <./MH4510_Project_file
-s/figure-latex/unnamed-chunk-37-1.pdf>] [18]
-Underfull \hbox (badness 10000) in paragraph at lines 1060--1062
+[13 <./MH4510_Project_files/figure-latex/unnamed-chunk-36-1.pdf>] [14]
+Underfull \hbox (badness 10000) in paragraph at lines 953--955
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1060--1062
+Underfull \hbox (badness 10000) in paragraph at lines 953--955
 
  []
 
-[19] (./MH4510_Project.aux)
+[15] (./MH4510_Project.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14488 strings out of 478268
- 232618 string characters out of 5846347
- 571087 words of memory out of 5000000
- 32191 multiletter control sequences out of 15000+600000
- 541244 words of font info for 150 fonts, out of 8000000 for 9000
+ 14423 strings out of 478268
+ 230475 string characters out of 5846347
+ 569958 words of memory out of 5000000
+ 32143 multiletter control sequences out of 15000+600000
+ 543803 words of font info for 150 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 74i,7n,77p,1011b,442s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 74i,7n,77p,1011b,395s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
 texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2022/t
-exmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/local/texlive/2022/texmf-dist/
-fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/
-dvips/lm/lm-mathex.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/l
+exmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2022/texmf-dist/
+fonts/enc/dvips/lm/lm-mathex.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/
+dvips/lm/lm-mathit.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/l
 m-ts1.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmbx10.pfb>
 </usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/loca
 l/texlive/2022/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></usr/local/texlive/2
 022/texmf-dist/fonts/type1/public/lm/lmex10.pfb></usr/local/texlive/2022/texmf-
 dist/fonts/type1/public/lm/lmmi10.pfb></usr/local/texlive/2022/texmf-dist/fonts
-/type1/public/lm/lmmi5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/publ
-ic/lm/lmmi7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr10
-.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/
-local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr5.pfb></usr/local/texliv
-e/2022/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2022/texmf
--dist/fonts/type1/public/lm/lmr9.pfb></usr/local/texlive/2022/texmf-dist/fonts/
-type1/public/lm/lmri10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/publ
-ic/lm/lmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmsy
-7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on MH4510_Project.pdf (19 pages, 397250 bytes).
+/type1/public/lm/lmmi7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/publ
+ic/lm/lmr10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr12
+.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/l
+ocal/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr9.pfb></usr/local/texlive
+/2022/texmf-dist/fonts/type1/public/lm/lmri10.pfb></usr/local/texlive/2022/texm
+f-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2022/texmf-dist/fon
+ts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/pu
+blic/lm/lmtt10.pfb>
+Output written on MH4510_Project.pdf (15 pages, 339807 bytes).
 PDF statistics:
- 493 PDF objects out of 1000 (max. 8388607)
- 402 compressed objects within 5 object streams
- 100 named destinations out of 1000 (max. 500000)
- 41179 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 423 PDF objects out of 1000 (max. 8388607)
+ 350 compressed objects within 4 object streams
+ 89 named destinations out of 1000 (max. 500000)
+ 41164 words of extra memory for PDF output out of 42996 (max. 10000000)
 
