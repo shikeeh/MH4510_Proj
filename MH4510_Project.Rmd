@@ -15,6 +15,7 @@ output:
     toc_depth: 3
     number_sections: true
     df_print: paged
+urlcolor: blue
 abstract: "Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish to achieve job satisfaction through meaningful career opportunities. This project aims to interpret the relationship between data science salaries and keywords in job descriptions. The data is cleaned by preparing job description text for analysis by converting it into a document-term matrix. The models used are Multiple Linear Regression (MLR), Random Forest (RF), XGBoost (XGB), Multivariate Adaptive Regression Splines (MARS), and Partial Least Squares (PLS), where their performances will be assessed in relation to one another. We found that MLR has the lowest Root Mean Square Error (RMSE) of 16.2. Thus MLR is the best performing model that accurately predicts salary, and we identified keywords used in this model."
 editor_options: 
   markdown: 
@@ -63,8 +64,6 @@ also be able to set healthy salary expectations based on keywords that
 reflect their skill set and values. Identified keywords can also give
 insight to areas that job seekers can look to upskill in.
 
-\newpage
-
 # Data set
 
 ## Description of data set
@@ -73,7 +72,7 @@ insight to areas that job seekers can look to upskill in.
 here](https://www.kaggle.com/datasets/nikhilbhathi/data-scientist-salary-us-glassdoor)
 to access our data set. The owner scrapped the data from Glassdoor and
 pre-processed it. It contains 41 variables, including the average data
-science salary measured in thousand, and has 742 observations.
+science salary measured in thousands, and has 742 observations.
 
 ```{r, include = FALSE}
 # Import relevant libraries:
@@ -100,9 +99,12 @@ library(pls)
 
 Below is a sample of our dataset:
 
-```{r, echo = FALSE}
+```{r, include = FALSE}
 # import data from local csv file
 D <- read_csv("data_cleaned_2021.csv")
+```
+
+```{r, echo = FALSE}
 knitr::kable(head(D[, 20:25]), 
              caption = "A sample of our dataset.")
 ```
@@ -605,11 +607,11 @@ a highly non-linear prediction equation. Even if using a lot of knots
 could help us fit a particularly excellent relationship to our training
 data, it might not perform well to unseen data. Once all of the knots
 have been found, we may systematically eliminate knots that do not
-significantly improve predictive accuracy. This is pruning process, and
-we may use cross-validation to determine the optimal number of knots.
+significantly improve predictive accuracy. This is the pruning process,
+and we may use cross-validation to determine the optimal number of
+knots.
 
-We will use the following packages. First of all, we divided the dataset
-into training dataset and test dataset:
+First, we divided the dataset into training and test data:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
@@ -623,14 +625,12 @@ cat("Dimensions of the MARS training dataset are", dim(train_mars), "\n")
 cat("Dimensions of the MARS test dataset are", dim(test_mars), "\n")
 ```
 
-MARS model have two hyper-parameters: the maximum degree of interactions
+MARS model has two hyper-parameters: the maximum degree of interactions
 and the number of terms retained in the final model. To achieve the
-optimal combination of these tuning parameters, we must conduct a grid
-search that minimize the error of prediction.
-
-We built up a grid with 30 different combinations of interaction
-complexity (degree) and the number of terms to include in the final
-model (nprune).
+optimal combination of these tuning parameters, we conduct a grid search
+that minimizes the error of prediction by building a grid with 30
+different combinations of interaction complexity (degree) and the number
+of terms to include in the final model (nprune).
 
 ```{r, include = FALSE}
 marsgrid <- expand.grid(
@@ -723,8 +723,8 @@ variables. The response variable is not taken into account during the
 dimension reduction process in PCA. PLS, on the other hand, seeks to
 select newly mapped factors that best describe the response variable.
 
-Similar to MARS, we divided the dataset into training dataset and test
-dataset first:
+Similar to MARS, we divided the dataset into training and test data
+first:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)

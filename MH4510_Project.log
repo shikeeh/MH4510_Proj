@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.26)  18 NOV 2022 16:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.26)  18 NOV 2022 17:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -190,7 +190,13 @@ Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1372.
 Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1373.
 Package xcolor Info: Model `Gray' substituted by `gray' on input line 1374.
 Package xcolor Info: Model `wave' substituted by `hsb' on input line 1375.
-) (/usr/local/texlive/2022/texmf-dist/tex/latex/geometry/geometry.sty
+(/usr/local/texlive/2022/texmf-dist/tex/latex/graphics/dvipsnam.def
+File: dvipsnam.def 2016/06/17 v3.0m Driver-dependent file (DPC,SPQR)
+) (/usr/local/texlive/2022/texmf-dist/tex/latex/xcolor/svgnam.def
+File: svgnam.def 2021/10/31 v2.13 Predefined colors according to SVG 1.1 (UK)
+) (/usr/local/texlive/2022/texmf-dist/tex/latex/xcolor/x11nam.def
+File: x11nam.def 2021/10/31 v2.13 Predefined colors according to Unix/X11 (UK)
+)) (/usr/local/texlive/2022/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
 (/usr/local/texlive/2022/texmf-dist/tex/generic/iftex/ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
@@ -407,7 +413,9 @@ File: bkm-pdftex.def 2020-11-06 v1.29 bookmark driver for pdfTeX (HO)
 \BKM@id=\count302
 )) (/usr/local/texlive/2022/texmf-dist/tex/latex/xurl/xurl.sty
 Package: xurl 2022/01/09 v 0.10 modify URL breaks
-) (/usr/local/texlive/2022/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+)
+Package hyperref Info: Option `colorlinks' set `true' on input line 119.
+(/usr/local/texlive/2022/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2022-02-07 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count303
 \l__pdf_internal_box=\box62
@@ -433,36 +441,36 @@ LaTeX Warning: Label `fig:figs' multiply defined.
 )
 \openout1 = `MH4510_Project.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 129.
-LaTeX Font Info:    ... okay on input line 129.
-LaTeX Info: Redefining \microtypecontext on input line 129.
-Package microtype Info: Applying patch `item' on input line 129.
-Package microtype Info: Applying patch `toc' on input line 129.
-Package microtype Info: Applying patch `eqnum' on input line 129.
-Package microtype Info: Applying patch `footnote' on input line 129.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 134.
+LaTeX Font Info:    ... okay on input line 134.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 134.
+LaTeX Font Info:    ... okay on input line 134.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 134.
+LaTeX Font Info:    ... okay on input line 134.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 134.
+LaTeX Font Info:    ... okay on input line 134.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 134.
+LaTeX Font Info:    ... okay on input line 134.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 134.
+LaTeX Font Info:    ... okay on input line 134.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 134.
+LaTeX Font Info:    ... okay on input line 134.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 134.
+LaTeX Font Info:    ... okay on input line 134.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 134.
+LaTeX Font Info:    ... okay on input line 134.
+LaTeX Info: Redefining \microtypecontext on input line 134.
+Package microtype Info: Applying patch `item' on input line 134.
+Package microtype Info: Applying patch `toc' on input line 134.
+Package microtype Info: Applying patch `eqnum' on input line 134.
+Package microtype Info: Applying patch `footnote' on input line 134.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using protrusion set `basicmath'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 129.
+LaTeX Info: Redefining \showhyphens on input line 134.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -524,7 +532,7 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 129.
+Package hyperref Info: Link coloring ON on input line 134.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
 (/usr/local/texlive/2022/texmf-dist/tex/latex/refcount/refcount.sty
@@ -536,43 +544,43 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count310
 )
-LaTeX Info: Redefining \ref on input line 129.
-LaTeX Info: Redefining \pageref on input line 129.
-LaTeX Info: Redefining \nameref on input line 129.
+LaTeX Info: Redefining \ref on input line 134.
+LaTeX Info: Redefining \pageref on input line 134.
+LaTeX Info: Redefining \nameref on input line 134.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 1
-31.
+36.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OML+lmm on input line 1
-31.
+36.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 
-131.
+136.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 
-131.
+136.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 131.
+(Font)              <12> on input line 136.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 131.
+(Font)              <8> on input line 136.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 131.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 131
+(Font)              <6> on input line 136.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 136
 .
 (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 131
+LaTeX Font Info:    Trying to load font information for U+msb on input line 136
 .
 (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
@@ -592,112 +600,112 @@ LaTeX Font Info:    External font `lmex10' loaded for size
 [1
 
 {/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
-LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-12.
-(/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmtt.fd
-File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-221.
-(/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ts1lmtt.fd
-File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [3]
-<MH4510_Project_files/figure-latex/unnamed-chunk-5-1.pdf, id=75, 459.7175pt x 3
+<MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pdf, id=69, 459.7175pt x 3
 15.1775pt>
-File: MH4510_Project_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (typ
-e pdf)
-<use MH4510_Project_files/figure-latex/unnamed-chunk-5-1.pdf>
-Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-5-1.pd
-f  used on input line 302.
-(pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
-<MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pdf, id=76, 253.94875pt x 
-249.93375pt>
 File: MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pdf Graphic file (typ
 e pdf)
 <use MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pdf>
 Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pd
-f  used on input line 318.
-(pdftex.def)             Requested size: 253.95586pt x 249.94075pt.
-[4 <./MH4510_Project_files/figure-latex/unnamed-chunk-5-1.pdf>]
-Overfull \hbox (7.99359pt too wide) in paragraph at lines 334--334
+f  used on input line 295.
+(pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
+<MH4510_Project_files/figure-latex/unnamed-chunk-7-1.pdf, id=70, 253.94875pt x 
+244.915pt>
+File: MH4510_Project_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (typ
+e pdf)
+<use MH4510_Project_files/figure-latex/unnamed-chunk-7-1.pdf>
+Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-7-1.pd
+f  used on input line 311.
+(pdftex.def)             Requested size: 253.95586pt x 244.92184pt.
+[3 <./MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pdf>]
+LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 3
+25.
+(/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmtt.fd
+File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+)
+Overfull \hbox (7.99359pt too wide) in paragraph at lines 327--327
 []\T1/lmtt/m/n/10 Setting minimum word frequency to 40, we retain 1238 words ou
 t of the original 10314 words.[] 
  []
 
 
-Overfull \hbox (175.9931pt too wide) in paragraph at lines 338--338
+Overfull \hbox (175.9931pt too wide) in paragraph at lines 331--331
 []\T1/lmtt/m/n/10 Our document-term matrix consists of 742 job descriptions aga
 inst 1238 words present in our vocab after removing stopwords.[] 
  []
 
-[5 <./MH4510_Project_files/figure-latex/unnamed-chunk-6-1.pdf>] [6]
-<MH4510_Project_files/figure-latex/unnamed-chunk-15-1.pdf, id=120, 459.7175pt x
+[4 <./MH4510_Project_files/figure-latex/unnamed-chunk-7-1.pdf>]
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
+384.
+(/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ts1lmtt.fd
+File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
+) [5]
+<MH4510_Project_files/figure-latex/unnamed-chunk-16-1.pdf, id=116, 459.7175pt x
  313.17pt>
-File: MH4510_Project_files/figure-latex/unnamed-chunk-15-1.pdf Graphic file (ty
+File: MH4510_Project_files/figure-latex/unnamed-chunk-16-1.pdf Graphic file (ty
 pe pdf)
-<use MH4510_Project_files/figure-latex/unnamed-chunk-15-1.pdf>
-Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-15-1.p
-df  used on input line 496.
+<use MH4510_Project_files/figure-latex/unnamed-chunk-16-1.pdf>
+Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-16-1.p
+df  used on input line 489.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
-[7 <./MH4510_Project_files/figure-latex/unnamed-chunk-15-1.pdf>]
-<MH4510_Project_files/figure-latex/unnamed-chunk-21-1.pdf, id=140, 459.7175pt x
+[6 <./MH4510_Project_files/figure-latex/unnamed-chunk-16-1.pdf>]
+<MH4510_Project_files/figure-latex/unnamed-chunk-22-1.pdf, id=135, 459.7175pt x
  315.1775pt>
-File: MH4510_Project_files/figure-latex/unnamed-chunk-21-1.pdf Graphic file (ty
+File: MH4510_Project_files/figure-latex/unnamed-chunk-22-1.pdf Graphic file (ty
 pe pdf)
-<use MH4510_Project_files/figure-latex/unnamed-chunk-21-1.pdf>
-Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-21-1.p
-df  used on input line 543.
+<use MH4510_Project_files/figure-latex/unnamed-chunk-22-1.pdf>
+Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-22-1.p
+df  used on input line 536.
 (pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
-[8 <./MH4510_Project_files/figure-latex/unnamed-chunk-21-1.pdf>] [9]
-<MH4510_Project_files/figure-latex/unnamed-chunk-26-1.pdf, id=180, 459.7175pt x
+[7 <./MH4510_Project_files/figure-latex/unnamed-chunk-22-1.pdf>] [8]
+<MH4510_Project_files/figure-latex/unnamed-chunk-27-1.pdf, id=176, 459.7175pt x
  315.1775pt>
-File: MH4510_Project_files/figure-latex/unnamed-chunk-26-1.pdf Graphic file (ty
+File: MH4510_Project_files/figure-latex/unnamed-chunk-27-1.pdf Graphic file (ty
 pe pdf)
-<use MH4510_Project_files/figure-latex/unnamed-chunk-26-1.pdf>
-Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-26-1.p
-df  used on input line 676.
+<use MH4510_Project_files/figure-latex/unnamed-chunk-27-1.pdf>
+Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-27-1.p
+df  used on input line 669.
 (pdftex.def)             Requested size: 459.74442pt x 315.19595pt.
-[10 <./MH4510_Project_files/figure-latex/unnamed-chunk-26-1.pdf>] [11]
-<MH4510_Project_files/figure-latex/unnamed-chunk-31-1.pdf, id=202, 445.665pt x 
+[9 <./MH4510_Project_files/figure-latex/unnamed-chunk-27-1.pdf>]
+<MH4510_Project_files/figure-latex/unnamed-chunk-32-1.pdf, id=192, 445.665pt x 
 315.1775pt>
-File: MH4510_Project_files/figure-latex/unnamed-chunk-31-1.pdf Graphic file (ty
+File: MH4510_Project_files/figure-latex/unnamed-chunk-32-1.pdf Graphic file (ty
 pe pdf)
-<use MH4510_Project_files/figure-latex/unnamed-chunk-31-1.pdf>
-Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-31-1.p
-df  used on input line 797.
+<use MH4510_Project_files/figure-latex/unnamed-chunk-32-1.pdf>
+Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-32-1.p
+df  used on input line 788.
 (pdftex.def)             Requested size: 445.6707pt x 315.18153pt.
-[12 <./MH4510_Project_files/figure-latex/unnamed-chunk-31-1.pdf>]
-<MH4510_Project_files/figure-latex/unnamed-chunk-36-1.pdf, id=218, 459.7175pt x
+[10] [11 <./MH4510_Project_files/figure-latex/unnamed-chunk-32-1.pdf>]
+<MH4510_Project_files/figure-latex/unnamed-chunk-37-1.pdf, id=214, 459.7175pt x
  313.17pt>
-File: MH4510_Project_files/figure-latex/unnamed-chunk-36-1.pdf Graphic file (ty
+File: MH4510_Project_files/figure-latex/unnamed-chunk-37-1.pdf Graphic file (ty
 pe pdf)
-<use MH4510_Project_files/figure-latex/unnamed-chunk-36-1.pdf>
-Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-36-1.p
-df  used on input line 853.
+<use MH4510_Project_files/figure-latex/unnamed-chunk-37-1.pdf>
+Package pdftex.def Info: MH4510_Project_files/figure-latex/unnamed-chunk-37-1.p
+df  used on input line 844.
 (pdftex.def)             Requested size: 459.7304pt x 313.17877pt.
-[13 <./MH4510_Project_files/figure-latex/unnamed-chunk-36-1.pdf>] [14]
-Underfull \hbox (badness 10000) in paragraph at lines 953--955
+[12 <./MH4510_Project_files/figure-latex/unnamed-chunk-37-1.pdf>] [13]
+Underfull \hbox (badness 10000) in paragraph at lines 944--946
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 953--955
+Underfull \hbox (badness 10000) in paragraph at lines 944--946
 
  []
 
-[15] (./MH4510_Project.aux)
+[14] (./MH4510_Project.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 14423 strings out of 478268
- 230475 string characters out of 5846347
- 569958 words of memory out of 5000000
- 32143 multiletter control sequences out of 15000+600000
- 543803 words of font info for 150 fonts, out of 8000000 for 9000
+ 14937 strings out of 478268
+ 239078 string characters out of 5846347
+ 602155 words of memory out of 5000000
+ 32647 multiletter control sequences out of 15000+600000
+ 543892 words of font info for 151 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 74i,7n,77p,1011b,395s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 74i,7n,77p,1011b,410s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/
 texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2022/t
 exmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2022/texmf-dist/
@@ -716,10 +724,10 @@ ocal/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr9.pfb></usr/local/texlive
 f-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2022/texmf-dist/fon
 ts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/pu
 blic/lm/lmtt10.pfb>
-Output written on MH4510_Project.pdf (15 pages, 339807 bytes).
+Output written on MH4510_Project.pdf (14 pages, 337299 bytes).
 PDF statistics:
- 423 PDF objects out of 1000 (max. 8388607)
- 350 compressed objects within 4 object streams
- 89 named destinations out of 1000 (max. 500000)
+ 419 PDF objects out of 1000 (max. 8388607)
+ 347 compressed objects within 4 object streams
+ 88 named destinations out of 1000 (max. 500000)
  41164 words of extra memory for PDF output out of 42996 (max. 10000000)
 
