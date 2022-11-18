@@ -1,2 +1,8 @@
-# MH4510_Proj
-MH4510 Project - Predicting Data Science Salaries
+# MH4510 Group Project
+## Studying the impact of job descriptions on data science salaries
+
+Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish to achieve job satisfaction through meaningful career opportunities. This project aims to study the impact of job descriptions on data science salaries. The data is cleaned by preparing job description text for analysis and converting it into a document-term matrix. The models used are Multiple Linear Regression (MLR), Random Forest (RF), XGBoost (XGB), Multivariate Adaptive Regression Splines (MARS), and Partial Least Squares (PLS), where their performances will be assessed in relation to one another. We found that MLR has the lowest Root Mean Square Error (RMSE) of 16.2. Thus MLR is the best performing model that accurately predicts salary, and we identified keywords used in this model.
+
+This project aims to study the impact of job descriptions on data science salaries. Doing so will give insight to keywords in job descriptions that have a significant impact on salaries. Job seekers will also be able to set healthy salary expectations based on keywords that reflect their skill set and values. Identified keywords can also give insight to areas that job seekers can look to upskill in.
+
+Based on RMSE, our best model uses Multiple Linear Regression, and it has identified key terms that have a significant impact on data science salary. However, Multiple Linear Regression does not identify the same important features (words) as our other models. Comparing identified important keywords between models was also not feasible within this project as each models used different methods of ranking the importance of variables. Different models also identified different keywords as important. Further research is required to better understand the difference between models and why they identify vastly different features as important.
