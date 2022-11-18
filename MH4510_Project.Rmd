@@ -16,7 +16,7 @@ output:
     number_sections: true
     df_print: paged
 urlcolor: blue
-abstract: "Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish to achieve job satisfaction through meaningful career opportunities. This project aims to interpret the relationship between data science salaries and keywords in job descriptions. The data is cleaned by preparing job description text for analysis by converting it into a document-term matrix. The models used are Multiple Linear Regression (MLR), Random Forest (RF), XGBoost (XGB), Multivariate Adaptive Regression Splines (MARS), and Partial Least Squares (PLS), where their performances will be assessed in relation to one another. We found that MLR has the lowest Root Mean Square Error (RMSE) of 16.2. Thus MLR is the best performing model that accurately predicts salary, and we identified keywords used in this model."
+abstract: "Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish to achieve job satisfaction through meaningful career opportunities. This project aims to interpret the relationship between data science salaries and keywords in job descriptions. The data is cleaned by preparing job description text for analysis and converting it into a document-term matrix. The models used are Multiple Linear Regression (MLR), Random Forest (RF), XGBoost (XGB), Multivariate Adaptive Regression Splines (MARS), and Partial Least Squares (PLS), where their performances will be assessed in relation to one another. We found that MLR has the lowest Root Mean Square Error (RMSE) of 16.2. Thus MLR is the best performing model that accurately predicts salary, and we identified keywords used in this model."
 editor_options: 
   markdown: 
     wrap: 72
@@ -57,12 +57,12 @@ percentage of successfully matching job seekers with their ideal jobs.
 
 ## Objective
 
-This project aims to interpret the relationship between data science
-salaries and keywords in job descriptions. Doing so will give insight to
-keywords that have a significant impact on salaries. Job seekers will
-also be able to set healthy salary expectations based on keywords that
-reflect their skill set and values. Identified keywords can also give
-insight to areas that job seekers can look to upskill in.
+This project aims to study the impact of job descriptions on data science 
+salaries. Doing so will give insight to keywords in job descriptions that 
+have a significant impact on salaries. Job seekers will also be able to set 
+healthy salary expectations based on keywords that reflect their skill set 
+and values. Identified keywords can also give insight to areas that job 
+seekers can look to upskill in.
 
 # Data set
 
@@ -185,8 +185,7 @@ The document-term matrix (DTM) is a table reflecting the frequency of
 each word where the column names represent words and the row names
 represent documents, i.e., the reviews.
 
-We create a DTM for our job descriptions, setting minimum word frequency
-to 40.
+We create a DTM for our job descriptions.
 
 ```{r, echo = FALSE, comment = ""}
 # we create a corpus and then a DTM
@@ -231,7 +230,7 @@ knitr::kable(head(D_dtm[, c('data', 'machine', 'python', 'analytics', 'science')
 ## Feature selection using LASSO
 
 We will use LASSO regularization to select features to prepare our data
-for three of our models: Multiple LInear Regression, Random Forest, and
+for three of our models: Multiple Linear Regression, Random Forest, and
 XGBoost. The last two models use their own methods of feature selection,
 so we will not use features selected by LASSO for those two models, but
 the entire dataset instead.
@@ -397,7 +396,7 @@ The optimal values of the hyper-parameters are:
 knitr::kable(mod_rf$bestTune)
 ```
 
-So we retrain the model with the selected hyper-parameters, and fit our
+Afterwhich, we retrain the model with the selected hyper-parameters, and fit our
 Random Forest model on the training data set.
 
 ```{r, include = FALSE}
@@ -685,12 +684,12 @@ include and remove variables throughout the pruning phase.
 
 After pruning, a predictor's significance value is 0 if it was never
 used in any of the MARS basis functions in the final model. There are
-only 9 features have importance values greater than 0, whereas the other
-features all have importance values of zero since they were excluded
+only 9 features with importance values greater than 0, whereas the remaining
+features obtain importance values of 0 since they were excluded
 from the final model.
 
-We also kept track of how the residual sums of squares (RSS) change when
-terms are added. However, we noticed that there is no much difference
+We also keep track of how the residual sums of squares (RSS) change when
+terms are added. However, we noticed that there is minimum difference
 between these two measures.
 
 ```{r, echo = FALSE, comment = "", warning = FALSE, fig.cap="\\label{fig:figs}MARS top 20 most important variables"}
@@ -702,7 +701,7 @@ plot_RSS <- vip(mars_cv, num_features = 20, geom = "col", value = "rss",
 gridExtra::grid.arrange(plot_GCV, plot_RSS, ncol = 2)
 ```
 
-We used the optimal hyper-parameters to train the model and then
+We used the optimal hyper-parameters to train the model and 
 calculated the RMSE:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
@@ -732,8 +731,8 @@ cat("RMSE:", round(caret::RMSE(test_data$Y_salary, pred_mars), 2), "\n")
 
 Partial Least Squares (PLS) is a common technique to analyse relative
 importance when the data includes more predictors than observations. It
-is an useful dimension reduction method which is similar with principal
-component analysis (PCA).
+is an useful dimension reduction method which is similar with Principal
+Component Analysis (PCA).
 
 We do a regression against the response variable inside the narrower
 space created by mapping the predictor variables to a smaller set of
@@ -741,7 +740,7 @@ variables. The response variable is not taken into account during the
 dimension reduction process in PCA. PLS, on the other hand, seeks to
 select newly mapped factors that best describe the response variable.
 
-Similar to MARS, we divided the dataset into training and test data
+Similar to MARS, we divide the dataset into training and test data
 first:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE}
@@ -756,7 +755,7 @@ cat("Dimensions of the MARS test dataset are", dim(test_pls), "\n")
 ```
 
 The hyper-parameter for PLS model is the number of components used in
-the model (ncomp) .We conduct a grid search that minimize the prediction
+the model (ncomp). We conduct a grid search that minimize the prediction
 error to achieve the optimal hyper-parameter. The grid search was
 conducted by 10-fold cross-validation, and we used the optimal
 hyper-parameter to train the model and calculated the RMSE as well:
