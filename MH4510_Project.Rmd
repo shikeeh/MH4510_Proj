@@ -16,7 +16,7 @@ output:
     number_sections: true
     df_print: paged
 urlcolor: blue
-abstract: "Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish to achieve job satisfaction through meaningful career opportunities. This project aims to study the impact of job descriptions on data science salaries.The data is cleaned by preparing job description text for analysis and converting it into a document-term matrix. The models used are Multiple Linear Regression (MLR), Random Forest (RF), XGBoost (XGB), Multivariate Adaptive Regression Splines (MARS), and Partial Least Squares (PLS), where their performances will be assessed in relation to one another. We found that MLR has the lowest Root Mean Square Error (RMSE) of 16.2. Thus MLR is the best performing model that accurately predicts salary, and we identified keywords used in this model."
+abstract: "Millions of workers worldwide are no longer satisfied with just a fair paycheck, instead, they wish to achieve job satisfaction through meaningful career opportunities. This project aims to study the impact of job descriptions on data science salaries. The data is cleaned by preparing job description text for analysis and converting it into a document-term matrix. The models used are Multiple Linear Regression (MLR), Random Forest (RF), XGBoost (XGB), Multivariate Adaptive Regression Splines (MARS), and Partial Least Squares (PLS), where their performances will be assessed in relation to one another. We found that MLR has the lowest Root Mean Square Error (RMSE) of 16.2. Thus MLR is the best performing model that accurately predicts salary, and we identified keywords used in this model."
 editor_options: 
   markdown: 
     wrap: 72
