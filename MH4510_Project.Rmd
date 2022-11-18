@@ -128,15 +128,14 @@ the text to lowercase. We then only keep the "Avg Salary(K)" and
 "cleaned_text" variables.
 
 ```{r, echo = FALSE}
-# Keep only alphabets and spaces, changing texts to lowercase, and remove all "\n"
+# Keep only alphanumeric characters and spaces, change texts to lowercase, 
+# and remove all "\n"
 D_clean <- D %>%
   mutate(cleaned_text = gsub("[^a-zA-Z0-9]", " ", D$`Job Description`)) %>%
   mutate(cleaned_text = gsub("\\n", " ", cleaned_text)) %>%
   mutate(cleaned_text = tolower(cleaned_text)) 
-```
 
-```{r, echo = FALSE}
-#remove unnecessary columns 
+# remove unnecessary columns 
 D_clean <- D_clean %>%
   select(c(`Avg Salary(K)`, cleaned_text))
 ```
@@ -163,11 +162,13 @@ informational value in our analysis. Below we show 100 of the most
 common words.
 
 ```{r, echo = FALSE, warning = FALSE, fig.cap="\\label{fig:figs}Job description word cloud"}
+# we create a function to visualize our text from "cleaned_text"
 visualize_text <- function(x) {
-  # x is a character vector
-  # the function will extract
-  frequent_words <- termFreq(x)
-  frequent_words <- frequent_words[!(names(frequent_words) %in% stopwords())]
+  # x is a character vector the function will extract
+  frequent_words <- termFreq(x) 
+  # we remove stopwords
+  frequent_words <- frequent_words[!(names(frequent_words) %in% stopwords())] 
+  # generate a word cloud
   wordcloud(words = names(frequent_words), 
             freq = frequent_words, min.freq = 40,
             max.words = 100, random.order=FALSE, rot.per=0.35, 
@@ -188,10 +189,14 @@ We create a DTM for our job descriptions, setting minimum word frequency
 to 40.
 
 ```{r, echo = FALSE, comment = ""}
+# we create a corpus and then a DTM
 corpus <- VCorpus(VectorSource(D_clean$cleaned_text))
 dtm <- DocumentTermMatrix(corpus)
 
+# we find the original number of unique words
 words_freq <- termFreq(D_clean$cleaned_text)
+
+# we filter such that minimum frequency of each word is at least 40, and remove stopwords
 frequent_words <- words_freq[words_freq >= 40]
 frequent_words <- frequent_words[!(names(frequent_words) %in% stopwords())]
 
@@ -199,6 +204,7 @@ cat("Setting minimum word frequency to 40, we retain", length(frequent_words), "
 ```
 
 ```{r, echo = FALSE, comment = ""}
+# finally, we filter our DTM as well
 dtm <- dtm[ , names(frequent_words)]
 
 cat("Our document-term matrix consists of", nrow(dtm), "job descriptions against", ncol(dtm), 'words present in our vocab after removing stopwords.', '\n')
@@ -207,6 +213,7 @@ cat("Our document-term matrix consists of", nrow(dtm), "job descriptions against
 We create a new data frame for our DTM and produce a sample of it below.
 
 ```{r, echo = FALSE}
+# convert DTM to a usable dataframe including our response variable
 D_dtm <- dtm %>%
   as.matrix %>%
   as_tibble %>% 
@@ -237,14 +244,16 @@ The LASSO procedure is as follows:
 3.  Prepare our final dataset to be used for MLR, RF, and XGB
 
 ```{r, include = FALSE}
-# we remove all output for the actual report.
-# to show the output of our model and the lambda coefficient plot, remove 
+# We remove all output for the actual report.
+# To show the output of our model and the lambda coefficient plot, remove 
 # "include = FALSE" written above
 
 set.seed(100)
 
+# set values of lambda
 lambda <- 10^seq(-1, 0 , length = 10)
 
+# use cross-validation to find the best lambda for LASSO
 lasso <- train(
   Y_salary ~., data = D_dtm, method = "glmnet",
   trControl = trainControl("cv", number = 10),
@@ -254,28 +263,36 @@ lasso <- train(
 
 lasso
 
+# create function for plotting lambda against coefficients of variables
 lambda_for_plotting <- 10^seq(from = -1, to = 1.2, length = 100)
 
+# create a table consisting of our coefficients of variables and lambda values
 lasso_coefs <- coef(lasso$finalModel, lambda_for_plotting) %>%
   as.matrix %>% t %>% as_tibble %>%
   mutate(lambda = lambda_for_plotting)
 
+
+# plot lambda and coefficients
 lasso_coefs %>%
   pivot_longer(-c(1, ncol(lasso_coefs)), names_to = "variable", values_to = "coef") %>%
   ggplot(aes(x = lambda, y = coef, group = variable, colour = variable)) +
   geom_line() + scale_x_log10() + theme(legend.position = "none")
 
+
+# store our chosen variables according to the best lambda value
 store <- filter(lasso_coefs, lambda == lasso$bestTune$lambda) %>% 
   select_if(function(col) !all(col == 0))
 
+# keep all variables except our response variable and lambda
 selected_var <- names(store[2:(ncol(store)-1)])
 
+# prepare our final dataset for MLR, RF, and XGB
 D_final <- D_dtm[c(gsub("`","", selected_var))] %>%
   mutate(Y_salary = D_dtm$Y_salary) %>%
   select(c(Y_salary, everything()))
 ```
 
-```{r}
+```{r, echo = FALSE}
 knitr::kable(head(D_final[, c('Y_salary', 'predictive', 'education', 'learn', 
                               'machine', 'experience', 'analytics', 'support')]), 
              caption = "A sample of our final dataset.")
@@ -288,6 +305,7 @@ dimensions are as follows:
 set.seed(100)
 ind <- runif(nrow(D_final)) < 0.8
 
+# split our training and test data
 train_data <- D_final[ind , ]
 test_data <- D_final[!ind , ]
 
@@ -616,7 +634,7 @@ First, we divided the dataset into training and test data:
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
 
-ind_mars <- which(runif(nrow(D_dtm)) < 0.7)
+ind_mars <- which(runif(nrow(D_dtm)) < 0.8)
 
 train_mars <- D_dtm %>% dplyr::slice(ind_mars)
 test_mars <- D_dtm %>% dplyr::slice(-ind_mars)
@@ -729,7 +747,7 @@ first:
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 set.seed(100)
 # 70/30 split
-inTraining <- createDataPartition(D_dtm$Y_salary, p = .7, list = FALSE)
+inTraining <- createDataPartition(D_dtm$Y_salary, p = .8, list = FALSE)
 train_pls <- D_dtm[inTraining,]
 test_pls  <- D_dtm[-inTraining,]
 
@@ -783,10 +801,9 @@ pred_pls = predict(pls_cv_tuned, test_pls)
 cat("RMSE:", round(caret::RMSE(test_pls$Y_salary, pred_pls), 2), "\n")
 ```
 
-The barplots below show that 'addition', 'generate', 'hypotheses',
-'framework' and 'characteristics' are positive predictors, while
-'streaming', 'francisco', 'difference', 'mongodb' are negative
-predictors:
+The barplots below show that 'addition', 'generate', 'framework' and
+'characteristics' are positive predictors, while 'streaming',
+'wellness', and 'molecules' are negative predictors:
 
 ```{r, echo = FALSE, comment = "", warning = FALSE, fig.cap="\\label{fig:figs}PLS top 20 most important variables"}
 coefficients_pls <- coef(pls_cv_tuned$finalModel)
@@ -808,9 +825,12 @@ ggplot(coefficients_pls_df, aes(x=coefficients_pls,
 
 ## Summary of results
 
+Below we summarise the RMSE values (rounded to two decimal places) for
+each model:
+
 ```{r, echo = FALSE, comment = "", warning = FALSE}
 final_results <- data.frame(Model = c('MLR', 'Random Forest', 'XGBoost', 'MARS', 'PLS'),
-                            RMSE = c(16.21, 21.59, 16.59, 30.00, 23.88))
+                            RMSE = c(16.21, 21.59, 16.59, 30.00, 22.52))
 knitr::kable(final_results, 
              caption = "Accuracy of models.")
 ```
